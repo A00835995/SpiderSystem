@@ -13,7 +13,7 @@ app.use(express.json());
 
 
 // Rutas de la API
-app.use('/login', loginRoutes);
+app.use('/api/login', loginRoutes);
 app.use('/api', articuloRoutes);
 
 
