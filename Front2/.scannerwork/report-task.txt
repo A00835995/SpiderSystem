@@ -1,6 +1,6 @@
-projectKey=SpiderSAP
+projectKey=FrontSpiderSAP
 serverUrl=http://localhost:9000
 serverVersion=25.4.0.105899
-dashboardUrl=http://localhost:9000/dashboard?id=SpiderSAP
-ceTaskId=c6351d03-1834-45a6-a16a-27136d8a659c
-ceTaskUrl=http://localhost:9000/api/ce/task?id=c6351d03-1834-45a6-a16a-27136d8a659c
+dashboardUrl=http://localhost:9000/dashboard?id=FrontSpiderSAP
+ceTaskId=203a7151-cc65-4333-874a-7073f765d446
+ceTaskUrl=http://localhost:9000/api/ce/task?id=203a7151-cc65-4333-874a-7073f765d446

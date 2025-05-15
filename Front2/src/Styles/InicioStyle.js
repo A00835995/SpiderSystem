@@ -1,5 +1,3 @@
-import { spacing } from "@ui5/webcomponents-react-base";
-
 export const styles = {
   pageContainer: {
     width: "100%",
