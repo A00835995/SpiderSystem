@@ -2,7 +2,7 @@ class InicioResponseDto {
     // Para las órdenes pendientes
     static toOrdenesPendientesResponse(dbResult) {
         return {
-            total: dbResult[0]?.CuentaOrdenesPend || 0
+            total: dbResult[0]?.CUENTAORDENESPEND || 0
         };
     }
 
@@ -32,10 +32,12 @@ class InicioResponseDto {
     static toOrdenesRecientesResponse(dbOrdenesRecientes) {
         return {
             numeroOrden: dbOrdenesRecientes.NUMEROORDEN,
+            numeroProveedor: dbOrdenesRecientes.IDPROVEEDOR,
             fecha: dbOrdenesRecientes.FECHAENTREGA,
             cantidad: dbOrdenesRecientes.CANTIDAD,
             productos: dbOrdenesRecientes.PRODUCTOS,
-            estado: dbOrdenesRecientes.ESTADO
+            estado: dbOrdenesRecientes.ESTADO,
+            total: dbOrdenesRecientes.TOTALORDEN
         };
     }
 

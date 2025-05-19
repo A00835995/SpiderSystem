@@ -78,7 +78,7 @@ exports.getProductosInventario = async (req, res) => {
 
 exports.getVentasMesAnterior = async (req, res) => {
     try{
-        const result = await executeQuery('CALL PorcentajeVentasMesAnterior()');
+        const result = await executeQuery('CALL "PorcentajeVentasMesAnterior"()');
 
         if (!result || result.length === 0) {
             return res.status(404).json({ message: "No se encontraron ventas mensuales anteriores" });
@@ -103,7 +103,7 @@ exports.getVentasMesAnterior = async (req, res) => {
 
 exports.getOrdenesRecientes = async (req, res) => {
     try{
-        const result = await executeQuery('CALL Ultimas4OrdenesResumen()');
+        const result = await executeQuery('CALL "Ultimas4OrdenesResumen"()');
 
         if (!result || result.length === 0) {
             return res.status(404).json({ message: "No se encontraron ultimas 4 ordenes resumen" });
@@ -128,7 +128,7 @@ exports.getOrdenesRecientes = async (req, res) => {
 
 exports.getVentasXCategoria = async (req, res) => {
     try{
-        const result = await executeQuery('CALL VentasPorCategoria()');
+        const result = await executeQuery('CALL "VentasPorCategoria"()');
 
         if (!result || result.length === 0) {
             return res.status(404).json({ message: "No se encontraron ventas por categoria" });

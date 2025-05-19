@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
+import InicioHeader from "../components/Inicio/InicioHeader";
+import InicioKpiCards from "../components/Inicio/InicioKpiCards";
+import InicioRecentOrders from "../components/Inicio/InicioRecentOrders";
+import InicioSalesCat from "../components/Inicio/InicioSalesCat";
+import { fetchInicioData, 
+    fetchVentasMes, 
+    fetchProductosInventario, 
+    fetchVentasMesAnterior } 
+    from "../services/InicioService";
+
 import {
-  DynamicPageTitle,
   FlexBox,
   FlexBoxDirection,
   FlexBoxAlignItems,
@@ -20,46 +29,64 @@ import { styles } from "../Styles/InicioStyle";
 
 const Inicio = () => {
   const [isLoading, setIsLoading] = useState(true);
-
+  
+  const [kpiStats, setKpiStats] = useState({
+    ordenesPendientes: 0,
+    ventasMes: 0,
+    productosInventario: 0,
+    crecimiento: 0
+  });
+  
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    setTimeout(() => setIsLoading(false), 500);
+    async function loadStats() {
+      setIsLoading(true);
+      const [ordenes, ventas, inventario, crecimiento] = await Promise.all([
+        fetchInicioData(),
+        fetchVentasMes(),
+        fetchProductosInventario(),
+        fetchVentasMesAnterior()
+      ]);
+      console.log("ordenes", ordenes);
+      console.log("ventas", ventas);
+      console.log("inventario", inventario);
+      console.log("crecimiento", crecimiento);
+      setKpiStats({
+        ordenesPendientes: ordenes[0]?.ordenesPendientes ?? 0,
+        ventasMes: ventas[0]?.total ?? 0,
+        productosInventario: inventario[0]?.total ?? 0,
+        crecimiento: crecimiento[0]?.porcentaje ?? 0
+      });      
+    }
+    loadStats();
+    
   }, []);
 
   const kpiCards = [
     {
       title: "Órdenes Pendientes",
-      value: "45",
+      value: kpiStats.ordenesPendientes,
       subtitle: "Órdenes Pendientes",
       icon: "cart",
-      state: "Warning",
-      trend: "+12% vs mes anterior"
+      state: "Warning"
     },
     {
       title: "Ventas del Mes",
-      value: "$48,500",
+      value: `$${kpiStats.ventasMes?.toLocaleString()}`,
       subtitle: "Ventas del Mes",
-      icon: "sales-order",
-      state: "Success",
-      trend: "+15.2% vs mes anterior"
+      icon: "sales-order"
     },
     {
       title: "Productos en Inventario",
-      value: "850",
+      value: kpiStats.productosInventario,
       subtitle: "Productos en Inventario",
-      icon: "product",
-      state: "Information",
-      trend: "-3% vs mes anterior"
+      icon: "product"
     },
     {
       title: "Crecimiento en Ventas",
-      value: "+15.2%",
+      value: `${Number(kpiStats.crecimiento).toFixed(2)}%`,
       subtitle: "vs Mes Anterior",
-      icon: "trend-up",
-      state: "Success",
-      trend: "+2.3% vs mes anterior"
+      icon: "trend-up"
     }
   ];
 
@@ -90,226 +117,17 @@ const Inicio = () => {
       gap: "1rem",
       paddingTop: "2rem"
     }}>
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-        backgroundColor: "var(--sapBackgroundColor)",
-        padding: "1.25rem",
-        borderRadius: "0.5rem",
-        boxShadow: "var(--sapContent_Shadow0)",
-        marginTop: "0.5rem",
-        minHeight: "72px"
-      }}>
+        <InicioHeader />
         <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.75rem"
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+            width: "100%"
         }}>
-          <Icon 
-            name="retail-store" 
-            style={{
-              fontSize: "1.75rem",
-              color: "var(--sapContent_IconColor)"
-            }}
-          />
-          <Title level="H1" style={{
-            margin: 0,
-            fontSize: "1.75rem",
-            color: "var(--sapTextColor)",
-            padding: "0.25rem 0"
-          }}>
-            Dashboard Super Shoes
-          </Title>
-        </div>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem"
-        }}>
-          <Icon 
-            name="map" 
-            style={{
-              fontSize: "1rem",
-              color: "var(--sapContent_IconColor)"
-            }}
-          />
-          <Text style={{
-            fontSize: "0.875rem",
-            color: "var(--sapContent_LabelColor)"
-          }}>
-            Plaza Comercial Reforma, Local 42B, CDMX
-          </Text>
-        </div>
-      </div>
-
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        width: "100%"
-      }}>
         <div style={styles.mainContent}>
-          <div style={styles.kpiSection}>
-            {kpiCards.map((card, index) => (
-              <div key={index} style={styles.kpiCard}>
-                <div style={styles.kpiHeader}>
-                  <Icon 
-                    name={card.icon} 
-                    style={{ 
-                      color: `var(--sapIndicationColor_${card.state})`,
-                      fontSize: "1.5rem"
-                    }} 
-                  />
-                  <ObjectStatus state={card.state}>
-                    {card.trend}
-                  </ObjectStatus>
-                </div>
-                <Text style={styles.kpiValue}>{card.value}</Text>
-                <Text style={styles.kpiLabel}>{card.subtitle}</Text>
-              </div>
-            ))}
-          </div>
-
-          <Card
-            style={styles.ordersCard}
-            header={
-              <CardHeader
-                titleText="Órdenes Recientes"
-                subtitleText="Últimas órdenes registradas"
-                avatar={<Icon name="sales-order" />}
-              />
-            }
-          >
-            <AnalyticalTable
-              data={[
-                {
-                  id: "OC-2025-001",
-                  fecha: "15/02/2025",
-                  producto: "Nike Air Max 2024",
-                  cantidad: 50,
-                  estado: "Pendiente",
-                  total: "$6,000"
-                },
-                {
-                  id: "OC-2025-002",
-                  fecha: "14/02/2025",
-                  producto: "Adidas Ultraboost",
-                  cantidad: 30,
-                  estado: "En proceso",
-                  total: "$4,500"
-                },
-                {
-                  id: "OC-2025-003",
-                  fecha: "13/02/2025",
-                  producto: "Puma RS-X",
-                  cantidad: 25,
-                  estado: "Completada",
-                  total: "$5,250"
-                },
-                {
-                  id: "OC-2025-004",
-                  fecha: "12/02/2025",
-                  producto: "Nike Zoom Elite",
-                  cantidad: 40,
-                  estado: "En tránsito",
-                  total: "$7,200"
-                }
-              ]}
-              columns={[
-                {
-                  Header: "Orden #",
-                  accessor: "id",
-                  width: 120
-                },
-                {
-                  Header: "Fecha",
-                  accessor: "fecha",
-                  width: 100
-                },
-                {
-                  Header: "Producto",
-                  accessor: "producto"
-                },
-                {
-                  Header: "Cantidad",
-                  accessor: "cantidad",
-                  width: 100
-                },
-                {
-                  Header: "Estado",
-                  accessor: "estado",
-                  Cell: ({ value }) => {
-                    const getStatusStyle = (status) => {
-                      switch (status) {
-                        case "Pendiente":
-                          return styles.pendiente;
-                        case "En proceso":
-                          return styles.enProceso;
-                        case "Completada":
-                          return styles.completada;
-                        case "En tránsito":
-                          return styles.enTransito;
-                        default:
-                          return {};
-                      }
-                    };
-                    return (
-                      <span style={{ ...styles.statusBadge, ...getStatusStyle(value) }}>
-                        {value}
-                      </span>
-                    );
-                  }
-                },
-                {
-                  Header: "Total",
-                  accessor: "total"
-                }
-              ]}
-              visibleRows={4}
-              minRows={4}
-              alternateRowColor
-              scaleWidthMode="Smart"
-              selectionMode="None"
-            />
-          </Card>
-
-          <Card style={styles.categoryCard}>
-            <CardHeader
-              titleText="Ventas por Categoría"
-              subtitleText="Distribución actual"
-              avatar={<Icon name="pie-chart" />}
-            />
-            {[
-              { categoria: "Calzado Deportivo", valor: 18500, porcentaje: 38 },
-              { categoria: "Calzado Casual", valor: 12000, porcentaje: 25 },
-              { categoria: "Calzado Formal", valor: 10500, porcentaje: 22 },
-              { categoria: "Calzado para Playa", valor: 7500, porcentaje: 15 }
-            ].map((categoria, index) => (
-              <div key={index} style={styles.categoryItem}>
-                <FlexBox style={styles.categoryHeader}>
-                  <Text style={styles.categoryName}>{categoria.categoria}</Text>
-                  <Text style={styles.categoryValue}>
-                    ${categoria.valor.toLocaleString()}
-                  </Text>
-                </FlexBox>
-                <div style={styles.progressBar}>
-                  <div
-                    style={{
-                      ...styles.progressFill,
-                      width: `${categoria.porcentaje}%`,
-                      backgroundColor: `var(--sapIndicationColor_${
-                        index === 0 ? "1" : index === 1 ? "2" : index === 2 ? "3" : "4"
-                      })`
-                    }}
-                  />
-                </div>
-                <Text style={styles.progressLabel}>{categoria.porcentaje}% del total</Text>
-              </div>
-            ))}
-          </Card>
-
+            <InicioKpiCards cards={kpiCards} styles={styles} />
+            <InicioRecentOrders />
+            <InicioSalesCat />
           <Title level="H4" style={styles.productsHeader}>Productos Más Vendidos</Title>
           <div style={styles.productsGrid}>
             {[
