@@ -1,38 +1,33 @@
 import React, { useState, useEffect } from "react";
+import { useInventory } from "../hooks/useInventory";
+
+import InventoryStats from "../components/Inventario/InventoryStats";
+import InventoryFilters from "../components/Inventario/InventoryFilters";
+import InventoryTable from "../components/Inventario/InventoryTable";
+
+import { downloadCSV } from "../utils/csvUtils";
+import { applyFilters } from "../utils/filters";
+
+import {
+  fetchInventoryData,
+  fetchTotalInventoryCount
+} from "../services/inventoryService";
+
+
 import {
   DynamicPageTitle,
   DynamicPageHeader,
   Title,
   Text,
   FlexBox,
-  FlexBoxDirection,
   FlexBoxAlignItems,
   FlexBoxJustifyContent,
   FlexBoxWrap,
-  Card,
-  CardHeader,
   Icon,
   Button,
-  Bar,
-  BarDesign,
-  Label,
-  Input,
-  Badge,
-  BusyIndicator,
   MessageStrip,
-  FilterBar,
-  FilterGroupItem,
-  MultiComboBox,
-  MultiComboBoxItem,
-  ComboBox,
-  ComboBoxItem,
-  AnalyticalTable,
   ObjectStatus,
-  Grid,
   Toast,
-  Select,
-  Option,
-  Dialog,
   ValueState
 } from "@ui5/webcomponents-react";
 import { useUI5Theme } from "../components/UI5ThemeProvider";
@@ -57,151 +52,6 @@ import "@ui5/webcomponents-icons/dist/group-2.js";
 import "@ui5/webcomponents-icons/dist/locate-me.js";
 import "@ui5/webcomponents-icons/dist/shipping-status.js";
 import "@ui5/webcomponents-icons/dist/supplier.js";
-
-// Datos de inventario simulados
-const initialData = [
-  {
-    id: 1,
-    producto: "Nike Air Max 270",
-    sku: "NK-270-001",
-    categoria: "Deportivos",
-    cantidad: 15,
-    ubicacion: "Almacén A",
-    proveedor: "Calzado Deportivo Premium",
-    estado: "Disponible",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 2,
-    producto: "Adidas Ultraboost",
-    sku: "AD-UB-002",
-    categoria: "Deportivos",
-    cantidad: 5,
-    ubicacion: "Almacén B",
-    proveedor: "Calzado Deportivo Premium",
-    estado: "Bajo stock",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 3,
-    producto: "Oxford Classic Brown",
-    sku: "OX-CL-003",
-    categoria: "Formales",
-    cantidad: 0,
-    ubicacion: "Almacén C",
-    proveedor: "Distribuidora de Zapatos Elegance",
-    estado: "Agotado",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 4,
-    producto: "Puma RS-X",
-    sku: "PM-RSX-004",
-    categoria: "Deportivos",
-    cantidad: 8,
-    ubicacion: "Almacén A",
-    proveedor: "Importadora Footwear Internacional",
-    estado: "Disponible",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 5,
-    producto: "Vans Old Skool",
-    sku: "VN-OS-005",
-    categoria: "Casual",
-    cantidad: 3,
-    ubicacion: "Almacén B",
-    proveedor: "Zapatos y Complementos Moda Total",
-    estado: "Bajo stock",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 6,
-    producto: "Converse Chuck 70",
-    sku: "CV-70-006",
-    categoria: "Casual",
-    cantidad: 12,
-    ubicacion: "Almacén C",
-    proveedor: "Importadora Footwear Internacional",
-    estado: "Disponible",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 7,
-    producto: "New Balance 574",
-    sku: "NB-574-007",
-    categoria: "Deportivos",
-    cantidad: 4,
-    ubicacion: "Almacén A",
-    proveedor: "Calzado Deportivo Premium",
-    estado: "Bajo stock",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 8,
-    producto: "Zapato Derby Negro",
-    sku: "DR-NG-008",
-    categoria: "Formales",
-    cantidad: 20,
-    ubicacion: "Almacén B",
-    proveedor: "Distribuidora de Zapatos Elegance",
-    estado: "Disponible",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 9,
-    producto: "Nike Air Force 1",
-    sku: "NK-AF1-009",
-    categoria: "Deportivos",
-    cantidad: 2,
-    ubicacion: "Almacén A",
-    proveedor: "Calzado Deportivo Premium",
-    estado: "Bajo stock",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 10,
-    producto: "Loafer Café",
-    sku: "LF-CF-010",
-    categoria: "Formales",
-    cantidad: 7,
-    ubicacion: "Almacén C",
-    proveedor: "Distribuidora de Zapatos Elegance",
-    estado: "Disponible",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 11,
-    producto: "Sandalias Havaianas",
-    sku: "SD-HV-011",
-    categoria: "Playa",
-    cantidad: 30,
-    ubicacion: "Almacén B",
-    proveedor: "Importadora Footwear Internacional",
-    estado: "Disponible",
-    ultimaActualizacion: new Date()
-  },
-  {
-    id: 12,
-    producto: "Salomon Trail Runner",
-    sku: "SL-TR-012",
-    categoria: "Deportivos",
-    cantidad: 0,
-    ubicacion: "Almacén A",
-    proveedor: "Calzado Deportivo Premium",
-    estado: "Agotado",
-    ultimaActualizacion: new Date()
-  }
-];
-
-// Lista de categorías únicas
-const categorias = [...new Set(initialData.map(item => item.categoria))];
-
-// Lista de ubicaciones únicas
-const ubicaciones = [...new Set(initialData.map(item => item.ubicacion))];
-
-// Lista de proveedores únicos
-const proveedores = [...new Set(initialData.map(item => item.proveedor))];
 
 // Función para convertir a CSV
 function convertArrayOfObjectsToCSV(array) {
@@ -233,48 +83,38 @@ function convertArrayOfObjectsToCSV(array) {
   return result;
 }
 
-// Función para descargar CSV
-function downloadCSV(array) {
-  const link = document.createElement("a");
-  let csv = convertArrayOfObjectsToCSV(array);
-  if (csv == null) return;
-
-  const filename = "inventario.csv";
-
-  if (!csv.match(/^data:text\/csv/i)) {
-    csv = `data:text/csv;charset=utf-8,${csv}`;
-  }
-
-  link.setAttribute("href", encodeURI(csv));
-  link.setAttribute("download", filename);
-  link.click();
-}
-
 export default function Inventario() {
   const { isDarkMode } = useUI5Theme();
-  const [inventoryData, setInventoryData] = useState(initialData);
-  const [filteredData, setFilteredData] = useState(initialData);
+
+  //Consigo los datos del inventario
+  const { 
+    inventoryData, 
+    filteredData, 
+    setFilteredData,
+    isLoading,
+    error,
+    inventoryStats,
+    lastUpdateTime,
+    refreshInventory
+  } = useInventory();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedProveedores, setSelectedProveedores] = useState([]);
   const [selectedEstados, setSelectedEstados] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFilterBarVisible, setIsFilterBarVisible] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [notifications, setNotifications] = useState([]);
 
-  
-  // Estadísticas de inventario
-  const totalProducts = inventoryData.length;
-  const lowStockProducts = inventoryData.filter(item => item.estado === "Bajo stock").length;
-  const outOfStockProducts = inventoryData.filter(item => item.estado === "Agotado").length;
-  const totalStock = inventoryData.reduce((sum, item) => sum + item.cantidad, 0);
-  
+  // Lista de categorías únicas
+  const categorias = [...new Set(inventoryData.map(item => item.categoria))];
+  // Lista de ubicaciones únicas
+  const ubicaciones = [...new Set(inventoryData.map(item => item.ubicacion))];
+  // Lista de proveedores únicos
+  const proveedores = [...new Set(inventoryData.map(item => item.proveedor))];
+
+
   // Columnas para la tabla
   const columns = [
     {
@@ -381,115 +221,51 @@ export default function Inventario() {
         <Text>{value instanceof Date ? value.toLocaleString() : value}</Text>
       )
     },
-    {
-      Header: "Acciones",
-      id: "actions",
-      width: 120,
-      Cell: ({ row }) => (
-        <FlexBox>
-          <Button
-            icon="edit"
-            design="Transparent"
-            onClick={() => handleEditRow(row.original)}
-            tooltip="Editar"
-            style={{ marginRight: '0.5rem' }}
-          />
-          <Button
-            icon="delete"
-            design="Transparent"
-            onClick={() => handleDeleteRow(row.original.id)}
-            tooltip="Eliminar"
-          />
-        </FlexBox>
-      )
-    }
   ];
   
-  // Efecto para simular actualizaciones periódicas
+  //APLICO EL BACKEND
   useEffect(() => {
-    const interval = setInterval(() => {
-      setInventoryData(prevData => {
-        const updatedData = prevData.map(item => {
-          if (Math.random() < 0.2) {
-            const randomChange = Math.floor(Math.random() * 3) - 1;
-            const newQuantity = Math.max(0, item.cantidad + randomChange);
-            
-            let newStatus = "Disponible";
-            if (newQuantity === 0) newStatus = "Agotado";
-            else if (newQuantity <= 5) newStatus = "Bajo stock";
-            
-            if (item.estado !== newStatus) {
-              // Esta función ahora sí se ejecutará correctamente
-              addNotification(item.producto, newStatus);
-            }
-  
-            return {
-              ...item,
-              cantidad: newQuantity,
-              estado: newStatus,
-              ultimaActualizacion: new Date()
-            };
-          }
-          return item;
-        });
-  
+    const loadInventory = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchInventoryData();
+        setFilteredData(data);
         setLastUpdateTime(new Date());
-        applyFilters(updatedData);
-        setToastMessage("Inventario actualizado automáticamente");
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
+      } catch (error) {
+        console.error("Error al obtener artículos:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
   
-        return updatedData;
-      });
-    }, 60000);
-  
-    return () => clearInterval(interval);
+    loadInventory();
   }, []);
   
-  
-  
 
+  useEffect(() => {
+    const loadTotalCount = async () => {
+      try {
+        const total = await fetchTotalInventoryCount();
+      } catch (error) {
+        console.error("Error al obtener el total de productos:", error);
+      }
+    };
+  
+    loadTotalCount();
+  }, []);
   
   // Aplicar filtros cuando cambian
   useEffect(() => {
-    applyFilters(inventoryData);
-  }, [searchQuery, selectedCategories, selectedLocations, selectedProveedores, selectedEstados]);
-  
-  // Función para aplicar filtros
-  const applyFilters = (data) => {
-    let filtered = [...data];
-    
-    // Filtrar por búsqueda
-    if (searchQuery) {
-      const searchLower = searchQuery.toLowerCase();
-      filtered = filtered.filter(item => 
-        item.producto.toLowerCase().includes(searchLower) || 
-        item.sku.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    // Filtrar por categorías
-    if (selectedCategories.length > 0) {
-      filtered = filtered.filter(item => selectedCategories.includes(item.categoria));
-    }
-    
-    // Filtrar por ubicaciones
-    if (selectedLocations.length > 0) {
-      filtered = filtered.filter(item => selectedLocations.includes(item.ubicacion));
-    }
-    
-    // Filtrar por proveedores
-    if (selectedProveedores.length > 0) {
-      filtered = filtered.filter(item => selectedProveedores.includes(item.proveedor));
-    }
-    
-    // Filtrar por estados
-    if (selectedEstados.length > 0) {
-      filtered = filtered.filter(item => selectedEstados.includes(item.estado));
-    }
-    
+    const filtered = applyFilters(inventoryData, {
+      searchQuery,
+      selectedCategories,
+      selectedLocations,
+      selectedProveedores,
+      selectedEstados
+    });
     setFilteredData(filtered);
-  };
+  }, [inventoryData, searchQuery, selectedCategories, selectedLocations, selectedProveedores, selectedEstados]);
+  
   
   // Manejadores de eventos
   const handleSearch = (event) => {
@@ -501,7 +277,9 @@ export default function Inventario() {
   };
   
   const handleLocationsChange = (event) => {
-    setSelectedLocations(event.detail.items.map(item => item.text));
+    const selectedItems = event.detail.items;
+    const selectedLocations = selectedItems.map(item => item.text);
+    setSelectedLocations(selectedLocations);
   };
   
   const handleProveedoresChange = (event) => {
@@ -512,17 +290,14 @@ export default function Inventario() {
     setSelectedEstados(event.detail.items.map(item => item.text));
   };
   
-  const handleRefresh = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      applyFilters(inventoryData);
-      setLastUpdateTime(new Date());
-      setIsLoading(false);
-      setToastMessage("Datos de inventario actualizados");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-    }, 800);
+  const handleRefresh = async () => {
+    setShowToast(true);
+    setToastMessage("Actualizando datos...");
+    await refreshInventory();
+    setToastMessage("Datos actualizados correctamente");
+    setTimeout(() => setShowToast(false), 3000);
   };
+  
   
   const handleClearFilters = () => {
     setSearchQuery("");
@@ -530,9 +305,9 @@ export default function Inventario() {
     setSelectedLocations([]);
     setSelectedProveedores([]);
     setSelectedEstados([]);
-    setFilteredData(inventoryData);
+    setFilteredData([...inventoryData]);
   };
-  
+        
   const handleExportCSV = () => {
     downloadCSV(filteredData);
     setToastMessage("Archivo CSV exportado");
@@ -540,25 +315,6 @@ export default function Inventario() {
     setTimeout(() => setShowToast(false), 3000);
   };
   
-  const handleEditRow = (product) => {
-    setSelectedProduct(product);
-    setIsDialogOpen(true);
-  };
-  
-  const handleDeleteRow = (productId) => {
-    const updatedData = inventoryData.filter(item => item.id !== productId);
-    setInventoryData(updatedData);
-    applyFilters(updatedData);
-    setToastMessage("Producto eliminado del inventario");
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-  };
-  
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    setSelectedProduct(null);
-  };
-
   const addNotification = (producto, nuevoEstado) => {
     const id = Date.now();
     const nuevaNotificacion = {
@@ -578,8 +334,6 @@ export default function Inventario() {
   return (
     
     <>
-    
-
       <DynamicPageTitle
         header={<Title>Inventario</Title>}
         subHeader={<Text>Gestión y control de inventario de productos</Text>}
@@ -649,152 +403,34 @@ export default function Inventario() {
       
       <div className={styles.pageContainer}>
         {/* Estadísticas de inventario */}
-        <Grid defaultSpan="XL3 L3 M6 S12" className={styles.statCard}>
-        <Card style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-  <CardHeader titleText="Total de Productos" avatar={<Icon name="inventory" />} />
-  <div
-    className={styles.statInfo}
-    style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}
-  >
-    <Title className={styles.statValue}>{totalProducts}</Title>
-    <Text className={styles.statLabel}>Productos en el inventario</Text>
-  </div>
-</Card>
-
-
-<Card style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-  <CardHeader titleText="Stock Total" avatar={<Icon name="shipping-status" />} />
-  <div
-    className={styles.statInfo}
-    style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}
-  >
-    <Title className={styles.statValue}>{totalStock}</Title>
-    <Text className={styles.statLabel}>Unidades en total</Text>
-  </div>
-</Card>
-
-
-<Card style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-  <CardHeader titleText="Bajo Stock" avatar={<Icon name="warning" />} />
-  <div
-    className={styles.statInfo}
-    style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}
-  >
-    <Title className={styles.statValue} style={{ color: "var(--sapWarningColor)" }}>{lowStockProducts}</Title>
-    <Text className={styles.statLabel}>Productos con bajo stock</Text>
-  </div>
-</Card>
-
-
-<Card style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-  <CardHeader titleText="Agotados" avatar={<Icon name="alert" />} />
-  <div
-    className={styles.statInfo}
-    style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}
-  >
-    <Title className={styles.statValue} style={{ color: "var(--sapErrorColor)" }}>{outOfStockProducts}</Title>
-    <Text className={styles.statLabel}>Productos sin stock</Text>
-  </div>
-</Card>
-</Grid>
+        <InventoryStats
+          inventoryStats={inventoryStats}
+          styles={styles}
+        />
 
 
         
         {/* Filtros */}
-        <FilterBar 
-          showGoButton={false}
-          showRestoreButton
-          showClearButton
-          onClear={handleClearFilters}
-          className={styles.filterBar}
-        >
-          <FilterGroupItem label="Búsqueda">
-            <Input 
-              placeholder="Buscar por nombre o SKU"
-              value={searchQuery}
-              onChange={handleSearch}
-              icon="search"
-              className={styles.inputFullWidth}
-            />
-          </FilterGroupItem>
-          
-          <FilterGroupItem label="Categoría">
-            <MultiComboBox
-              onSelectionChange={handleCategoriesChange}
-              placeholder="Filtrar por categoría"
-            >
-              {categorias.map((cat, index) => (
-                <MultiComboBoxItem key={index} text={cat} />
-              ))}
-            </MultiComboBox>
-          </FilterGroupItem>
-          
-          <FilterGroupItem label="Ubicación">
-            <MultiComboBox
-              onSelectionChange={handleLocationsChange}
-              placeholder="Filtrar por ubicación"
-            >
-              {ubicaciones.map((loc, index) => (
-                <MultiComboBoxItem key={index} text={loc} />
-              ))}
-            </MultiComboBox>
-          </FilterGroupItem>
-          
-          <FilterGroupItem label="Estado">
-            <MultiComboBox
-              onSelectionChange={handleEstadosChange}
-              placeholder="Filtrar por estado"
-            >
-              <MultiComboBoxItem text="Disponible" />
-              <MultiComboBoxItem text="Bajo stock" />
-              <MultiComboBoxItem text="Agotado" />
-            </MultiComboBox>
-          </FilterGroupItem>
-        </FilterBar>
-        
+        <InventoryFilters
+          searchQuery={searchQuery}
+          handleSearch={handleSearch}
+          categorias={categorias}
+          ubicaciones={ubicaciones}
+          handleCategoriesChange={handleCategoriesChange}
+          handleLocationsChange={handleLocationsChange}
+          handleEstadosChange={handleEstadosChange}
+          selectedEstados={selectedEstados}
+          handleClearFilters={handleClearFilters}
+          styles={styles}
+        />
         {/* Tabla de inventario */}
-        {isLoading ? (
-          <FlexBox 
-            direction={FlexBoxDirection.Column}
-            justifyContent={FlexBoxJustifyContent.Center}
-            alignItems={FlexBoxAlignItems.Center}
-            className={styles.tableWrapper}
-          >
-            <BusyIndicator size="Large" />
-            <Text style={{ marginTop: "1rem" }}>Cargando datos de inventario...</Text>
-          </FlexBox>
-        ) : (
-          <Card className={styles.tableWrapper}>
-            <AnalyticalTable
-              data={filteredData}
-              columns={columns}
-              visibleRows={10}
-              alternateRowColor
-              header={
-                <Bar 
-                  design={BarDesign.Header}
-                  endContent={
-                    <Label>Mostrando {filteredData.length} de {inventoryData.length} productos</Label>
-                  }
-                />
-              }
-              footer={
-                <Bar 
-                  design={BarDesign.Footer}
-                  startContent={
-                    <Text>Total de productos: {filteredData.length}</Text>
-                  }
-                />
-              }
-              scaleWidthMode="Smart"
-              selectionMode="SingleSelect"
-              withRowHighlight
-              sortable
-              filterable
-              groupable
-            />
-          </Card>
-        )}
+        <InventoryTable
+          data={filteredData}
+          columns={columns}
+          isLoading={isLoading}
+          totalCount={inventoryData.length}
+        />
+
         
         {/* Toast para notificaciones */}
         {showToast && (
@@ -806,60 +442,7 @@ export default function Inventario() {
           </Toast>
         )}
         
-        {/* Diálogo de edición */}
-        {selectedProduct && (
-          <Dialog
-            headerText="Editar Producto"
-            open={isDialogOpen}
-            onAfterClose={handleCloseDialog}
-            className={styles.dialogContent}
-            footer={
-              <Bar 
-                design={BarDesign.Footer}
-                endContent={
-                  <>
-                    <Button design="Transparent" onClick={handleCloseDialog}>Cancelar</Button>
-                    <Button design="Emphasized" onClick={handleCloseDialog}>Guardar</Button>
-                  </>
-                }
-              />
-            }
-          >
-            <div className={styles.formColumn}>
-              <FlexBox direction={FlexBoxDirection.Column} style={{ gap: "1rem" }}>
-                <Label required>Producto</Label>
-                <Input value={selectedProduct.producto} />
-                
-                <Label required>SKU</Label>
-                <Input value={selectedProduct.sku} />
-                
-                <Label required>Categoría</Label>
-                <Select>
-                  {categorias.map((cat, index) => (
-                    <Option key={index} selected={cat === selectedProduct.categoria}>{cat}</Option>
-                  ))}
-                </Select>
-                
-                <Label required>Cantidad</Label>
-                <Input type="Number" value={selectedProduct.cantidad.toString()} />
-                
-                <Label required>Ubicación</Label>
-                <Select>
-                  {ubicaciones.map((loc, index) => (
-                    <Option key={index} selected={loc === selectedProduct.ubicacion}>{loc}</Option>
-                  ))}
-                </Select>
-                
-                <Label required>Proveedor</Label>
-                <Select>
-                  {proveedores.map((prov, index) => (
-                    <Option key={index} selected={prov === selectedProduct.proveedor}>{prov}</Option>
-                  ))}
-                </Select>
-              </FlexBox>
-            </div>
-          </Dialog>
-        )}
+
       </div>
     </>
   );
