@@ -38,7 +38,7 @@ import {
   Select,
   Badge,
   ThemeToggle
-} from "../styles/GestionDeProveedores/GestionDeProveedoresStyle";
+} from "../styles/GestionDeProveedores/Gestion_de_Proveedores";
 import { MdBusinessCenter, MdOutlineShoppingCart } from "react-icons/md";
 
 // Define a GlobalStyle component for this page

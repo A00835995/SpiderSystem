@@ -27,7 +27,7 @@ import {
   FormLabel,
   Badge,
   ThemeToggle
-} from "../styles/GestionDeProveedores/GestionDeProveedoresStyle";
+} from "../styles/GestionDeProveedores/Gestion_de_Proveedores";
 import { MdSearch, MdOutlineShoppingCart, MdFileDownload, MdSort } from 'react-icons/md';
 
 // Define a GlobalStyle component for this page
