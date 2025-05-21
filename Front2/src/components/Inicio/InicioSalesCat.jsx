@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, CardHeader, FlexBox, Text, Icon } from "@ui5/webcomponents-react";
 import { fetchVentasXCategoria } from "../../services/InicioService";
 import { styles } from "../../Styles/InicioStyle"; 
+import "@ui5/webcomponents-icons/dist/pie-chart.js";
 
 export default function InicioSalesCat() {
   const [categories, setCategories] = useState([]);
