@@ -1,40 +1,23 @@
 import React, { useState, useEffect } from "react";
 import {
-  DynamicPageTitle,
-  DynamicPageHeader,
-  Title,
   Text,
   FlexBox,
   FlexBoxDirection,
   FlexBoxAlignItems,
   FlexBoxJustifyContent,
   FlexBoxWrap,
-  Card,
-  CardHeader,
   SegmentedButton,
   SegmentedButtonItem,
-  Icon,
-  Label,
-  Grid,
-  MessageStrip,
-  IllustratedMessage,
-  IllustrationMessageType,
   ValueState,
   Button,
-  List,
-  StandardListItem,
-  BusyIndicator,
-  AnalyticalTable,
-  ObjectStatus
+  BusyIndicator
 } from "@ui5/webcomponents-react";
-import {
-  LineChart,
-  BarChart,
-  ComposedChart,
-  MicroBarChart,
-  ScatterChart
-} from "@ui5/webcomponents-react-charts";
 import { useUI5Theme } from "../components/UI5ThemeProvider";
+import PredictiveHeader from "../components/Predictivo/PredictiveHeader";
+import PredictiveMetrics from "../components/Predictivo/PredictiveMetrics";
+import PredictiveChart from "../components/Predictivo/PredictiveChart";
+import PredictiveProductList from "../components/Predictivo/PredictiveProductList";
+import PredictiveProductDetail from "../components/Predictivo/PredictiveProductDetail";
 
 // Importar íconos necesarios
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
@@ -173,6 +156,14 @@ export default function Predictivo() {
   const [loading, setLoading] = useState(true);
   const [predicciones, setPredicciones] = useState([]);
   const [tendencias, setTendencias] = useState([]);
+  const [metricas, setMetricas] = useState({
+    precision: 92,
+    tendencia: 15,
+    margenError: 8,
+    nivelConfianza: 95
+  });
+  const [productos, setProductos] = useState(dataset);
+  const [alertas, setAlertas] = useState(alertasPerdidas);
   
   // Inicializar datos de gráficos
   useEffect(() => {
@@ -210,6 +201,12 @@ export default function Predictivo() {
 
       setLoading(false);
     }, 1000);
+
+    // Simulación de carga de datos adicional
+    setTimeout(() => {
+      setProductos(dataset);
+      setAlertas(alertasPerdidas);
+    }, 1500);
   }, []);
   
   // Función para cambiar el tipo de gráfico
@@ -273,60 +270,8 @@ export default function Predictivo() {
       gap: "1rem",
       paddingTop: "2rem"
     }}>
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-        backgroundColor: "var(--sapBackgroundColor)",
-        padding: "1.25rem",
-        borderRadius: "0.5rem",
-        boxShadow: "var(--sapContent_Shadow0)",
-        marginTop: "0.5rem",
-        minHeight: "72px"
-      }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.75rem"
-        }}>
-          <Icon 
-            name="future" 
-            style={{
-              fontSize: "1.75rem",
-              color: "var(--sapContent_IconColor)"
-            }}
-          />
-          <Title level="H1" style={{
-            margin: 0,
-            fontSize: "1.75rem",
-            color: "var(--sapTextColor)",
-            padding: "0.25rem 0"
-          }}>
-            Análisis Predictivo
-          </Title>
-        </div>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem"
-        }}>
-          <Icon 
-            name="map" 
-            style={{
-              fontSize: "1rem",
-              color: "var(--sapContent_IconColor)"
-            }}
-          />
-          <Text style={{
-            fontSize: "0.875rem",
-            color: "var(--sapContent_LabelColor)"
-          }}>
-            Plaza Comercial Reforma, Local 42B, CDMX
-          </Text>
-        </div>
-      </div>
-
+      <PredictiveHeader />
+      
       <div style={{
         padding: "0.5rem 1rem",
         backgroundColor: "var(--sapList_Background)",
@@ -364,67 +309,7 @@ export default function Predictivo() {
       <div style={{ padding: "1rem" }}>
         {/* Métricas de rendimiento del modelo */}
         {!selectedProduct && (
-          <Grid defaultSpan="XL3 L3 M6 S12" style={{ marginBottom: "1rem" }}>
-            <Card>
-              <CardHeader
-                titleText="Precisión del Modelo"
-                avatar={<Icon name="status-positive" />}
-              />
-              <div style={{ padding: "1rem", textAlign: "center" }}>
-                <Title style={{ fontSize: "2rem", color: "var(--sapPositiveColor)" }}>
-                  {metricas.precision}
-                </Title>
-                <Text>
-                  La precisión de nuestras predicciones en los últimos 3 meses
-                </Text>
-              </div>
-            </Card>
-            
-            <Card>
-              <CardHeader
-                titleText="Tendencia de Ventas"
-                avatar={<Icon name="increase" />}
-              />
-              <div style={{ padding: "1rem", textAlign: "center" }}>
-                <Title style={{ fontSize: "2rem", color: "var(--sapPositiveColor)" }}>
-                  {metricas.tendencia}
-                </Title>
-                <Text>
-                  Crecimiento proyectado para el próximo mes
-                </Text>
-              </div>
-            </Card>
-            
-            <Card>
-              <CardHeader
-                titleText="Margen de Error"
-                avatar={<Icon name="alert" />}
-              />
-              <div style={{ padding: "1rem", textAlign: "center" }}>
-                <Title style={{ fontSize: "2rem" }}>
-                  {metricas.margenError}
-                </Title>
-                <Text>
-                  Margen de error de nuestras predicciones
-                </Text>
-              </div>
-            </Card>
-            
-            <Card>
-              <CardHeader
-                titleText="Nivel de Confianza"
-                avatar={<Icon name="bullet-text" />}
-              />
-              <div style={{ padding: "1rem", textAlign: "center" }}>
-                <Title style={{ fontSize: "2rem", color: "var(--sapAccentColor4)" }}>
-                  {metricas.confianza}
-                </Title>
-                <Text>
-                  Intervalo de confianza del modelo predictivo
-                </Text>
-              </div>
-            </Card>
-          </Grid>
+          <PredictiveMetrics metricas={metricas} />
         )}
         
         {/* Principal chart or product detail */}
@@ -439,196 +324,24 @@ export default function Predictivo() {
             <Text style={{ marginTop: "1rem" }}>Analizando datos...</Text>
           </FlexBox>
         ) : selectedProduct ? (
-          // Vista detallada de producto
-          <>
-            <Card style={{ marginBottom: "1rem" }}>
-              <CardHeader titleText={`Análisis Detallado: ${selectedProduct.articulo}`} />
-              <div style={{ padding: "1rem" }}>
-                <Grid defaultSpan="XL6 L6 M12 S12">
-                  <div>
-                    <Title level="H4" style={{ marginBottom: "1rem" }}>Tendencia Histórica y Proyección</Title>
-                    <div style={{ height: "400px" }}>
-                      {chartType === "line" ? (
-                        <LineChart 
-                          dataset={getProductChartData(selectedProduct)}
-                          dimensions={[{ accessor: "mes", label: "Mes" }]}
-                          measures={[
-                            { accessor: "ventas", label: "Ventas" },
-                            { accessor: "prediccion", label: "Predicción", type: "line" }
-                          ]}
-                          chartConfig={{
-                            zoomingTool: true,
-                            legendPosition: "bottom",
-                            legendHorizontalAlign: "center"
-                          }}
-                        />
-                      ) : (
-                        <BarChart 
-                          dataset={getProductChartData(selectedProduct)}
-                          dimensions={[{ accessor: "mes" }]}
-                          measures={[
-                            { accessor: "ventas", label: "Ventas Reales" },
-                            { accessor: "prediccion", label: "Predicción" }
-                          ]}
-                          chartConfig={{
-                            zoomingTool: true,
-                            legendPosition: "bottom",
-                            legendHorizontalAlign: "center"
-                          }}
-                        />
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Title level="H4" style={{ marginBottom: "1rem" }}>Métricas del Producto</Title>
-                    <List>
-                      <StandardListItem 
-                        info={`${selectedProduct.ventas} unidades`} 
-                        infoState={ValueState.Information}
-                        icon="cart"
-                      >
-                        Ventas Actuales (Mayo)
-                      </StandardListItem>
-                      <StandardListItem 
-                        info={`${selectedProduct.prediccion} unidades`} 
-                        infoState={ValueState.Success}
-                        icon="increase"
-                      >
-                        Predicción (Junio)
-                      </StandardListItem>
-                      <StandardListItem 
-                        info={`${Math.round((selectedProduct.prediccion - selectedProduct.ventas) / selectedProduct.ventas * 100)}%`} 
-                        infoState={ValueState.Success}
-                        icon="trend-up"
-                      >
-                        Crecimiento Proyectado
-                      </StandardListItem>
-                      <StandardListItem 
-                        info={`${selectedProduct.perdidas} unidades`} 
-                        infoState={selectedProduct.perdidas > 10 ? ValueState.Error : ValueState.Warning}
-                        icon="alert"
-                      >
-                        Pérdidas Potenciales
-                      </StandardListItem>
-                    </List>
-                  </div>
-                </Grid>
-              </div>
-            </Card>
-            
-            {/* Recomendaciones */}
-            <Card>
-              <CardHeader 
-                titleText="Recomendaciones" 
-                avatar={<Icon name="learning-assistant" />}
-              />
-              <div style={{ padding: "1rem" }}>
-                <MessageStrip
-                  design="Information"
-                  hideCloseButton
-                  icon="business-objects-experience"
-                  style={{ marginBottom: "1rem" }}
-                >
-                  Recomendaciones basadas en análisis de tendencias y patrones de comportamiento
-                </MessageStrip>
-                
-                {alertasPerdidas.filter(alerta => alerta.articulo === selectedProduct.articulo).map((alerta, index) => (
-                  <div key={index} style={{ marginBottom: "1rem" }}>
-                    <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ marginBottom: "0.5rem" }}>
-                      <Icon name={getTendenciaIcon(alerta.tendencia)} style={{ marginRight: "0.5rem" }} />
-                      <Text style={{ fontWeight: "bold" }}>
-                        Tendencia: {alerta.tendencia}
-                      </Text>
-                    </FlexBox>
-                    <Text style={{ marginBottom: "0.5rem" }}>
-                      {alerta.recomendacion}
-                    </Text>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </>
+          <PredictiveProductDetail 
+            product={selectedProduct}
+            chartType={chartType}
+            getProductChartData={getProductChartData}
+            getTendenciaIcon={getTendenciaIcon}
+            alertasPerdidas={alertas}
+          />
         ) : (
-          // Vista general
           <>
-            <Card style={{ marginBottom: "1rem" }}>
-              <CardHeader titleText={`Tendencia de Ventas y Predicción ${chartType === "line" ? "Lineal" : "Comparativa"}`} />
-              <div style={{ height: "400px", padding: "1rem" }}>
-                {chartType === "line" ? (
-                  <LineChart 
-                    dataset={chartData}
-                    dimensions={[{ accessor: "mes" }]}
-                    measures={[
-                      { 
-                        accessor: "ventas", 
-                        label: "Ventas Reales",
-                        color: "#0070F2"
-                      },
-                      { 
-                        accessor: "prediccion", 
-                        label: "Predicción",
-                        color: "#16B9D4",
-                        type: "dashed"
-                      }
-                    ]}
-                    chartConfig={{
-                      legendPosition: "top",
-                      legendHorizontalAlign: "left",
-                      paddingTop: 50,
-                      zoomingTool: false
-                    }}
-                  />
-                ) : (
-                  <BarChart 
-                    dataset={chartData}
-                    dimensions={[{ accessor: "mes" }]}
-                    measures={[
-                      { 
-                        accessor: "ventas", 
-                        label: "Ventas Reales",
-                        color: "#0070F2"
-                      },
-                      { 
-                        accessor: "prediccion", 
-                        label: "Predicción",
-                        color: "#16B9D4"
-                      }
-                    ]}
-                    chartConfig={{
-                      legendPosition: "top",
-                      legendHorizontalAlign: "left",
-                      paddingTop: 50,
-                      zoomingTool: false
-                    }}
-                  />
-                )}
-              </div>
-            </Card>
+            <PredictiveChart 
+              chartType={chartType}
+              chartData={chartData}
+            />
             
-            <Card>
-              <CardHeader 
-                titleText="Productos con Potencial de Pérdidas" 
-                subtitle="Seleccione un producto para un análisis detallado" 
-                avatar={<Icon name="alert" />}
-              />
-              <div style={{ maxHeight: "400px", overflow: "auto" }}>
-                <List>
-                  {dataset.sort((a, b) => b.perdidas - a.perdidas).map((producto, index) => (
-                    <StandardListItem
-                      key={index}
-                      info={`${producto.perdidas} unidades`}
-                      infoState={producto.perdidas > 10 ? ValueState.Error : producto.perdidas > 5 ? ValueState.Warning : ValueState.Success}
-                      description={`Ventas: ${producto.ventas} | Predicción: ${producto.prediccion}`}
-                      icon={producto.perdidas > 10 ? "status-critical" : "cart"}
-                      onClick={() => handleProductSelect(producto)}
-                    >
-                      {producto.articulo}
-                    </StandardListItem>
-                  ))}
-                </List>
-              </div>
-            </Card>
+            <PredictiveProductList 
+              products={productos}
+              onProductSelect={handleProductSelect}
+            />
           </>
         )}
       </div>

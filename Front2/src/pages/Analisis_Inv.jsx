@@ -1,32 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import {
-  DynamicPageTitle,
   FlexBox,
   FlexBoxDirection,
   FlexBoxAlignItems,
   FlexBoxJustifyContent,
-  Title,
   Text,
-  Card,
-  CardHeader,
-  ObjectStatus,
-  AnalyticalTable,
   IllustratedMessage,
-  IllustrationMessageType,
-  Icon,
-  Select,
-  Option,
-  Button
+  IllustrationMessageType
 } from '@ui5/webcomponents-react';
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  DonutChart
-} from '@ui5/webcomponents-react-charts';
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
 import { styles } from "../Styles/InicioStyle";
-import { MdTrendingUp, MdTrendingDown, MdOutlineInventory2, MdOutlineShoppingCart, MdLocalShipping, MdWarning, MdOutlineStorefront, MdTimer, MdCalendarToday, MdFilterList, MdOutlineRefresh } from "react-icons/md";
+import InventoryHeader from "../components/AnalisisInv/InventoryHeader";
+import InventoryFilters from "../components/AnalisisInv/InventoryFilters";
+import InventoryKPIs from "../components/AnalisisInv/InventoryKPIs";
+import InventoryDistribution from "../components/AnalisisInv/InventoryDistribution";
+import InventoryStatus from "../components/AnalisisInv/InventoryStatus";
+import InventoryMetrics from "../components/AnalisisInv/InventoryMetrics";
 
 // Datos de ejemplo para diferentes períodos
 const inventoryDataByPeriod = {
@@ -268,380 +257,36 @@ const Analisis_Inv = () => {
       gap: "1rem",
       paddingTop: "2rem"
     }}>
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-        backgroundColor: "var(--sapBackgroundColor)",
-        padding: "1.25rem",
-        borderRadius: "0.5rem",
-        boxShadow: "var(--sapContent_Shadow0)",
-        marginTop: "0.5rem",
-        minHeight: "72px"
-      }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.75rem"
-        }}>
-          <Icon 
-            name="inventory" 
-            style={{
-              fontSize: "1.75rem",
-              color: "var(--sapContent_IconColor)"
-            }}
-          />
-          <Title level="H1" style={{
-            margin: 0,
-            fontSize: "1.75rem",
-            color: "var(--sapTextColor)",
-            padding: "0.25rem 0"
-          }}>
-            Análisis de Inventario
-          </Title>
-        </div>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem"
-        }}>
-          <Icon 
-            name="map" 
-            style={{
-              fontSize: "1rem",
-              color: "var(--sapContent_IconColor)"
-            }}
-          />
-          <Text style={{
-            fontSize: "0.875rem",
-            color: "var(--sapContent_LabelColor)"
-          }}>
-            Plaza Comercial Reforma, Local 42B, CDMX
-          </Text>
-        </div>
-      </div>
-
-      <div style={{
-        padding: "0.5rem 1rem",
-        backgroundColor: "var(--sapList_Background)",
-        borderRadius: "0.5rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        boxShadow: "var(--sapContent_Shadow0)",
-        margin: "0.5rem 0"
-      }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem"
-        }}>
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem"
-          }}>
-            <Icon name="filter" />
-            <Text>Categoría:</Text>
-            <Select
-              onChange={(event) => setSelectedCategory(event.detail.selectedOption.value)}
-            >
-              <Option value="all" selected={selectedCategory === "all"}>Todas las categorías</Option>
-              <Option value="deportivo" selected={selectedCategory === "deportivo"}>Calzado Deportivo</Option>
-              <Option value="casual" selected={selectedCategory === "casual"}>Calzado Casual</Option>
-              <Option value="formal" selected={selectedCategory === "formal"}>Calzado Formal</Option>
-              <Option value="playa" selected={selectedCategory === "playa"}>Calzado para Playa</Option>
-            </Select>
-          </div>
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem"
-          }}>
-            <Icon name="calendar" />
-            <Text>Período:</Text>
-            <Select
-              onChange={(event) => setTimeRange(event.detail.selectedOption.value)}
-            >
-              <Option value="mesActual" selected={timeRange === "mesActual"}>Mes Actual</Option>
-              <Option value="mesPasado" selected={timeRange === "mesPasado"}>Mes Pasado</Option>
-            </Select>
-          </div>
-          <Button 
-            icon="refresh"
-            design="Transparent"
-            onClick={handleResetFilters}
-          >
-            Reiniciar Filtros
-          </Button>
-        </div>
-      </div>
+      <InventoryHeader />
+      
+      <InventoryFilters 
+        selectedCategory={selectedCategory}
+        timeRange={timeRange}
+        onCategoryChange={setSelectedCategory}
+        onTimeRangeChange={setTimeRange}
+        onResetFilters={handleResetFilters}
+      />
 
       <div style={styles.mainContent}>
-        <div style={styles.kpiSection}>
-          {kpiCards.map((card, index) => (
-            <div key={index} style={styles.kpiCard}>
-              <div style={styles.kpiHeader}>
-                <Icon 
-                  name={card.icon} 
-                  style={{ 
-                    color: `var(--sapIndicationColor_${card.state})`,
-                    fontSize: "1.5rem"
-                  }} 
-                />
-                <ObjectStatus state={card.state}>
-                  {card.trend}
-                </ObjectStatus>
-              </div>
-              <Text style={{
-                fontSize: "0.875rem",
-                color: "var(--sapContent_LabelColor)",
-                marginBottom: "0.25rem"
-              }}>{card.title}</Text>
-              <Text style={styles.kpiValue}>{card.value}</Text>
-              <Text style={styles.kpiLabel}>{card.subtitle}</Text>
-            </div>
-          ))}
-        </div>
-
-        <div style={styles.kpiSection}>
-          {secondRowKPIs.map((card, index) => (
-            <div key={index} style={styles.kpiCard}>
-              <div style={styles.kpiHeader}>
-                <Icon 
-                  name={card.icon} 
-                  style={{ 
-                    color: `var(--sapIndicationColor_${card.state})`,
-                    fontSize: "1.5rem"
-                  }} 
-                />
-                <ObjectStatus state={card.state}>
-                  {card.trend}
-                </ObjectStatus>
-              </div>
-              <Text style={{
-                fontSize: "0.875rem",
-                color: "var(--sapContent_LabelColor)",
-                marginBottom: "0.25rem"
-              }}>{card.title}</Text>
-              <Text style={styles.kpiValue}>{card.value}</Text>
-              <Text style={styles.kpiLabel}>{card.subtitle}</Text>
-            </div>
-          ))}
-        </div>
+        <InventoryKPIs kpiCards={kpiCards} />
+        <InventoryKPIs kpiCards={secondRowKPIs} />
 
         <div style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           gap: "1rem"
         }}>
-          <Card
-            style={styles.categoryCard}
-            header={
-              <CardHeader
-                titleText="Distribución por Categoría"
-                subtitleText="Distribución actual del inventario"
-                avatar={<Icon name="donut-chart" />}
-              />
-            }
-          >
-            {getFilteredCategoryDistribution().map((category, index) => (
-              <div key={index} style={styles.categoryItem}>
-                <FlexBox style={styles.categoryHeader}>
-                  <Text style={styles.categoryName}>{category.name}</Text>
-                  <Text style={styles.categoryValue}>
-                    {category.count} productos
-                  </Text>
-                </FlexBox>
-                <div style={styles.progressBar}>
-                  <div
-                    style={{
-                      ...styles.progressFill,
-                      width: `${category.percentage}%`,
-                      backgroundColor: category.color
-                    }}
-                  />
-                </div>
-                <Text style={styles.progressLabel}>{category.percentage}% del total</Text>
-              </div>
-            ))}
-          </Card>
-
-          <Card
-            style={styles.categoryCard}
-            header={
-              <CardHeader
-                titleText="Estado del Inventario"
-                subtitleText="Distribución por estado"
-                avatar={<Icon name="status-completed" />}
-              />
-            }
-          >
-            <div style={{ padding: "1rem" }}>
-              {(() => {
-                const status = getFilteredInventoryStatus();
-                const total = status.inStock + status.lowStock + status.outOfStock;
-                return (
-                  <>
-                    <div style={{
-                      height: "24px",
-                      display: "flex",
-                      borderRadius: "12px",
-                      overflow: "hidden",
-                      marginBottom: "1rem"
-                    }}>
-                      <div style={{ 
-                        width: `${(status.inStock / total) * 100}%`, 
-                        backgroundColor: "var(--sapPositiveColor)" 
-                      }} />
-                      <div style={{ 
-                        width: `${(status.lowStock / total) * 100}%`, 
-                        backgroundColor: "var(--sapWarningColor)" 
-                      }} />
-                      <div style={{ 
-                        width: `${(status.outOfStock / total) * 100}%`, 
-                        backgroundColor: "var(--sapNegativeColor)" 
-                      }} />
-                    </div>
-
-                    <div style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      fontSize: "0.875rem"
-                    }}>
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem"
-                      }}>
-                        <ObjectStatus state="Success">
-                          En Stock: {status.inStock}
-                        </ObjectStatus>
-                      </div>
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem"
-                      }}>
-                        <ObjectStatus state="Warning">
-                          Stock Bajo: {status.lowStock}
-                        </ObjectStatus>
-                      </div>
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem"
-                      }}>
-                        <ObjectStatus state="Error">
-                          Agotado: {status.outOfStock}
-                        </ObjectStatus>
-                      </div>
-                    </div>
-
-                    <Text
-                      style={{
-                        color: "var(--sapInformativeColor)",
-                        fontSize: "0.875rem",
-                        marginTop: "1rem"
-                      }}
-                    >
-                      El {(((status.lowStock + status.outOfStock) / total) * 100).toFixed(1)}% de productos requieren atención en el inventario.
-                    </Text>
-                  </>
-                );
-              })()}
-            </div>
-          </Card>
+          <InventoryDistribution 
+            categoryDistribution={getFilteredCategoryDistribution()} 
+          />
+          <InventoryStatus 
+            inventoryStatus={getFilteredInventoryStatus()} 
+          />
         </div>
 
-        <Card
-          style={styles.ordersCard}
-          header={
-            <CardHeader
-              titleText="Métricas por Categoría"
-              subtitleText="Rendimiento por categoría"
-              avatar={<Icon name="table-view" />}
-            />
-          }
-        >
-          <div style={{ padding: "0.5rem" }}>
-            <table style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              fontSize: "0.875rem"
-            }}>
-              <thead>
-                <tr style={{
-                  borderBottom: "1px solid var(--sapList_BorderColor)",
-                  color: "var(--sapContent_LabelColor)"
-                }}>
-                  <th style={{ 
-                    padding: "1rem",
-                    textAlign: "left",
-                    fontWeight: "normal"
-                  }}>Categoría</th>
-                  <th style={{ 
-                    padding: "1rem",
-                    textAlign: "left",
-                    fontWeight: "normal"
-                  }}>Ventas</th>
-                  <th style={{ 
-                    padding: "1rem",
-                    textAlign: "left",
-                    fontWeight: "normal"
-                  }}>% Devoluciones</th>
-                  <th style={{ 
-                    padding: "1rem",
-                    textAlign: "left",
-                    fontWeight: "normal"
-                  }}>Rotación</th>
-                  <th style={{ 
-                    padding: "1rem",
-                    textAlign: "left",
-                    fontWeight: "normal"
-                  }}>Beneficio</th>
-                  <th style={{ 
-                    padding: "1rem",
-                    textAlign: "left",
-                    fontWeight: "normal"
-                  }}>Tendencia</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getFilteredCategoryMetrics().map((metric, index) => (
-                  <tr key={index} style={{
-                    borderBottom: "1px solid var(--sapList_BorderColor)",
-                    backgroundColor: index % 2 === 0 ? "var(--sapList_Background)" : "transparent"
-                  }}>
-                    <td style={{ padding: "1rem" }}>{metric.category}</td>
-                    <td style={{ padding: "1rem" }}>{metric.sales} unidades</td>
-                    <td style={{ padding: "1rem" }}>{metric.returnsRate}%</td>
-                    <td style={{ padding: "1rem" }}>{metric.turnoverRate}</td>
-                    <td style={{ padding: "1rem" }}>${metric.profit.toLocaleString()}</td>
-                    <td style={{ padding: "1rem" }}>
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.25rem",
-                        color: metric.trend >= 0 ? "var(--sapPositiveColor)" : "var(--sapNegativeColor)"
-                      }}>
-                        <Icon 
-                          name={metric.trend >= 0 ? "trend-up" : "trend-down"} 
-                          style={{
-                            width: "1rem",
-                            height: "1rem"
-                          }}
-                        />
-                        {metric.trend >= 0 ? "+" : ""}{metric.trend}%
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+        <InventoryMetrics 
+          categoryMetrics={getFilteredCategoryMetrics()} 
+        />
       </div>
     </div>
   );
