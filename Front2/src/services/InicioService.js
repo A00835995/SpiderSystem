@@ -79,3 +79,19 @@ export async function fetchVentasXCategoria() {
     porcentaje: item.porcentaje
   }));      
 }
+
+export async function fetchProductosMasVendidosMesActual() {
+  const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.productosMasVendidosMesActual}`);
+  if (!response.ok) {
+    throw new Error('Error fetching productos mas vendidos data');
+  }
+  const json = await response.json();
+  return json.data.map(item => ({
+    idProducto: item.idProducto,
+    nombre: item.nombre,
+    precio: item.precio,
+    existencia: item.existencia,
+    estado: item.estado,
+    total: item.total
+  }));
+}

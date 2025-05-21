@@ -151,3 +151,26 @@ exports.getVentasXCategoria = async (req, res) => {
     }
 };
 
+exports.getProductosMasVendidosMesActual = async (req, res) => {
+    try{
+        const result = await executeQuery('CALL "TOP3_PRODUCTOS_MES_ACTUAL"()');
+
+        if (!result || result.length === 0) {
+            return res.status(404).json({ message: "No se encontraron productos mas vendidos del mes actual" });
+        }
+        // Transformar el resultado usando el DTO
+        const productosMasVendidosMesActual = InicioResponseDto.toProductosMasVendidosMesActualList(result);
+
+        return res.status(200).json({
+            message: "Productos mas vendidos del mes actual obtenidos exitosamente",
+            data: productosMasVendidosMesActual
+        });
+    } catch (error){
+        console.error("Error en getProductosMasVendidosMesActual:", error.message);
+        res.status(500).json({
+            message: "Error en el servidor",
+            error: error.message
+        });
+    }
+}
+

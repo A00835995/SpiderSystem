@@ -8,6 +8,7 @@ export const API_CONFIG = {
         productosInventario: "/productosinventario",
         ventasMesAnterior: "/ventasmesanterior",
         ordenesRecientes: "/ordenesrecientes",
-        ventasXCategoria: "/ventasxcategoria"
+        ventasXCategoria: "/ventasxcategoria",
+        productosMasVendidosMesActual: "/productosmasvendidosmesactual"
     }
 };

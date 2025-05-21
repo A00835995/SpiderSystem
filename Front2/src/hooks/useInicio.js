@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchInicioData, fetchVentasMes, fetchProductosInventario, fetchVentasMesAnterior, fetchOrdenesRecientes, fetchVentasXCategoria } from '../services/InicioService';
+import { fetchInicioData, fetchVentasMes, fetchProductosInventario, fetchVentasMesAnterior, fetchOrdenesRecientes, fetchVentasXCategoria, fetchProductosMasVendidosMesActual } from '../services/InicioService';
 
 export function useInicio() {
     const [inicioData, setInicioData] = useState(null);
@@ -9,13 +9,14 @@ export function useInicio() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [ordenesPendientes, ventasMes, productosInventario, ventasMesAnterior, ordenesRecientes, ventasXCategoria] = await Promise.all([
+                const [ordenesPendientes, ventasMes, productosInventario, ventasMesAnterior, ordenesRecientes, ventasXCategoria, productosMasVendidosMesActual] = await Promise.all([
                     fetchInicioData(),
                     fetchVentasMes(),
                     fetchProductosInventario(),
                     fetchVentasMesAnterior(),
                     fetchOrdenesRecientes(),
-                    fetchVentasXCategoria()
+                    fetchVentasXCategoria(),
+                    fetchProductosMasVendidosMesActual()
                 ]);
 
                 setInicioData({
@@ -24,7 +25,8 @@ export function useInicio() {
                     productosInventario,
                     ventasMesAnterior,
                     ordenesRecientes,
-                    ventasXCategoria
+                    ventasXCategoria,
+                    productosMasVendidosMesActual
                 });
 
                 setLoading(false);

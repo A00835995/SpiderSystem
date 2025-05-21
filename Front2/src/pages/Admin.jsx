@@ -481,20 +481,6 @@ const Admin = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Último acceso */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    color: 'var(--sapContent_LabelColor)',
-                    fontSize: '0.875rem',
-                    marginTop: '0.5rem'
-                  }}>
-                    <Icon name="history" />
-                    <Text>Último acceso: {usuario.ultimoAcceso}</Text>
-                  </div>
-
                   {/* Acciones */}
                   <div style={{
                     display: 'flex',

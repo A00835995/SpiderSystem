@@ -82,10 +82,6 @@ const Cuenta = () => {
                 <Label style={{ width: '150px', fontWeight: 'bold' }}>Departamento:</Label>
                 <Text>{userData.departamento}</Text>
               </div>
-              <div style={{ display: 'flex', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.75rem' }}>
-                <Label style={{ width: '150px', fontWeight: 'bold' }}>Último Acceso:</Label>
-                <Text>{userData.ultimoAcceso}</Text>
-              </div>
             </FlexBox>
           </div>
 

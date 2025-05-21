@@ -62,6 +62,24 @@ class InicioResponseDto {
         }
         return dbVentasXCategoria.map(categoria => this.toVentasXCategoriaResponse(categoria));
     }
+
+    static toProductosMasVendidosMesActualResponse(dbProductosMasVendidos) {
+        return {
+            idProducto: dbProductosMasVendidos.ARTIID,
+            nombre: dbProductosMasVendidos.ARTNOMBRE,
+            precio: dbProductosMasVendidos.ARTPRECIOVENTA,
+            existencia: dbProductosMasVendidos.ARTEXISTENCIA,
+            estado: dbProductosMasVendidos.ESTADO,
+            total: dbProductosMasVendidos.TOTALVENDIDOS
+        };
+    }
+
+    static toProductosMasVendidosMesActualList(dbProductosMasVendidos) {
+        if (!Array.isArray(dbProductosMasVendidos)) {
+            return [];
+        }
+        return dbProductosMasVendidos.map(producto => this.toProductosMasVendidosMesActualResponse(producto));
+    }
 }
 
 module.exports = InicioResponseDto;

@@ -33,7 +33,12 @@ export default function InicioRecentOrders() {
           {
             Header: "Fecha",
             accessor: "fecha",
-            width: 100
+            width: 100,
+            Cell: ({ value }) => {
+              if (!value) return "";
+              const [year, month, day] = value.split(" ")[0].split("-");
+              return `${day}/${month}/${year}`;
+            }
           },
           {
             Header: "Cantidad",
