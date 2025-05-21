@@ -1,42 +1,15 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import {
-  DynamicPageTitle, 
-  DynamicPageHeader,
-  Title,
-  Text,
-  FlexBox,
-  FlexBoxDirection,
-  FlexBoxAlignItems, 
-  FlexBoxJustifyContent,
-  FlexBoxWrap,
-  Button,
-  Bar,
-  BarDesign,
-  Panel,
-  Icon,
-  Card,
-  CardHeader,
-  List,
-  StandardListItem,
-  ValueState,
-  Badge,
-  SegmentedButton,
-  SegmentedButtonItem,
-  MessageStrip,
-  Dialog,
-  IllustratedMessage,
-  IllustrationMessageType,
-  BusyIndicator,
-  FilterBar,
-  FilterGroupItem,
-  MultiComboBox,
-  MultiComboBoxItem,
-  Popover,
-  ToolbarSpacer,
-  Avatar,
-  ButtonDesign
-} from "@ui5/webcomponents-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { ValueState } from "@ui5/webcomponents-react";
 import { useUI5Theme } from "../components/UI5ThemeProvider";
+import { styles } from "../Styles/AlertasStyle";
+
+// Importar componentes
+import AlertHeader from "../components/Alertas/AlertHeader";
+import AlertFilters from "../components/Alertas/AlertFilters";
+import AlertList from "../components/Alertas/AlertList";
+import AlertDetailDialog from "../components/Alertas/AlertDetailDialog";
+
+// Importar íconos necesarios
 import "@ui5/webcomponents-icons/dist/alert.js";
 import "@ui5/webcomponents-icons/dist/filter.js";
 import "@ui5/webcomponents-icons/dist/refresh.js";
@@ -52,21 +25,18 @@ import "@ui5/webcomponents-icons/dist/line-chart.js";
 import "@ui5/webcomponents-icons/dist/shipping-status.js";
 import "@ui5/webcomponents-icons/dist/check-availability.js";
 import "@ui5/webcomponents-icons/dist/circle-task.js";
-import { styles } from "../Styles/AlertasStyle";
-import "@ui5/webcomponents-icons/dist/AllIcons.js";
 
 // Configuración de umbrales para alertas
 const STOCK_THRESHOLDS = {
-  CRITICAL: 5,  // Nivel crítico de stock
-  WARNING: 10,  // Nivel de advertencia de stock
-  REORDER: 15,  // Punto de reorden
-  HIGH_DEMAND: 20  // Umbral para alta demanda
+  CRITICAL: 5,
+  WARNING: 10,
+  REORDER: 15,
+  HIGH_DEMAND: 20
 };
 
 // Configuración de actualización y paginación
-const UPDATE_INTERVAL = 30000; // 30 segundos
+const UPDATE_INTERVAL = 30000;
 const ALERTS_PER_PAGE = 10;
-const MAX_RESOLVED_ALERTS = 10;
 
 // Lista de productos de ejemplo
 const SAMPLE_PRODUCTS = [
@@ -94,33 +64,6 @@ const SAMPLE_SHIPMENTS = [
   { id: 103, producto: "Botas de Cuero Importadas", fecha: "2025-02-14", estado: "retrasado", destino: "Tienda Sur" },
 ];
 
-// Reemplazar el componente de paginación con botones
-const PaginationBar = ({ currentPage, totalPages, onPageChange }) => {
-  return (
-    <FlexBox 
-      justifyContent={FlexBoxJustifyContent.Center} 
-      alignItems={FlexBoxAlignItems.Center}
-      style={{ marginTop: "1rem" }}
-    >
-      <Button
-        icon="nav-back"
-        disabled={currentPage === 1}
-        onClick={() => onPageChange({ detail: { page: currentPage - 1 }})}
-        design={ButtonDesign.Transparent}
-      />
-      <Text style={{ margin: "0 1rem" }}>
-        Página {currentPage} de {totalPages}
-      </Text>
-      <Button
-        icon="navigation-right-arrow"
-        disabled={currentPage === totalPages}
-        onClick={() => onPageChange({ detail: { page: currentPage + 1 }})}
-        design={ButtonDesign.Transparent}
-      />
-    </FlexBox>
-  );
-};
-
 export default function Alertas() {
   const { isDarkMode } = useUI5Theme();
   const [allAlerts, setAllAlerts] = useState([]);
@@ -131,14 +74,12 @@ export default function Alertas() {
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  
+
   // Generar alertas basadas en datos
   useEffect(() => {
-    console.log(localStorage.getItem("token"))
     const generateAlerts = () => {
       setIsLoading(true);
       
-      // Tiempo de retardo simulado para carga de datos
       setTimeout(() => {
         const newAlerts = [];
         let alertId = 1;
@@ -233,20 +174,15 @@ export default function Alertas() {
           }
         }
         
-        // Ordenar alertas por tiempo y severidad
+        // Ordenar alertas
         newAlerts.sort((a, b) => {
-          // Primero ordenar por si está resuelto
           if (a.isResolved !== b.isResolved) {
             return a.isResolved ? 1 : -1;
           }
-          
-          // Luego por tipo de alerta (error > warning > info)
           const typePriority = { error: 0, warning: 1, success: 2 };
           if (typePriority[a.type] !== typePriority[b.type]) {
             return typePriority[a.type] - typePriority[b.type];
           }
-          
-          // Finalmente por timestamp, más reciente primero
           return new Date(b.timestamp) - new Date(a.timestamp);
         });
         
@@ -257,19 +193,17 @@ export default function Alertas() {
     
     generateAlerts();
     
-    // Configurar actualización periódica
     const intervalId = setInterval(() => {
       setRefreshTrigger(prev => prev + 1);
     }, UPDATE_INTERVAL);
     
     return () => clearInterval(intervalId);
   }, [refreshTrigger]);
-  
-  // Filtrar alertas según el filtro seleccionado y actualizar paginación
+
+  // Filtrar alertas
   useEffect(() => {
     let filtered = [...allAlerts];
     
-    // Aplicar filtro
     if (selectedFilter !== "all") {
       filtered = filtered.filter(alert => {
         if (selectedFilter === "success") {
@@ -283,28 +217,26 @@ export default function Alertas() {
     setFilteredAlerts(filtered);
     setCurrentPage(1);
   }, [allAlerts, selectedFilter]);
-  
+
   // Obtener alertas para la página actual
   const currentAlerts = useMemo(() => {
     const startIndex = (currentPage - 1) * ALERTS_PER_PAGE;
     return filteredAlerts.slice(startIndex, startIndex + ALERTS_PER_PAGE);
   }, [filteredAlerts, currentPage]);
-  
+
   // Calcular total de páginas
   const totalPages = Math.ceil(filteredAlerts.length / ALERTS_PER_PAGE);
-  
-  // Manejar cambio de página
+
+  // Manejadores de eventos
   const handlePageChange = (event) => {
     setCurrentPage(event.detail.page);
   };
-  
-  // Manejar click en alerta para ver detalles
+
   const handleAlertClick = (alert) => {
     setSelectedAlert(alert);
     setIsDetailDialogOpen(true);
   };
-  
-  // Marcar alerta como resuelta
+
   const handleResolveAlert = (alertId) => {
     setAllAlerts(prevAlerts => 
       prevAlerts.map(alert => 
@@ -321,13 +253,12 @@ export default function Alertas() {
     );
     setIsDetailDialogOpen(false);
   };
-  
-  // Forzar actualización manual
+
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1);
   };
-  
-  // Mapear tipos de alerta a estados de UI5
+
+  // Funciones auxiliares
   const getValueState = (type) => {
     switch (type) {
       case "error": return ValueState.Error;
@@ -336,8 +267,7 @@ export default function Alertas() {
       default: return ValueState.Information;
     }
   };
-  
-  // Mapear categorías a iconos
+
   const getCategoryIcon = (category) => {
     switch (category) {
       case "stock": return "inventory";
@@ -346,201 +276,37 @@ export default function Alertas() {
       default: return "check-availability";
     }
   };
-  
-  // Formatear fecha para mostrar
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString();
-  };
-  
+
   return (
     <div style={styles.mainContent}>
-      <div style={styles.header}>
-        <div style={styles.headerLeft}>
-          <Icon 
-            name="alert" 
-            style={styles.headerIcon}
-          />
-          <Title level="H1" style={styles.headerTitle}>
-            Sistema de Alertas
-          </Title>
-        </div>
-        <div style={styles.headerLocation}>
-          <Icon 
-            name="map" 
-            style={styles.locationIcon}
-          />
-          <Text style={styles.locationText}>
-            Plaza Comercial Reforma, Local 42B, CDMX
-          </Text>
-        </div>
-      </div>
-
-      <div style={styles.filterBar}>
-        <FlexBox 
-          justifyContent={FlexBoxJustifyContent.SpaceBetween}
-          alignItems={FlexBoxAlignItems.Center}
-          wrap={FlexBoxWrap.Wrap}
-        >
-          <FlexBox alignItems={FlexBoxAlignItems.Center}>
-            <SegmentedButton
-              style={{ marginRight: "1rem" }}
-              onSelectionChange={(e) => setSelectedFilter(e.detail.selectedItem.getAttribute("data-key"))}
-            >
-              <SegmentedButtonItem data-key="all" icon="circle-task" selected={selectedFilter === "all"}>
-                Todas
-              </SegmentedButtonItem>
-              <SegmentedButtonItem data-key="error" icon="message-error" selected={selectedFilter === "error"}>
-                Críticas
-              </SegmentedButtonItem>
-              <SegmentedButtonItem data-key="warning" icon="message-warning" selected={selectedFilter === "warning"}>
-                Advertencias
-              </SegmentedButtonItem>
-              <SegmentedButtonItem data-key="success" icon="message-success" selected={selectedFilter === "success"}>
-                Resueltas
-              </SegmentedButtonItem>
-            </SegmentedButton>
-          </FlexBox>
-          
-          <FlexBox>
-            <Button 
-              icon="refresh" 
-              onClick={handleRefresh}
-              tooltip="Actualizar alertas"
-            >
-              Actualizar
-            </Button>
-          </FlexBox>
-        </FlexBox>
-      </div>
+      <AlertHeader />
+      
+      <AlertFilters
+        selectedFilter={selectedFilter}
+        onFilterChange={setSelectedFilter}
+        onRefresh={handleRefresh}
+      />
 
       <div style={styles.alertList}>
-        {isLoading ? (
-          <FlexBox 
-            direction={FlexBoxDirection.Column}
-            justifyContent={FlexBoxJustifyContent.Center}
-            alignItems={FlexBoxAlignItems.Center}
-            style={{ height: "400px" }}
-          >
-            <BusyIndicator size="Large" />
-            <Text style={{ marginTop: "1rem" }}>Cargando alertas...</Text>
-          </FlexBox>
-        ) : filteredAlerts.length === 0 ? (
-          <Card>
-            <IllustratedMessage
-              name={IllustrationMessageType.NoData}
-              titleText="No hay alertas que mostrar"
-              subtitleText="No se encontraron alertas con los filtros seleccionados"
-              style={{ margin: "2rem 0" }}
-            />
-          </Card>
-        ) : (
-          <>
-            <Text style={{ marginBottom: "1rem" }}>
-              Mostrando {Math.min(filteredAlerts.length, ALERTS_PER_PAGE)} de {filteredAlerts.length} alertas
-            </Text>
-            
-            <List>
-              {currentAlerts.map(alert => (
-                <StandardListItem
-                  key={alert.id}
-                  icon={getCategoryIcon(alert.category)}
-                  iconEnd={alert.isResolved ? <Icon name="message-success" /> : null}
-                  info={alert.status}
-                  infoState={getValueState(alert.type)}
-                  style={{ 
-                    ...styles.alertItem,
-                    ...(alert.type === "error" ? styles.alertItemError : 
-                       alert.type === "warning" ? styles.alertItemWarning : 
-                       alert.type === "success" ? styles.alertItemSuccess : {}),
-                    opacity: alert.isResolved ? 0.7 : 1
-                  }}
-                  onClick={() => handleAlertClick(alert)}
-                >
-                  {alert.title}
-                </StandardListItem>
-              ))}
-            </List>
-            
-            {totalPages > 1 && (
-              <div style={styles.paginationBar}>
-                <PaginationBar
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
-              </div>
-            )}
-          </>
-        )}
+        <AlertList
+          alerts={currentAlerts}
+          isLoading={isLoading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          onAlertClick={handleAlertClick}
+          getValueState={getValueState}
+          getCategoryIcon={getCategoryIcon}
+        />
       </div>
-      
-      {selectedAlert && (
-        <Dialog
-          open={isDetailDialogOpen}
-          onAfterClose={() => setIsDetailDialogOpen(false)}
-          headerText={selectedAlert.title}
-          className="alert-detail-dialog"
-          style={{ width: "600px" }}
-          footer={
-            <Bar 
-              design={BarDesign.Footer}
-              endContent={
-                <FlexBox>
-                  {!selectedAlert.isResolved && (
-                    <Button 
-                      design="Emphasized" 
-                      onClick={() => handleResolveAlert(selectedAlert.id)}
-                      style={{ marginRight: "0.5rem" }}
-                    >
-                      Marcar como resuelto
-                    </Button>
-                  )}
-                  <Button 
-                    onClick={() => setIsDetailDialogOpen(false)}
-                  >
-                    Cerrar
-                  </Button>
-                </FlexBox>
-              }
-            />
-          }
-        >
-          <FlexBox direction={FlexBoxDirection.Column} style={{ padding: "1rem" }}>
-            <MessageStrip
-              design={getValueState(selectedAlert.type)}
-              icon={selectedAlert.type === "error" ? "error" : selectedAlert.type === "warning" ? "warning" : "sys-enter-2"}
-              style={{ 
-                marginBottom: "1rem",
-                ...styles[`statusBadge${selectedAlert.type.charAt(0).toUpperCase() + selectedAlert.type.slice(1)}`]
-              }}
-              hideCloseButton
-            >
-              {selectedAlert.status}
-            </MessageStrip>
-            
-            <Title level="H5" style={{ marginBottom: "0.5rem" }}>Detalles</Title>
-            <Text style={{ marginBottom: "1rem" }}>{selectedAlert.details}</Text>
-            
-            <FlexBox direction={FlexBoxDirection.Column} style={{ marginBottom: "1rem" }}>
-              <Text style={{ marginBottom: "0.5rem" }}>
-                <strong>Categoría:</strong> {selectedAlert.category === "stock" ? "Inventario" : 
-                                        selectedAlert.category === "demand" ? "Demanda" : 
-                                        selectedAlert.category === "shipping" ? "Envíos" : 
-                                        "Otro"}
-              </Text>
-              <Text style={{ marginBottom: "0.5rem" }}>
-                <strong>Fecha de alerta:</strong> {formatDate(selectedAlert.timestamp)}
-              </Text>
-              {selectedAlert.isResolved && (
-                <Text style={{ marginBottom: "0.5rem" }}>
-                  <strong>Fecha de resolución:</strong> {formatDate(selectedAlert.resolvedAt)}
-                </Text>
-              )}
-            </FlexBox>
-          </FlexBox>
-        </Dialog>
-      )}
+
+      <AlertDetailDialog
+        alert={selectedAlert}
+        isOpen={isDetailDialogOpen}
+        onClose={() => setIsDetailDialogOpen(false)}
+        onResolve={handleResolveAlert}
+        getValueState={getValueState}
+      />
     </div>
   );
 } 
