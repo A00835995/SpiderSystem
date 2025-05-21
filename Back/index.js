@@ -6,6 +6,7 @@ const app = express();
 const loginRoutes = require('./Routes/loginRutas');
 const articuloRoutes = require('./Routes/articuloRutes');
 const inicioRoutes = require('./Routes/inicioRoutes');
+const comprasRoutes = require('./Routes/comprasRoutes');
 const { connectToHANA } = require('./Config/confDB');
 
 // Middleware
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use('/api/login', loginRoutes);
 app.use('/api', articuloRoutes);
 app.use('/api/', inicioRoutes);
+app.use('/api/compras', comprasRoutes);
+
 
 
 

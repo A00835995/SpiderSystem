@@ -3,6 +3,9 @@ export const API_CONFIG = {
     endpoints: {
         articles: "/getarticulos",
         totalCount: "/getTotalArticulos",
+        compras: {
+            getData: "/compras/getData"
+        },
         ordenesPendientes: "/ordenespendientes",
         ventasMes: "/ventasmes",
         productosInventario: "/productosinventario",

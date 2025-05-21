@@ -83,18 +83,19 @@ function convertArrayOfObjectsToCSV(array) {
   return result;
 }
 
+//Main Componente
 export default function Inventario() {
   const { isDarkMode } = useUI5Theme();
 
   //Consigo los datos del inventario
   const { 
-    inventoryData, 
-    filteredData, 
-    setFilteredData,
-    isLoading,
-    error,
-    inventoryStats,
-    lastUpdateTime,
+    inventoryData, //Contiene los datos del inventario
+    filteredData, //Contiene los datos filtrados
+    setFilteredData, //Contiene la funcion para filtrar los datos
+    isLoading, //Contiene el estado de carga
+    error, //Contiene el error
+    inventoryStats, //Contiene las estadisticas del inventario
+    lastUpdateTime, //Contiene la ultima actualizacion
     refreshInventory
   } = useInventory();
 
@@ -224,11 +225,13 @@ export default function Inventario() {
   ];
   
   //APLICO EL BACKEND
+  //Solo se ejecuta cuando se carga la pagina porque tiene "[]"
   useEffect(() => {
     const loadInventory = async () => {
       setIsLoading(true);
       try {
         const data = await fetchInventoryData();
+        //Update los datos del inventario
         setFilteredData(data);
         setLastUpdateTime(new Date());
       } catch (error) {
@@ -241,7 +244,7 @@ export default function Inventario() {
     loadInventory();
   }, []);
   
-
+  //APLICO EL BACKEND
   useEffect(() => {
     const loadTotalCount = async () => {
       try {
