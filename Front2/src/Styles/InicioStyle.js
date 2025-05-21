@@ -202,7 +202,7 @@ export const styles = {
     marginBottom: "0.75rem"
   },
   productName: {
-    fontSize: "1rem",
+    fontSize: "1.25rem",
     fontWeight: "600",
     color: "var(--sapTitleColor)",
     marginBottom: "0.25rem"

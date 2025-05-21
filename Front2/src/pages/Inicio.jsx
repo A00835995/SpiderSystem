@@ -8,6 +8,12 @@ import InicioTopProducts from "../components/Inicio/InicioTopProducts";
 import { FlexBox, FlexBoxDirection, FlexBoxAlignItems, FlexBoxJustifyContent, IllustratedMessage, IllustrationMessageType } from "@ui5/webcomponents-react";
 import { styles } from "../Styles/InicioStyle";
 
+// Importar los iconos necesarios
+import "@ui5/webcomponents-icons/dist/cart.js";
+import "@ui5/webcomponents-icons/dist/sales-order.js";
+import "@ui5/webcomponents-icons/dist/product.js";
+import "@ui5/webcomponents-icons/dist/trend-up.js";
+
 const Inicio = () => {
   const { inicioData, loading, error } = useInicio();
 

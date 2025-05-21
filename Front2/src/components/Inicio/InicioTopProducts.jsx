@@ -18,7 +18,11 @@ export default function InicioTopProducts({ products }) {
             </div>
             <div style={styles.productInfo}>
               <div style={styles.productHeader}>
-                <div>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem'
+                }}>
                   <Text style={styles.productName}>{producto.nombre}</Text>
                   <Text style={styles.productPrice}>${producto.precio}</Text>
                 </div>
