@@ -16,6 +16,7 @@ export const API_CONFIG = {
         actualizarRolUsuario: "/gestion/actualizar-rol-usuario",
         actualizarNombreUsuario: "/gestion/actualizar-nombre-usuario",
         actualizarEmailUsuario: "/gestion/actualizar-email-usuario",
-        eliminarUsuario: "/gestion/eliminar-usuario"
+        eliminarUsuario: "/gestion/eliminar-usuario",
+        getAlertas: "/alertas/getAlertas"
     }
 };

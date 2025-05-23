@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { ValueState } from "@ui5/webcomponents-react";
 import { useUI5Theme } from "../components/UI5ThemeProvider";
 import { styles } from "../Styles/AlertasStyle";
+import { fetchAlertas } from "../services/AlertasService";
 
 // Importar componentes
 import AlertHeader from "../components/Alertas/AlertHeader";
@@ -26,43 +27,7 @@ import "@ui5/webcomponents-icons/dist/shipping-status.js";
 import "@ui5/webcomponents-icons/dist/check-availability.js";
 import "@ui5/webcomponents-icons/dist/circle-task.js";
 
-// Configuración de umbrales para alertas
-const STOCK_THRESHOLDS = {
-  CRITICAL: 5,
-  WARNING: 10,
-  REORDER: 15,
-  HIGH_DEMAND: 20
-};
-
-// Configuración de actualización y paginación
-const UPDATE_INTERVAL = 30000;
 const ALERTS_PER_PAGE = 10;
-
-// Lista de productos de ejemplo
-const SAMPLE_PRODUCTS = [
-  { id: 1, producto: "Zapatillas Deportivas Premium", cantidad: 3, demanda: "alta", categoria: "deportivo" },
-  { id: 2, producto: "Mocasines Elegance", cantidad: 0, demanda: "media", categoria: "formal" },
-  { id: 3, producto: "Botas de Cuero Importadas", cantidad: 8, demanda: "alta", categoria: "casual" },
-  { id: 4, producto: "Zapatos Formales Modelo Ejecutivo", cantidad: 12, demanda: "baja", categoria: "formal" },
-  { id: 5, producto: "Sandalias de Playa Tropical", cantidad: 22, demanda: "alta", categoria: "playa" },
-  { id: 6, producto: "Tenis Urbanos Street Style", cantidad: 4, demanda: "alta", categoria: "casual" },
-  { id: 7, producto: "Botines Chelsea Premium", cantidad: 7, demanda: "media", categoria: "casual" },
-  { id: 8, producto: "Zapatos Náuticos Marinero", cantidad: 9, demanda: "baja", categoria: "casual" },
-  { id: 9, producto: "Zapatillas Running Pro", cantidad: 0, demanda: "alta", categoria: "deportivo" },
-  { id: 10, producto: "Alpargatas Verano Essential", cantidad: 15, demanda: "media", categoria: "playa" },
-  { id: 11, producto: "Pantuflas Comfort Home", cantidad: 11, demanda: "baja", categoria: "hogar" },
-  { id: 12, producto: "Zapatillas Skate Extreme", cantidad: 5, demanda: "alta", categoria: "deportivo" },
-  { id: 13, producto: "Zapatos Oxford Classic", cantidad: 2, demanda: "media", categoria: "formal" },
-  { id: 14, producto: "Sandalias Outdoor Adventure", cantidad: 18, demanda: "alta", categoria: "deportivo" },
-  { id: 15, producto: "Botas de Lluvia Waterproof", cantidad: 7, demanda: "baja", categoria: "casual" },
-];
-
-// Datos de envíos de ejemplo
-const SAMPLE_SHIPMENTS = [
-  { id: 101, producto: "Zapatillas Deportivas Premium", fecha: "2025-02-15", estado: "retrasado", destino: "Tienda Norte" },
-  { id: 102, producto: "Mocasines Elegance", fecha: "2025-02-16", estado: "pendiente", destino: "Tienda Centro" },
-  { id: 103, producto: "Botas de Cuero Importadas", fecha: "2025-02-14", estado: "retrasado", destino: "Tienda Sur" },
-];
 
 export default function Alertas() {
   const { isDarkMode } = useUI5Theme();
@@ -75,137 +40,82 @@ export default function Alertas() {
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Generar alertas basadas en datos
+  // Obtener alertas desde el API
   useEffect(() => {
-    const generateAlerts = () => {
+    const getAlertasFromAPI = async () => {
       setIsLoading(true);
-      
-      setTimeout(() => {
-        const newAlerts = [];
-        let alertId = 1;
+      try {
+        // Limpiar las alertas existentes antes de cargar las nuevas
+        setAllAlerts([]);
         
-        // Generar alertas de stock
-        SAMPLE_PRODUCTS.forEach(product => {
-          if (product.cantidad === 0) {
-            newAlerts.push({
-              id: alertId++,
-              type: "error",
-              status: "Agotado",
-              title: `${product.producto} - Sin Stock`,
-              details: "0 unidades disponibles en todas las ubicaciones",
-              category: "stock",
-              timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-              product: product,
-              isResolved: false
-            });
-          } else if (product.cantidad <= STOCK_THRESHOLDS.CRITICAL) {
-            newAlerts.push({
-              id: alertId++,
-              type: "error",
-              status: "Crítico",
-              title: `${product.producto} - Stock Crítico`,
-              details: `Stock actual: ${product.cantidad} unidades (Por debajo del umbral crítico de ${STOCK_THRESHOLDS.CRITICAL})`,
-              category: "stock",
-              timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-              product: product,
-              isResolved: false
-            });
-          } else if (product.cantidad <= STOCK_THRESHOLDS.WARNING) {
-            newAlerts.push({
-              id: alertId++,
-              type: "warning",
-              status: "Bajo Stock",
-              title: `${product.producto} - Stock Bajo`,
-              details: `Stock actual: ${product.cantidad} unidades (Por debajo del umbral de advertencia de ${STOCK_THRESHOLDS.WARNING})`,
-              category: "stock",
-              timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-              product: product,
-              isResolved: false
-            });
-          }
-        });
+        const response = await fetchAlertas();
         
-        // Generar alertas de demanda
-        SAMPLE_PRODUCTS.filter(p => p.demanda === "alta" && p.cantidad > 0 && p.cantidad < 20).forEach(product => {
-          newAlerts.push({
-            id: alertId++,
-            type: "warning",
-            status: "Alta Demanda",
-            title: `${product.producto} - Alta Demanda`,
-            details: `Stock actual: ${product.cantidad} unidades. Considere aumentar el inventario debido a la alta demanda.`,
-            category: "demand",
-            timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-            product: product,
-            isResolved: false
+        if (response && response.data) {
+          // Mapear datos del API al formato esperado por la UI
+          const mappedAlerts = response.data.map(alert => {
+            // Determinar el tipo de alerta basado en el estado
+            let type = "information";
+            if (alert.estado === "Bajo stock") {
+              type = "warning";
+            } else if (alert.estado === "Agotado") {
+              type = "error";
+            } else if (alert.estado === "Disponible") {
+              type = "success";
+            }
+            
+            // Verificar si la alerta está resuelta
+            const isResolved = alert.fecha_resolucion === true;
+            
+            return {
+              id: alert.id,
+              type: type,
+              status: alert.estado,
+              title: `${alert.nombre} - ${alert.estado}`,
+              details: alert.mensaje,
+              category: "stock", 
+              timestamp: alert.fecha_creacion,
+              product: {
+                id: alert.id,
+                producto: alert.nombre,
+                cantidad: alert.existencia
+              },
+              isResolved: isResolved,
+              resolvedAt: isResolved ? alert.resuelto : null
+            };
           });
-        });
-        
-        // Generar alertas de envíos
-        SAMPLE_SHIPMENTS.filter(s => s.estado === "retrasado").forEach(shipment => {
-          newAlerts.push({
-            id: alertId++,
-            type: "warning",
-            status: "Envío Retrasado",
-            title: `${shipment.producto} - Envío Retrasado`,
-            details: `Envío con destino a ${shipment.destino} programado para ${new Date(shipment.fecha).toLocaleDateString()} se encuentra retrasado.`,
-            category: "shipping",
-            timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-            shipment: shipment,
-            isResolved: false
+          
+          // Ordenar alertas
+          mappedAlerts.sort((a, b) => {
+            if (a.isResolved !== b.isResolved) {
+              return a.isResolved ? 1 : -1;
+            }
+            const typePriority = { error: 0, warning: 1, success: 2, information: 3 };
+            if (typePriority[a.type] !== typePriority[b.type]) {
+              return typePriority[a.type] - typePriority[b.type];
+            }
+            return new Date(b.timestamp) - new Date(a.timestamp);
           });
-        });
-        
-        // Agregar algunas alertas resueltas para ejemplo
-        for (let i = 0; i < 3; i++) {
-          if (i < SAMPLE_PRODUCTS.length) {
-            const product = SAMPLE_PRODUCTS[i];
-            newAlerts.push({
-              id: alertId++,
-              type: "success",
-              status: "Resuelto",
-              title: `${product.producto} - Stock Normalizado`,
-              details: `El nivel de stock ha sido normalizado a ${product.cantidad + 20} unidades.`,
-              category: "stock",
-              timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-              product: product,
-              isResolved: true,
-              resolvedAt: new Date(Date.now() - Math.random() * 43200000).toISOString()
-            });
-          }
+          
+          // Reemplazar completamente las alertas existentes
+          setAllAlerts(mappedAlerts);
         }
-        
-        // Ordenar alertas
-        newAlerts.sort((a, b) => {
-          if (a.isResolved !== b.isResolved) {
-            return a.isResolved ? 1 : -1;
-          }
-          const typePriority = { error: 0, warning: 1, success: 2 };
-          if (typePriority[a.type] !== typePriority[b.type]) {
-            return typePriority[a.type] - typePriority[b.type];
-          }
-          return new Date(b.timestamp) - new Date(a.timestamp);
-        });
-        
-        setAllAlerts(newAlerts);
+      } catch (error) {
+        console.error("Error al obtener alertas:", error);
+      } finally {
         setIsLoading(false);
-      }, 1000);
+      }
     };
     
-    generateAlerts();
-    
-    const intervalId = setInterval(() => {
-      setRefreshTrigger(prev => prev + 1);
-    }, UPDATE_INTERVAL);
-    
-    return () => clearInterval(intervalId);
+    getAlertasFromAPI();
   }, [refreshTrigger]);
 
   // Filtrar alertas
   useEffect(() => {
+    // Siempre empezar con una copia limpia de todas las alertas
     let filtered = [...allAlerts];
     
     if (selectedFilter !== "all") {
-      filtered = filtered.filter(alert => {
+      filtered = allAlerts.filter(alert => {
         if (selectedFilter === "success") {
           return alert.isResolved;
         } else {
@@ -214,6 +124,9 @@ export default function Alertas() {
       });
     }
     
+    // Limpiar las alertas filtradas antes de establecer las nuevas
+    setFilteredAlerts([]);
+    // Luego establecer las alertas filtradas
     setFilteredAlerts(filtered);
     setCurrentPage(1);
   }, [allAlerts, selectedFilter]);
@@ -232,29 +145,20 @@ export default function Alertas() {
     setCurrentPage(event.detail.page);
   };
 
+  const handleFilterChange = (newFilter) => {
+    // Limpiar las alertas filtradas antes de cambiar el filtro
+    setFilteredAlerts([]);
+    setSelectedFilter(newFilter);
+    setCurrentPage(1);
+  };
+
   const handleAlertClick = (alert) => {
     setSelectedAlert(alert);
     setIsDetailDialogOpen(true);
   };
 
-  const handleResolveAlert = (alertId) => {
-    setAllAlerts(prevAlerts => 
-      prevAlerts.map(alert => 
-        alert.id === alertId 
-          ? { 
-              ...alert, 
-              isResolved: true, 
-              type: "success", 
-              status: "Resuelto", 
-              resolvedAt: new Date().toISOString() 
-            } 
-          : alert
-      )
-    );
-    setIsDetailDialogOpen(false);
-  };
-
   const handleRefresh = () => {
+    // Forzar actualización desde la API
     setRefreshTrigger(prev => prev + 1);
   };
 
@@ -283,7 +187,7 @@ export default function Alertas() {
       
       <AlertFilters
         selectedFilter={selectedFilter}
-        onFilterChange={setSelectedFilter}
+        onFilterChange={handleFilterChange}
         onRefresh={handleRefresh}
       />
 
@@ -304,9 +208,8 @@ export default function Alertas() {
         alert={selectedAlert}
         isOpen={isDetailDialogOpen}
         onClose={() => setIsDetailDialogOpen(false)}
-        onResolve={handleResolveAlert}
         getValueState={getValueState}
       />
     </div>
   );
-} 
+}

@@ -16,14 +16,31 @@ export default function AlertDetailDialog({
   alert, 
   isOpen, 
   onClose, 
-  onResolve,
   getValueState 
 }) {
   if (!alert) return null;
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString();
+    if (!dateString) return "No disponible";
+    
+    try {
+      const date = new Date(dateString);
+      
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        return "Fecha no válida";
+      }
+      
+      // Check if it's near the epoch (likely an error)
+      if (date.getFullYear() < 2000) {
+        return "No disponible";
+      }
+      
+      return date.toLocaleString();
+    } catch (error) {
+      console.error("Error al formatear la fecha:", error);
+      return "Error de formato";
+    }
   };
 
   return (
@@ -38,15 +55,6 @@ export default function AlertDetailDialog({
           design={BarDesign.Footer}
           endContent={
             <FlexBox>
-              {!alert.isResolved && (
-                <Button 
-                  design="Emphasized" 
-                  onClick={() => onResolve(alert.id)}
-                  style={{ marginRight: "0.5rem" }}
-                >
-                  Marcar como resuelto
-                </Button>
-              )}
               <Button onClick={onClose}>
                 Cerrar
               </Button>

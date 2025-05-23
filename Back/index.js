@@ -7,6 +7,7 @@ const loginRoutes = require('./Routes/loginRutas');
 const articuloRoutes = require('./Routes/articuloRutes');
 const inicioRoutes = require('./Routes/inicioRoutes');
 const gestionRoutes = require('./Routes/gestionRutes');
+const alertasRoutes = require('./Routes/alertaRoutes');
 const { connectToHANA } = require('./Config/confDB');
 
 // Middleware
@@ -19,6 +20,7 @@ app.use('/api/login', loginRoutes);
 app.use('/api', articuloRoutes);
 app.use('/api/inicio', inicioRoutes);
 app.use('/api/gestion', gestionRoutes);
+app.use('/api/alertas', alertasRoutes);
 
 
 
