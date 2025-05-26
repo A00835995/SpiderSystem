@@ -33,7 +33,7 @@ class InicioResponseDto {
         return {
             numeroOrden: dbOrdenesRecientes.NUMEROORDEN,
             numeroProveedor: dbOrdenesRecientes.IDPROVEEDOR,
-            fecha: dbOrdenesRecientes.FECHAENTREGA,
+            fecha: dbOrdenesRecientes.FECHAMOVIMIENTO,
             cantidad: dbOrdenesRecientes.CANTIDAD,
             productos: dbOrdenesRecientes.PRODUCTOS,
             estado: dbOrdenesRecientes.ESTADO,

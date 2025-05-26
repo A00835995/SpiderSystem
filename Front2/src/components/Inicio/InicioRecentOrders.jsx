@@ -57,11 +57,11 @@ export default function InicioRecentOrders() {
                 switch (status) {
                   case "Pendiente":
                     return styles.pendiente;
-                  case "En proceso":
+                  case "En Proceso":
                     return styles.enProceso;
                   case "Completada":
                     return styles.completada;
-                  case "En tránsito":
+                  case "En Tránsito":
                     return styles.enTransito;
                   default:
                     return {};
