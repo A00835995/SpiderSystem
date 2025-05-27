@@ -108,7 +108,7 @@ export default function Alertas() {
     
     getAlertasFromAPI();
   }, [refreshTrigger]);
-
+  
   // Filtrar alertas
   useEffect(() => {
     // Siempre empezar con una copia limpia de todas las alertas
@@ -130,16 +130,16 @@ export default function Alertas() {
     setFilteredAlerts(filtered);
     setCurrentPage(1);
   }, [allAlerts, selectedFilter]);
-
+  
   // Obtener alertas para la página actual
   const currentAlerts = useMemo(() => {
     const startIndex = (currentPage - 1) * ALERTS_PER_PAGE;
     return filteredAlerts.slice(startIndex, startIndex + ALERTS_PER_PAGE);
   }, [filteredAlerts, currentPage]);
-
+  
   // Calcular total de páginas
   const totalPages = Math.ceil(filteredAlerts.length / ALERTS_PER_PAGE);
-
+  
   // Manejadores de eventos
   const handlePageChange = (event) => {
     setCurrentPage(event.detail.page);
@@ -156,12 +156,11 @@ export default function Alertas() {
     setSelectedAlert(alert);
     setIsDetailDialogOpen(true);
   };
-
   const handleRefresh = () => {
     // Forzar actualización desde la API
     setRefreshTrigger(prev => prev + 1);
   };
-
+  
   // Funciones auxiliares
   const getValueState = (type) => {
     switch (type) {
@@ -171,7 +170,7 @@ export default function Alertas() {
       default: return ValueState.Information;
     }
   };
-
+  
   const getCategoryIcon = (category) => {
     switch (category) {
       case "stock": return "inventory";
@@ -180,7 +179,7 @@ export default function Alertas() {
       default: return "check-availability";
     }
   };
-
+  
   return (
     <div style={styles.mainContent}>
       <AlertHeader />
@@ -195,15 +194,15 @@ export default function Alertas() {
         <AlertList
           alerts={currentAlerts}
           isLoading={isLoading}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
           onAlertClick={handleAlertClick}
           getValueState={getValueState}
           getCategoryIcon={getCategoryIcon}
-        />
+                />
       </div>
-
+      
       <AlertDetailDialog
         alert={selectedAlert}
         isOpen={isDetailDialogOpen}
