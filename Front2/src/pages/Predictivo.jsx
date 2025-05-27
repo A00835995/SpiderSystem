@@ -12,7 +12,7 @@ import {
   Button,
   BusyIndicator
 } from "@ui5/webcomponents-react";
-import { useUI5Theme } from "../components/UI5ThemeProvider";
+
 import PredictiveHeader from "../components/Predictivo/PredictiveHeader";
 import PredictiveMetrics from "../components/Predictivo/PredictiveMetrics";
 import PredictiveChart from "../components/Predictivo/PredictiveChart";
@@ -148,7 +148,7 @@ const alertasPerdidas = [
 ];
 
 export default function Predictivo() {
-  const { isDarkMode } = useUI5Theme();
+
   const [chartType, setChartType] = useState("line");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);

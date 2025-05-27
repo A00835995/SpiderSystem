@@ -15,7 +15,6 @@ const ProveedoresFilters = ({
   onKeyPress,
   filterType,
   onFilterChange,
-  isDarkMode,
   tiposProveedores = []
 }) => {
   // Función para formatear el nombre del tipo para mostrar
@@ -65,7 +64,7 @@ const ProveedoresFilters = ({
               left: '10px', 
               top: '50%', 
               transform: 'translateY(-50%)',
-              color: isDarkMode ? '#8a8d91' : '#0854a0',
+              color: '#0854a0',
               fontSize: '1rem'
             }} 
           />

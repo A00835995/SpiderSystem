@@ -19,7 +19,6 @@ const ProveedorDetailsDialog = ({
   selectedProveedor, 
   showDialog, 
   onClose, 
-  isDarkMode,
   loading = false,
   onUpdateNombre,
   onUpdateContacto,
@@ -255,7 +254,7 @@ const ProveedorDetailsDialog = ({
           width: isMobile ? '100%' : '140px',
           minWidth: isMobile ? 'auto' : '120px',
           fontWeight: 'bold',
-          color: isDarkMode ? '#e0e0e0' : '#32363a'
+          color: '#32363a'
         }}>
           {label}:
         </Text>
@@ -279,9 +278,9 @@ const ProveedorDetailsDialog = ({
                     minWidth: isMobile ? '100%' : '200px',
                     padding: '0.5rem',
                     borderRadius: '0.25rem',
-                    border: `1px solid ${isDarkMode ? '#444444' : '#d9d9d9'}`,
-                    backgroundColor: isDarkMode ? '#3d3d3d' : '#ffffff',
-                    color: isDarkMode ? '#ffffff' : '#32363a',
+                    border: '1px solid #d9d9d9',
+                    backgroundColor: '#ffffff',
+                    color: '#32363a',
                     fontSize: '0.875rem',
                     outline: 'none',
                     cursor: 'pointer'
@@ -334,7 +333,7 @@ const ProveedorDetailsDialog = ({
                 </ObjectStatus>
               ) : (
                 <Text style={{ 
-                  color: isDarkMode ? '#ffffff' : '#32363a',
+                  color: '#32363a',
                   marginRight: '0.5rem',
                   flex: 1,
                   wordBreak: 'break-word'
@@ -400,10 +399,10 @@ const ProveedorDetailsDialog = ({
           minWidth: window.innerWidth <= 768 ? '95vw' : '500px',
           maxWidth: '90vw',
           maxHeight: '90vh',
-          backgroundColor: isDarkMode ? '#2d2d2d' : '#ffffff',
+          backgroundColor: '#ffffff',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           borderRadius: '0.5rem',
-          border: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+          border: '1px solid #e0e0e0',
           zIndex: 1000,
           overflow: 'hidden'
         }}
@@ -412,12 +411,12 @@ const ProveedorDetailsDialog = ({
         {/* Modal Header */}
         <div style={{
           padding: '1rem 1.5rem',
-          borderBottom: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+          borderBottom: '1px solid #e0e0e0',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <Title level="H4" style={{ margin: 0, color: isDarkMode ? '#ffffff' : '#32363a' }}>
+          <Title level="H4" style={{ margin: 0, color: '#32363a' }}>
             Detalles del Proveedor
           </Title>
           <Button
@@ -441,7 +440,7 @@ const ProveedorDetailsDialog = ({
               style={{ height: '200px' }}
             >
               <BusyIndicator active size="Medium" />
-              <Text style={{ marginLeft: '1rem', color: isDarkMode ? '#e0e0e0' : 'inherit' }}>
+              <Text style={{ marginLeft: '1rem', color: 'inherit' }}>
                 Cargando detalles...
               </Text>
             </FlexBox>
@@ -451,16 +450,16 @@ const ProveedorDetailsDialog = ({
               {updateError && (
                 <div style={{
                   padding: '1rem',
-                  backgroundColor: isDarkMode ? '#442726' : '#ffeaea',
-                  border: `1px solid ${isDarkMode ? '#5c2b2b' : '#ffd7d7'}`,
+                  backgroundColor: '#ffeaea',
+                  border: '1px solid #ffd7d7',
                   borderRadius: '0.25rem'
                 }}>
-                  <Text style={{
-                    color: isDarkMode ? '#ff8d8d' : '#ab1f1f',
-                    fontSize: '0.875rem'
-                  }}>
-                    {updateError}
-                  </Text>
+                                      <Text style={{
+                      color: '#ab1f1f',
+                      fontSize: '0.875rem'
+                    }}>
+                      {updateError}
+                    </Text>
                 </div>
               )}
 
@@ -479,7 +478,7 @@ const ProveedorDetailsDialog = ({
                 <Text style={{ 
                   width: '140px', 
                   fontWeight: 'bold',
-                  color: isDarkMode ? '#e0e0e0' : '#32363a'
+                  color: '#32363a'
                 }}>
                   Productos:
                 </Text>
@@ -492,7 +491,7 @@ const ProveedorDetailsDialog = ({
                 <Text style={{ 
                   width: '140px', 
                   fontWeight: 'bold',
-                  color: isDarkMode ? '#e0e0e0' : '#32363a'
+                  color: '#32363a'
                 }}>
                   Total Existencia:
                 </Text>
@@ -505,12 +504,12 @@ const ProveedorDetailsDialog = ({
                 <Text style={{ 
                   width: '140px', 
                   fontWeight: 'bold',
-                  color: isDarkMode ? '#e0e0e0' : '#32363a'
+                  color: '#32363a'
                 }}>
                   Último Pedido:
                 </Text>
                 <Text style={{ 
-                  color: isDarkMode ? '#ffffff' : '#32363a'
+                  color: '#32363a'
                 }}>
                   {selectedProveedor.ultimoPedido || 'No registrado'}
                 </Text>
@@ -522,7 +521,7 @@ const ProveedorDetailsDialog = ({
               alignItems={FlexBoxAlignItems.Center}
               style={{ height: '200px', flexDirection: 'column', gap: '1rem' }}
             >
-              <Text style={{ color: isDarkMode ? '#a0a0a0' : '#6a6d70', fontSize: '1rem' }}>
+              <Text style={{ color: '#6a6d70', fontSize: '1rem' }}>
                 No se pudo cargar la información del proveedor
               </Text>
             </FlexBox>
@@ -532,7 +531,7 @@ const ProveedorDetailsDialog = ({
         {/* Modal Footer */}
         <div style={{
           padding: '1rem 1.5rem',
-          borderTop: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+          borderTop: '1px solid #e0e0e0',
           display: 'flex',
           justifyContent: 'flex-end'
         }}>
@@ -541,7 +540,7 @@ const ProveedorDetailsDialog = ({
             onClick={onClose}
             style={{ 
               minWidth: '5rem',
-              backgroundColor: isDarkMode ? '#4c9aff' : '#0854a0',
+              backgroundColor: '#0854a0',
               color: 'white'
             }}
           >

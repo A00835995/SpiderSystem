@@ -9,8 +9,7 @@ const ProveedoresPagination = ({
   currentPage, 
   setCurrentPage, 
   proveedores, 
-  itemsPerPage, 
-  isDarkMode 
+  itemsPerPage 
 }) => {
   // Calcular páginas totales
   const totalPages = Math.ceil(proveedores.length / itemsPerPage);
@@ -24,8 +23,8 @@ const ProveedoresPagination = ({
       style={{ 
         marginTop: '1rem', 
         padding: '0.5rem',
-        backgroundColor: isDarkMode ? '#252525' : '#f5f5f5',
-        borderTop: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+        backgroundColor: '#f5f5f5',
+        borderTop: '1px solid #e0e0e0',
       }}
     >
       <Button

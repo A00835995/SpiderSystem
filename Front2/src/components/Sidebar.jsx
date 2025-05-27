@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useUI5Theme } from "./UI5ThemeProvider";
 
 export function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDarkMode, toggleDarkMode } = useUI5Theme();
   const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
@@ -38,8 +36,8 @@ export function Sidebar() {
           left: 0,
           right: 0,
           height: "60px",
-          backgroundColor: isDarkMode ? "#1a1a1a" : "#fff",
-          borderBottom: "1px solid " + (isDarkMode ? "#333" : "#e0e0e0"),
+          backgroundColor: "#fff",
+          borderBottom: "1px solid #e0e0e0",
           display: "flex",
           alignItems: "center",
           padding: "0 20px",
@@ -52,7 +50,7 @@ export function Sidebar() {
             style={{
               fontSize: "24px",
               cursor: "pointer",
-              color: isDarkMode ? "#fff" : "#000",
+              color: "#000",
               padding: "8px",
               background: "none",
               border: "none"
@@ -67,7 +65,7 @@ export function Sidebar() {
             style={{
               fontSize: "20px",
               fontWeight: "bold",
-              color: isDarkMode ? "#fff" : "#000"
+              color: "#000"
             }}
           >
             Spider System
@@ -75,26 +73,13 @@ export function Sidebar() {
         </div>
         <div style={{ display: "flex", gap: "15px" }}>
           <button
-            onClick={toggleDarkMode}
-            style={{
-              background: "none",
-              border: "none",
-              fontSize: "20px",
-              cursor: "pointer",
-              color: isDarkMode ? "#fff" : "#000"
-            }}
-            aria-label="Toggle theme"
-          >
-            {isDarkMode ? "🌞" : "🌙"}
-          </button>
-          <button
             onClick={() => navigate("/cuenta")}
             style={{
               background: "none",
               border: "none",
               fontSize: "20px",
               cursor: "pointer",
-              color: isDarkMode ? "#fff" : "#000"
+              color: "#000"
             }}
             aria-label="Mi cuenta"
           >
@@ -124,8 +109,8 @@ export function Sidebar() {
           onTouchEnd={() => setIsOpen(false)}
           style={{
             width: isOpen ? "250px" : "60px",
-            backgroundColor: isDarkMode ? "#1a1a1a" : "#fff",
-            borderRight: "1px solid " + (isDarkMode ? "#333" : "#e0e0e0"),
+            backgroundColor: "#fff",
+            borderRight: "1px solid #e0e0e0",
             transition: "width 0.3s ease",
             overflowX: "hidden",
             flexShrink: 0
@@ -147,26 +132,16 @@ export function Sidebar() {
                     alignItems: "center",
                     gap: "10px",
                     cursor: "pointer",
-                    backgroundColor: active
-                      ? isDarkMode
-                        ? "#333"
-                        : "#f0f0f0"
-                      : "transparent",
-                    color: isDarkMode ? "#fff" : "#000",
+                    backgroundColor: active ? "#f0f0f0" : "transparent",
+                    color: "#000",
                     transition: "background-color 0.2s",
                     whiteSpace: "nowrap"
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = isDarkMode
-                      ? "#444"
-                      : "#e0e0e0";
+                    e.currentTarget.style.backgroundColor = "#e0e0e0";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = active
-                      ? isDarkMode
-                        ? "#333"
-                        : "#f0f0f0"
-                      : "transparent";
+                    e.currentTarget.style.backgroundColor = active ? "#f0f0f0" : "transparent";
                   }}
                 >
                   <span style={{ fontSize: "20px" }}>{item.icon}</span>
@@ -190,7 +165,7 @@ export function Sidebar() {
           style={{
             flex: 1,
             padding: "8px",
-            backgroundColor: isDarkMode ? "#121212" : "#f5f5f5",
+            backgroundColor: "#f5f5f5",
             transition: "margin-left 0.3s ease",
             overflow: "auto"
           }}

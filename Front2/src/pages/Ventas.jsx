@@ -190,13 +190,21 @@ const Ventas = () => {
 
   // Remover del carrito
   const handleRemoveFromCart = (productId) => {
-    setCarrito(carrito.filter(item => item.id !== productId));
+    const newCarrito = carrito.filter(item => item.id !== productId);
+    setCarrito(newCarrito);
+    
+    // Cerrar carrito si queda vacío
+    if (newCarrito.length === 0) {
+      setIsCartOpen(false);
+    }
+    
     showNotification('Producto removido del carrito', 'Warning');
   };
 
   // Vaciar carrito
   const handleClearCart = () => {
     setCarrito([]);
+    setIsCartOpen(false);
     showNotification('Carrito vaciado', 'Information');
   };
 
@@ -207,10 +215,12 @@ const Ventas = () => {
     
     alert(`¡Gracias por tu compra!\n\nResumen:\n- ${itemCount} artículos\n- Total: $${total.toLocaleString()}\n\nProcediendo al pago...`);
     
+    // Cerrar carrito inmediatamente para mejor UX
+    setIsCartOpen(false);
+    
     // Simular proceso de pago
     setTimeout(() => {
       setCarrito([]);
-      setIsCartOpen(false);
       showNotification('¡Compra realizada exitosamente!', 'Success');
     }, 1000);
   };

@@ -21,6 +21,7 @@ const ShoppingCart = ({
   onClearCart,
   onCheckout 
 }) => {
+
   const getTotalItems = () => {
     return carrito.reduce((total, item) => total + item.cantidad, 0);
   };
@@ -41,22 +42,29 @@ const ShoppingCart = ({
         transition: 'right 0.3s ease'
       }}>
         <div style={{ position: 'relative', display: 'inline-block' }}>
-          <Button
-            design="Emphasized"
-            icon="cart"
+          <button
             onClick={onToggle}
             style={{
               width: '60px',
               height: '60px',
               borderRadius: '50%',
-              backgroundColor: '#0854a0',
+              backgroundColor: isOpen ? '#074888' : '#0854a0',
               color: 'white',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              boxShadow: isOpen ? '0 6px 16px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.15)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              transform: isOpen ? 'scale(1.05)' : 'scale(1)',
+              transition: 'all 0.3s ease',
+              border: isOpen ? '2px solid #ffffff' : 'none',
+              outline: 'none',
+              cursor: 'pointer',
+              fontSize: '1.2rem',
+              fontWeight: 'bold'
             }}
-          />
+          >
+            {isOpen ? '✕' : '🛒'}
+          </button>
           {getTotalItems() > 0 && (
             <Badge 
               colorScheme="3"
@@ -122,7 +130,7 @@ const ShoppingCart = ({
         <div style={{
           flex: 1,
           overflowY: 'auto',
-          padding: carrito.length === 0 ? '2rem' : '1rem'
+          padding: carrito.length === 0 ? '2rem' : '0.75rem'
         }}>
           {carrito.length === 0 ? (
             <div style={{
@@ -136,65 +144,138 @@ const ShoppingCart = ({
               </Text>
             </div>
           ) : (
-            <FlexBox direction={FlexBoxDirection.Column} style={{ gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem' }}>
               {carrito.map((item) => (
-                <Card key={item.id} style={{ padding: '1rem' }}>
-                  <FlexBox direction={FlexBoxDirection.Column} style={{ gap: '0.75rem' }}>
+                <div 
+                  key={item.id} 
+                  style={{ 
+                    padding: '1.5rem',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: '12px',
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    margin: '0'
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                     {/* Información del producto */}
-                    <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween}>
-                      <div style={{ flex: 1 }}>
-                        <Title level="H6" style={{ margin: 0, marginBottom: '0.25rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div style={{ flex: 1, paddingRight: '1.5rem' }}>
+                        <h6 style={{ 
+                          margin: 0, 
+                          marginBottom: '0.75rem', 
+                          fontSize: '1.1rem', 
+                          fontWeight: '600',
+                          color: '#32363a'
+                        }}>
                           {item.nombre}
-                        </Title>
-                        <Text style={{ fontSize: '0.875rem', color: '#666' }}>
+                        </h6>
+                        <p style={{ 
+                          fontSize: '0.9rem', 
+                          color: '#666', 
+                          textTransform: 'capitalize',
+                          margin: 0
+                        }}>
                           {item.categoria}
-                        </Text>
+                        </p>
                       </div>
                       <Button
                         icon="delete"
                         design="Transparent"
                         onClick={() => onRemoveItem(item.id)}
-                        style={{ color: '#bb0000' }}
+                        style={{ 
+                          color: '#bb0000',
+                          minWidth: '36px',
+                          height: '36px',
+                          borderRadius: '6px'
+                        }}
                       />
-                    </FlexBox>
+                    </div>
 
                     {/* Precio y controles de cantidad */}
-                    <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween} alignItems={FlexBoxAlignItems.Center}>
-                      <Text style={{ fontWeight: 'bold', color: '#0854a0' }}>
-                        ${item.precio.toLocaleString()}
-                      </Text>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <p style={{ 
+                          fontSize: '0.8rem', 
+                          color: '#666', 
+                          marginBottom: '0.25rem',
+                          margin: '0 0 0.25rem 0'
+                        }}>
+                          Precio unitario
+                        </p>
+                        <p style={{ 
+                          fontWeight: 'bold', 
+                          color: '#0854a0', 
+                          fontSize: '1.2rem',
+                          margin: 0
+                        }}>
+                          ${item.precio.toLocaleString()}
+                        </p>
+                      </div>
                       
-                      <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <Button
                           icon="less"
                           design="Transparent"
                           onClick={() => onUpdateQuantity(item.id, item.cantidad - 1)}
                           disabled={item.cantidad <= 1}
-                          style={{ minWidth: '32px', height: '32px' }}
+                          style={{ 
+                            minWidth: '40px', 
+                            height: '40px',
+                            border: '1px solid #d0d0d0',
+                            borderRadius: '6px',
+                            backgroundColor: '#f8f9fa'
+                          }}
                         />
-                        <Text style={{ minWidth: '24px', textAlign: 'center', fontWeight: 'bold' }}>
+                        <span style={{ 
+                          minWidth: '40px', 
+                          textAlign: 'center', 
+                          fontWeight: 'bold',
+                          fontSize: '1.1rem',
+                          padding: '0.5rem',
+                          backgroundColor: '#f0f7fd',
+                          borderRadius: '6px',
+                          border: '1px solid #e0f0ff',
+                          display: 'inline-block'
+                        }}>
                           {item.cantidad}
-                        </Text>
+                        </span>
                         <Button
                           icon="add"
                           design="Transparent"
                           onClick={() => onUpdateQuantity(item.id, item.cantidad + 1)}
                           disabled={item.cantidad >= item.stock}
-                          style={{ minWidth: '32px', height: '32px' }}
+                          style={{ 
+                            minWidth: '40px', 
+                            height: '40px',
+                            border: '1px solid #d0d0d0',
+                            borderRadius: '6px',
+                            backgroundColor: '#f8f9fa'
+                          }}
                         />
-                      </FlexBox>
-                    </FlexBox>
+                      </div>
+                    </div>
 
                     {/* Subtotal */}
-                    <FlexBox justifyContent={FlexBoxJustifyContent.End}>
-                      <Text style={{ fontWeight: 'bold' }}>
+                    <div style={{
+                      borderTop: '1px solid #e5e5e5',
+                      paddingTop: '1rem',
+                      marginTop: '0.5rem',
+                      textAlign: 'right'
+                    }}>
+                      <p style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '1.1rem',
+                        color: '#0854a0',
+                        margin: 0
+                      }}>
                         Subtotal: ${(item.precio * item.cantidad).toLocaleString()}
-                      </Text>
-                    </FlexBox>
-                  </FlexBox>
-                </Card>
-              ))}
-            </FlexBox>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                              ))}
+            </div>
           )}
         </div>
 

@@ -9,7 +9,7 @@ import {
 } from '@ui5/webcomponents-react';
 import { useNavigate } from 'react-router-dom';
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
-import { useUI5Theme } from '../components/UI5ThemeProvider';
+
 import { useProveedores } from '../hooks/useProveedores';
 
 // Import necesario para soporte de formularios UI5
@@ -26,7 +26,7 @@ import InventoryResumen from '../components/Proveedores/InventoryResumen';
 
 const Gestion_de_Proveedores = () => {
   const navigate = useNavigate();
-  const { isDarkMode, setIsDarkMode } = useUI5Theme();
+
   
   // Usar el hook de proveedores
   const {
@@ -127,8 +127,8 @@ const Gestion_de_Proveedores = () => {
     
     try {
       setLoadingDetails(true);
-      setShowDialog(true);
-      document.body.style.overflow = 'hidden';
+    setShowDialog(true);
+    document.body.style.overflow = 'hidden';
       
       const detalles = await getProveedor(proveedor.idProveedor);
       console.log("Detalles obtenidos del servidor:", detalles);
@@ -275,10 +275,10 @@ const Gestion_de_Proveedores = () => {
 
   // Mostrar error si hay problemas con el hook
   if (hookError) {
-    return (
-      <div style={{ 
-        padding: '1.5rem',
-        backgroundColor: isDarkMode ? '#1c1c1c' : '#f7f7f7',
+  return (
+    <div style={{ 
+      padding: '1.5rem',
+        backgroundColor: '#f7f7f7',
         minHeight: '100vh',
         fontFamily: '"72", Arial, sans-serif',
         maxWidth: '1200px',
@@ -289,7 +289,7 @@ const Gestion_de_Proveedores = () => {
           alignItems={FlexBoxAlignItems.Center}
           style={{ height: '50vh', flexDirection: 'column', gap: '1rem' }}
         >
-          <Text style={{ color: isDarkMode ? '#ff6b6b' : '#d63031', fontSize: '1.125rem' }}>
+          <Text style={{ color: '#d63031', fontSize: '1.125rem' }}>
             {hookError}
           </Text>
         </FlexBox>
@@ -300,7 +300,7 @@ const Gestion_de_Proveedores = () => {
   return (
     <div style={{ 
       padding: '1.5rem',
-      backgroundColor: isDarkMode ? '#1c1c1c' : '#f7f7f7',
+      backgroundColor: '#f7f7f7',
       minHeight: '100vh',
       fontFamily: '"72", Arial, sans-serif',
       maxWidth: '1200px',
@@ -314,7 +314,7 @@ const Gestion_de_Proveedores = () => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        borderBottom: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+        borderBottom: '1px solid #e0e0e0',
         paddingBottom: '1rem',
         marginTop: '1rem',
       }}>
@@ -325,7 +325,7 @@ const Gestion_de_Proveedores = () => {
         <div 
           style={{ 
             marginTop: '1rem',
-            backgroundColor: isDarkMode ? '#2d2d2d' : '#ffffff',
+            backgroundColor: '#ffffff',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.07)',
             borderRadius: '0.5rem',
             border: 'none',
@@ -339,7 +339,7 @@ const Gestion_de_Proveedores = () => {
               style={{ height: '300px' }}
             >
               <BusyIndicator active size="Medium" />
-            <Text style={{ marginLeft: '1rem', color: isDarkMode ? '#e0e0e0' : 'inherit' }}>
+            <Text style={{ marginLeft: '1rem', color: 'inherit' }}>
               Cargando proveedores...
             </Text>
             </FlexBox>
@@ -353,7 +353,6 @@ const Gestion_de_Proveedores = () => {
             onKeyPress={handleKeyPress}
             filterType={filterType}
             onFilterChange={handleFilterChange}
-            isDarkMode={isDarkMode}
             tiposProveedores={tiposProveedores?.data || []}
           />
 
@@ -361,7 +360,6 @@ const Gestion_de_Proveedores = () => {
             paginatedProveedores={paginatedProveedores}
             itemsPerPage={itemsPerPage}
             onViewDetails={handleViewDetails}
-            isDarkMode={isDarkMode}
             proveedores={proveedores}
             onAddProveedor={handleOpenAddDialog}
           />
@@ -371,13 +369,11 @@ const Gestion_de_Proveedores = () => {
             setCurrentPage={setCurrentPage}
             proveedores={proveedores}
             itemsPerPage={itemsPerPage}
-            isDarkMode={isDarkMode}
           />
 
           <InventoryResumen
             activeCategory={activeCategory}
             setActiveCategory={setActiveCategory}
-            isDarkMode={isDarkMode}
           />
         </>
       )}
@@ -386,7 +382,6 @@ const Gestion_de_Proveedores = () => {
         selectedProveedor={selectedProveedor}
         showDialog={showDialog}
         onClose={handleCloseDialog}
-        isDarkMode={isDarkMode}
         loading={loadingDetails}
         onUpdateNombre={actualizarNombreProveedor}
         onUpdateContacto={actualizarNombreContactoProveedor}
@@ -406,7 +401,6 @@ const Gestion_de_Proveedores = () => {
         onInputChange={handleInputChange}
         formErrors={formErrors}
         onAddProveedor={handleAddProveedor}
-        isDarkMode={isDarkMode}
         tiposProveedores={tiposProveedores}
         tiposPagos={tiposPagos}
       />

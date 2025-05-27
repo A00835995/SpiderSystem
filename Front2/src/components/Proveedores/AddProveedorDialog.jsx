@@ -21,7 +21,6 @@ const AddProveedorDialog = ({
   onInputChange,
   formErrors,
   onAddProveedor,
-  isDarkMode,
   tiposProveedores = [],
   tiposPagos = []
 }) => {
@@ -73,10 +72,10 @@ const AddProveedorDialog = ({
           width: '500px',
           maxWidth: '90vw',
           maxHeight: '90vh',
-          backgroundColor: isDarkMode ? '#2d2d2d' : '#ffffff',
+          backgroundColor: '#ffffff',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           borderRadius: '0.5rem',
-          border: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+          border: '1px solid #e0e0e0',
           zIndex: 101,
           overflow: 'hidden'
         }}
@@ -85,12 +84,12 @@ const AddProveedorDialog = ({
         {/* Modal Header */}
         <div style={{
           padding: '1rem 1.5rem',
-          borderBottom: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+          borderBottom: '1px solid #e0e0e0',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <Title level="H4" style={{ margin: 0, color: isDarkMode ? '#ffffff' : '#32363a' }}>
+          <Title level="H4" style={{ margin: 0, color: '#32363a' }}>
             Agregar Nuevo Proveedor
           </Title>
           <Button
@@ -109,7 +108,7 @@ const AddProveedorDialog = ({
         }}>
           <Text style={{ 
             marginBottom: '1.5rem', 
-            color: isDarkMode ? '#e0e0e0' : '#6a6d70',
+            color: '#6a6d70',
             fontSize: '0.875rem',
             lineHeight: '1.4',
             display: 'block'
@@ -128,7 +127,7 @@ const AddProveedorDialog = ({
                   }}>
                     <Text style={{ 
                       fontWeight: '600',
-                      color: isDarkMode ? '#e0e0e0' : '#32363a',
+                      color: '#32363a',
                       fontSize: '0.875rem'
                     }}>
                       Nombre del Proveedor
@@ -140,7 +139,7 @@ const AddProveedorDialog = ({
                   </div>
                   <Text style={{ 
                     fontSize: '0.75rem',
-                    color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                    color: '#6a6d70',
                     lineHeight: '1.3'
                   }}>
                     Nombre comercial o razón social completa
@@ -154,7 +153,7 @@ const AddProveedorDialog = ({
                 onChange={onInputChange}
                 valueState={formErrors.nombre ? ValueState.Error : ValueState.None}
                 valueStateMessage={formErrors.nombre}
-                placeholder="Ej: Calzado Deportivo Premium S.A. de C.V."
+                placeholder="Ej: Distribuidora ABC S.A. de C.V."
                 style={{ width: '100%' }}
               />
             </FormItem>
@@ -170,7 +169,7 @@ const AddProveedorDialog = ({
                   }}>
                     <Text style={{ 
                       fontWeight: '600',
-                      color: isDarkMode ? '#e0e0e0' : '#32363a',
+                      color: '#32363a',
                       fontSize: '0.875rem'
                     }}>
                       Nombre del Contacto
@@ -182,7 +181,7 @@ const AddProveedorDialog = ({
                   </div>
                   <Text style={{ 
                     fontSize: '0.75rem',
-                    color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                    color: '#6a6d70',
                     lineHeight: '1.3'
                   }}>
                     Persona responsable o representante
@@ -212,7 +211,7 @@ const AddProveedorDialog = ({
                   }}>
                     <Text style={{ 
                       fontWeight: '600',
-                      color: isDarkMode ? '#e0e0e0' : '#32363a',
+                      color: '#32363a',
                       fontSize: '0.875rem'
                     }}>
                       Correo Electrónico
@@ -224,7 +223,7 @@ const AddProveedorDialog = ({
                   </div>
                   <Text style={{ 
                     fontSize: '0.75rem',
-                    color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                    color: '#6a6d70',
                     lineHeight: '1.3'
                   }}>
                     Correo electrónico principal para comunicaciones
@@ -254,7 +253,7 @@ const AddProveedorDialog = ({
                   }}>
                     <Text style={{ 
                       fontWeight: '600',
-                      color: isDarkMode ? '#e0e0e0' : '#32363a',
+                      color: '#32363a',
                       fontSize: '0.875rem'
                     }}>
                       Teléfono
@@ -266,7 +265,7 @@ const AddProveedorDialog = ({
                   </div>
                   <Text style={{ 
                     fontSize: '0.75rem',
-                    color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                    color: '#6a6d70',
                     lineHeight: '1.3'
                   }}>
                     Número de teléfono con código de país (ej: +52, +1, +34)
@@ -296,7 +295,7 @@ const AddProveedorDialog = ({
                   }}>
                     <Text style={{ 
                       fontWeight: '600',
-                      color: isDarkMode ? '#e0e0e0' : '#32363a',
+                      color: '#32363a',
                       fontSize: '0.875rem'
                     }}>
                       Dirección
@@ -308,7 +307,7 @@ const AddProveedorDialog = ({
                   </div>
                   <Text style={{ 
                     fontSize: '0.75rem',
-                    color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                    color: '#6a6d70',
                     lineHeight: '1.3'
                   }}>
                     Dirección completa incluyendo calle, número, colonia, ciudad y estado
@@ -338,7 +337,7 @@ const AddProveedorDialog = ({
                   }}>
                     <Text style={{ 
                       fontWeight: '600',
-                      color: isDarkMode ? '#e0e0e0' : '#32363a',
+                      color: '#32363a',
                       fontSize: '0.875rem'
                     }}>
                       Tipo de Proveedor
@@ -346,7 +345,7 @@ const AddProveedorDialog = ({
                   </div>
                   <Text style={{ 
                     fontSize: '0.75rem',
-                    color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                    color: '#6a6d70',
                     lineHeight: '1.3'
                   }}>
                     Seleccione la categoría que mejor describe al proveedor
@@ -384,7 +383,7 @@ const AddProveedorDialog = ({
                   }}>
                     <Text style={{ 
                       fontWeight: '600',
-                      color: isDarkMode ? '#e0e0e0' : '#32363a',
+                      color: '#32363a',
                       fontSize: '0.875rem'
                     }}>
                       Tipo de Pago
@@ -392,7 +391,7 @@ const AddProveedorDialog = ({
                   </div>
                   <Text style={{ 
                     fontSize: '0.75rem',
-                    color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                    color: '#6a6d70',
                     lineHeight: '1.3'
                   }}>
                     Método de pago preferido para transacciones
@@ -402,16 +401,16 @@ const AddProveedorDialog = ({
             >
               <Select
                 name="tipoPago"
-                value={formData.tipoPago || (tiposPagos?.data?.[0] || tiposPagos?.[0] || '')}
+                value={formData.tipoPago}
                 onChange={(e) => onInputChange({ target: { name: 'tipoPago', value: e.target.value } })}
                 style={{ width: '100%' }}
               >
                 {/* Manejar tanto estructura de API como array directo */}
                 {(() => {
-                  const pagos = tiposPagos?.data || tiposPagos || [];
+                  const tiposPago = tiposPagos?.data || tiposPagos || [];
                   
-                  return pagos.map((tipoPago, index) => (
-                    <Option key={`pago-${index}`} value={tipoPago}>
+                  return tiposPago.map((tipoPago, index) => (
+                    <Option key={`tipoPago-${index}`} value={tipoPago}>
                       {formatTipoPagoNombre(tipoPago)}
                     </Option>
                   ));
@@ -424,12 +423,12 @@ const AddProveedorDialog = ({
             <div style={{
               marginTop: '1.5rem',
               padding: '1rem',
-              backgroundColor: isDarkMode ? '#442726' : '#ffeaea',
-              border: `1px solid ${isDarkMode ? '#5c2b2b' : '#ffd7d7'}`,
+              backgroundColor: '#ffeaea',
+              border: '1px solid #ffd7d7',
               borderRadius: '0.25rem'
             }}>
               <Text style={{
-                color: isDarkMode ? '#ff8d8d' : '#ab1f1f',
+                color: '#ab1f1f',
                 fontSize: '0.875rem',
                 fontWeight: '500',
                 display: 'block'
@@ -443,33 +442,30 @@ const AddProveedorDialog = ({
             <div style={{
               marginTop: '1.5rem',
               padding: '1rem',
-              backgroundColor: isDarkMode ? '#442726' : '#ffeaea',
-              border: `1px solid ${isDarkMode ? '#5c2b2b' : '#ffd7d7'}`,
+              backgroundColor: '#ffeaea',
+              border: '1px solid #ffd7d7',
               borderRadius: '0.25rem'
             }}>
               <Text style={{
-                color: isDarkMode ? '#ff8d8d' : '#ab1f1f',
+                color: '#ab1f1f',
                 fontSize: '0.875rem',
                 fontWeight: '500',
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                Por favor corrija los siguientes errores:
+                Por favor, corrija los siguientes errores:
               </Text>
               <ul style={{ 
-                marginLeft: '1.25rem',
-                listStyle: 'disc'
+                margin: '0', 
+                paddingLeft: '1.25rem',
+                color: '#ab1f1f',
+                fontSize: '0.8125rem'
               }}>
                 {Object.entries(formErrors)
-                  .filter(([field]) => field !== 'general')
+                  .filter(([key]) => key !== 'general')
                   .map(([field, error]) => (
-                    <li key={field} style={{
-                      color: isDarkMode ? '#ff8d8d' : '#ab1f1f',
-                      fontSize: '0.75rem',
-                      marginBottom: '0.25rem',
-                      lineHeight: '1.3'
-                    }}>
-                      {error}
+                    <li key={field} style={{ marginBottom: '0.25rem' }}>
+                      <strong>{field.charAt(0).toUpperCase() + field.slice(1)}:</strong> {error}
                     </li>
                   ))}
               </ul>
@@ -480,10 +476,10 @@ const AddProveedorDialog = ({
         {/* Modal Footer */}
         <div style={{
           padding: '1rem 1.5rem',
-          borderTop: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+          borderTop: '1px solid #e0e0e0',
           display: 'flex',
           justifyContent: 'flex-end',
-          gap: '0.5rem'
+          gap: '0.75rem'
         }}>
           <Button 
             design="Transparent" 
@@ -497,11 +493,11 @@ const AddProveedorDialog = ({
             onClick={onAddProveedor}
             style={{ 
               minWidth: '5rem',
-              backgroundColor: isDarkMode ? '#4c9aff' : '#0854a0',
+              backgroundColor: '#0854a0',
               color: 'white'
             }}
           >
-            Crear
+            Agregar
           </Button>
         </div>
       </div>

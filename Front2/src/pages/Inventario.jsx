@@ -30,7 +30,7 @@ import {
   Toast,
   ValueState
 } from "@ui5/webcomponents-react";
-import { useUI5Theme } from "../components/UI5ThemeProvider";
+
 import { styles } from "../Styles/InventarioStyles";
 
 // Importar íconos necesarios
@@ -85,7 +85,7 @@ function convertArrayOfObjectsToCSV(array) {
 
 //Main Componente
 export default function Inventario() {
-  const { isDarkMode } = useUI5Theme();
+
 
   //Consigo los datos del inventario
   const { 

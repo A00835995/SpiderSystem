@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar";
-import { useUI5Theme } from "../components/UI5ThemeProvider";
+
 
 // Lazy loading de las páginas
 const LazyLogin = React.lazy(() => import("../pages/Login"));
@@ -49,7 +49,6 @@ const PageWrapper = ({ component: Component }) => (
 
 function Layout() {
   const location = useLocation();
-  const { theme } = useUI5Theme();
   const [sidebarWidth, setSidebarWidth] = useState(64);
   const [isMobile, setIsMobile] = useState(false);
 
