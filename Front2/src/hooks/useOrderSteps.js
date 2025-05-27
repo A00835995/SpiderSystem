@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+//Este hook se encarga de manejar los pasos de la orden
 const useOrderSteps = (totalSteps = 5) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedProvider, setSelectedProvider] = useState(null);

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+//Este hook se encarga de calcular los datos de la orden
 const useOrderCalculations = (selectedProducts, products) => {
   const getProductById = (productId) => {
     return products.find(p => p.id === productId);
