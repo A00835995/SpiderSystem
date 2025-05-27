@@ -1,119 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  Title,
-  Text,
-  Button,
-  Dialog,
-  Input,
-  Label,
-  Form,
-  FormItem,
-  FlexBox,
-  FlexBoxJustifyContent,
-  FlexBoxAlignItems,
-  Icon,
-  ObjectStatus,
-  ValueState,
-  Select,
-  Option,
-  AnalyticalTable,
-  MessageStrip,
-  Bar,
-  Badge,
-  Toolbar,
-  ToolbarSpacer,
-  IllustratedMessage,
-  IllustrationMessageType,
-  Popover,
-  ButtonDesign
-} from '@ui5/webcomponents-react';
+import { Card, Title } from '@ui5/webcomponents-react';
 import { useNavigate } from 'react-router-dom';
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
 
-// Componente de diálogo personalizado sin capa bloqueante
-const CustomDialog = ({ isOpen, onClose, title, children, footer, width = "900px" }) => {
-  if (!isOpen) return null;
-
-  // Prevenir que clics dentro del diálogo cierren el diálogo
-  const handleDialogClick = (e) => {
-    e.stopPropagation();
-  };
-
-  return (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)'
-      }}
-      onClick={onClose} // Cerrar al hacer clic fuera del diálogo
-    >
-      <div 
-        style={{
-          width: width,
-          maxWidth: '95vw',
-          maxHeight: '90vh',
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 0 24px rgba(0, 0, 0, 0.15)',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          position: 'relative',
-          zIndex: 1001
-        }}
-        onClick={handleDialogClick} // Evitar que clics dentro del diálogo lo cierren
-      >
-        {/* Header */}
-        <div style={{ 
-          padding: '0.75rem 1rem',
-          borderBottom: '1px solid #e5e5e5',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          backgroundColor: '#f5f5f5'
-        }}>
-          <Title level="H4">{title}</Title>
-          <Button 
-            icon="decline" 
-            design="Transparent" 
-            onClick={onClose}
-            ariaLabel="Cerrar"
-          />
-        </div>
-        
-        {/* Content */}
-        <div style={{ 
-          padding: '1rem', 
-          overflowY: 'auto',
-          flexGrow: 1,
-          maxHeight: 'calc(80vh - 120px)'
-        }}>
-          {children}
-        </div>
-        
-        {/* Footer */}
-        <div style={{ 
-          padding: '0.75rem 1rem',
-          borderTop: '1px solid #e5e5e5',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          backgroundColor: '#f5f5f5'
-        }}>
-          {footer}
-        </div>
-      </div>
-    </div>
-  );
-};
+// Importar componentes refactorizados
+import ComprasProveedorHeader from '../components/comprasproveedor(Ordenes)/ComprasProveedorHeader';
+import ComprasToolbar from '../components/comprasproveedor(Ordenes)/ComprasToolbar';
+import ComprasTable from '../components/comprasproveedor(Ordenes)/ComprasTable';
+import PaginationControls from '../components/comprasproveedor(Ordenes)/PaginationControls';
+import DetailsDialog from '../components/comprasproveedor(Ordenes)/DetailsDialog';
+import ConfirmDialog from '../components/comprasproveedor(Ordenes)/ConfirmDialog';
 
 const ComprasProveedor = () => {
   const navigate = useNavigate();
@@ -121,12 +17,11 @@ const ComprasProveedor = () => {
   const [compras, setCompras] = useState([]);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [selectedCompra, setSelectedCompra] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [actionType, setActionType] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); // Mostramos 5 elementos por página por defecto
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
     // Simulación de carga de datos
@@ -383,130 +278,80 @@ const ComprasProveedor = () => {
   const currentItems = filteredCompras.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredCompras.length / itemsPerPage);
 
-  // Función para manejar la paginación de forma segura
-  const paginate = (pageNumber) => {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-      // Hacer scroll al inicio de la tabla
-      document.querySelector('.analyticalTable')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  // Manejar ver detalles
+  // Handlers para las acciones
   const handleViewDetails = (compra) => {
     setSelectedCompra(compra);
     setShowDetailsDialog(true);
   };
 
-  // Manejar confirmar compra
   const handleConfirmCompra = (compra) => {
     setSelectedCompra(compra);
     setActionType('confirm');
     setShowConfirmDialog(true);
   };
 
-  // Manejar rechazar compra
   const handleRejectCompra = (compra) => {
     setSelectedCompra(compra);
     setActionType('reject');
-    setShowRejectDialog(true);
+    setShowConfirmDialog(true);
   };
 
-  // Confirmar acción
+  const handleConfirmFromDetails = () => {
+    setActionType('confirm');
+    setShowConfirmDialog(true);
+  };
+
+  const handleRejectFromDetails = () => {
+    setActionType('reject');
+    setShowConfirmDialog(true);
+  };
+
   const handleConfirmAction = () => {
     if (actionType === 'confirm') {
-      // Actualizar estado a en_proceso (en lugar de confirmada)
       const updatedCompras = compras.map(compra => 
         compra.id === selectedCompra.id 
           ? { ...compra, estado: 'en_proceso' } 
           : compra
       );
       setCompras(updatedCompras);
-      setShowConfirmDialog(false);
-      setShowDetailsDialog(false);
-      
-      // Mostrar mensaje de éxito
       alert('Orden aceptada exitosamente');
     } else if (actionType === 'reject') {
-      // Eliminar la orden de la lista
       const updatedCompras = compras.filter(compra => compra.id !== selectedCompra.id);
       setCompras(updatedCompras);
-      setShowRejectDialog(false);
-      setShowDetailsDialog(false);
-      
-      // Mostrar mensaje de éxito
       alert('Orden rechazada exitosamente');
     }
+    
+    setShowConfirmDialog(false);
+    setShowDetailsDialog(false);
     setSelectedCompra(null);
     setActionType(null);
   };
 
-  // Obtener color del estado
-  const getStatusValueState = (estado) => {
-    switch(estado) {
-      case 'pendiente': return ValueState.Warning;
-      case 'en_proceso': return ValueState.Information;
-      case 'en_transito': return ValueState.Information;
-      case 'confirmada': return ValueState.Success;
-      case 'completada': return ValueState.Success;
-      case 'rechazada': return ValueState.Error;
-      case 'cancelada': return ValueState.Error;
-      default: return ValueState.Warning; // Por defecto muestra como pendiente
-    }
-  };
 
-  // Obtener texto del estado
-  const getStatusText = (estado) => {
-    switch(estado) {
-      case 'pendiente': return 'Pendiente';
-      case 'en_proceso': return 'En proceso';
-      case 'en_transito': return 'En tránsito';
-      case 'confirmada': return 'Confirmada';
-      case 'completada': return 'Completada';
-      case 'rechazada': return 'Rechazada';
-      case 'cancelada': return 'Cancelada';
-      default: return 'Pendiente'; // Por defecto muestra como pendiente
-    }
-  };
 
-  // Obtener color de prioridad
-  const getPriorityValueState = (prioridad) => {
-    switch(prioridad) {
-      case 'alta': return ValueState.Error;
-      case 'media': return ValueState.Warning;
-      case 'baja': return ValueState.Information;
-      default: return ValueState.None;
-    }
-  };
-
-  // Obtener color de badge de prioridad
-  const getPriorityBadgeColor = (prioridad) => {
-    switch(prioridad) {
-      case 'alta': return '3'; // Rojo
-      case 'media': return '7'; // Naranja
-      case 'baja': return '8'; // Azul
-      default: return '10';
-    }
-  };
-
-  // Obtener texto de prioridad
-  const getPriorityText = (prioridad) => {
-    switch(prioridad) {
-      case 'alta': return 'Alta';
-      case 'media': return 'Media';
-      case 'baja': return 'Baja';
-      default: return prioridad;
-    }
-  };
-
-  // Formatear fecha
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    return new Date(dateString).toLocaleDateString('es-MX', options);
-  };
-
-  // Exportar a CSV
   const handleExportData = () => {
+    const getStatusText = (estado) => {
+      switch(estado) {
+        case 'pendiente': return 'Pendiente';
+        case 'en_proceso': return 'En proceso';
+        case 'en_transito': return 'En tránsito';
+        case 'confirmada': return 'Confirmada';
+        case 'completada': return 'Completada';
+        case 'rechazada': return 'Rechazada';
+        case 'cancelada': return 'Cancelada';
+        default: return 'Pendiente';
+      }
+    };
+
+    const getPriorityText = (prioridad) => {
+      switch(prioridad) {
+        case 'alta': return 'Alta';
+        case 'media': return 'Media';
+        case 'baja': return 'Baja';
+        default: return prioridad;
+      }
+    };
+
     const header = [
       'Número de Orden',
       'Fecha de Pedido',
@@ -549,166 +394,20 @@ const ComprasProveedor = () => {
     document.body.removeChild(link);
   };
 
-  // Definir las columnas para la tabla analítica
-  const columns = [
-    {
-      Header: "Número de Orden",
-      accessor: "id",
-      width: 150
-    },
-    {
-      Header: "Fecha de Pedido",
-      accessor: "fecha",
-      width: 150,
-      Cell: ({ value }) => formatDate(value)
-    },
-    {
-      Header: "Producto",
-      accessor: "producto",
-      width: 200
-    },
-    {
-      Header: "Cantidad",
-      accessor: "cantidad",
-      width: 100,
-      Cell: ({ value }) => (
-        <Badge colorScheme={value > 30 ? "8" : "10"}>
-          {value}
-        </Badge>
-      )
-    },
-    {
-      Header: "Estado",
-      accessor: "estado",
-      width: 120,
-      Cell: ({ value }) => {
-        const estado = value || 'pendiente'; // Si no hay valor, mostrar como pendiente
-        let backgroundColor;
-        let textColor = 'white';
-        
-        // Asignar colores según el estado
-        switch(estado) {
-          case 'pendiente':
-            backgroundColor = '#e9730c'; // Naranja para Pendiente
-            break;
-          case 'en_proceso':
-            backgroundColor = '#0a6ed1'; // Azul para En proceso
-            break;
-          case 'en_transito':
-            backgroundColor = '#0a6ed1'; // Azul para En tránsito
-            break;
-          case 'completada':
-          case 'confirmada':
-            backgroundColor = '#107e3e'; // Verde para Completada/Confirmada
-            break;
-          default:
-            backgroundColor = '#e9730c'; // Por defecto Naranja
-        }
-        
-        return (
-          <div style={{
-            backgroundColor: backgroundColor,
-            color: textColor,
-            padding: '4px 8px',
-            borderRadius: '4px',
-            display: 'inline-block',
-            fontWeight: 'bold',
-            fontSize: '0.875rem',
-            textAlign: 'center'
-          }}>
-            {getStatusText(estado)}
-          </div>
-        );
-      }
-    },
-    {
-      Header: "Prioridad",
-      accessor: "prioridad",
-      width: 120,
-      Cell: ({ value }) => (
-        <Badge colorScheme={getPriorityBadgeColor(value)}>
-          {getPriorityText(value)}
-        </Badge>
-      )
-    },
-    {
-      Header: "Fecha Límite",
-      accessor: "fechaLimite",
-      width: 150,
-      Cell: ({ value }) => formatDate(value)
-    },
-    {
-      Header: "Notas",
-      accessor: "notas",
-      width: 200
-    },
-    {
-      Header: "Método de Envío",
-      accessor: "metodoEnvio",
-      width: 180
-    },
-    {
-      Header: "Dirección de Entrega",
-      accessor: "direccionEntrega",
-      width: 300
-    },
-    {
-      Header: "Acciones",
-      accessor: "actions",
-      width: 300,
-      Cell: ({ row }) => (
-        <FlexBox style={{ gap: '0.5rem' }}>
-          <Button 
-            design="Emphasized"
-            icon="detail-view"
-            onClick={() => handleViewDetails(row.original)}
-            style={{ backgroundColor: '#0854a0', color: 'white' }}
-          >
-            Ver Detalle
-          </Button>
-          {row.original.estado === 'pendiente' && (
-            <>
-              <Button 
-                design="Negative"
-                icon="decline"
-                onClick={() => handleRejectCompra(row.original)}
-                style={{ backgroundColor: '#bb0000', color: 'white' }}
-              >
-                Rechazar
-              </Button>
-              <Button 
-                design="Emphasized"
-                icon="accept"
-                onClick={() => handleConfirmCompra(row.original)}
-                style={{ backgroundColor: '#0a6ed1', color: 'white' }}
-              >
-                Aceptar
-              </Button>
-            </>
-          )}
-        </FlexBox>
-      )
-    }
-  ];
+
 
   return (
     <div style={{ 
       padding: '1.5rem',
-      paddingTop: '6rem', // Espacio mayor en la parte superior para dejar espacio al header
+      paddingTop: '6rem',
       maxWidth: '100%',
       boxSizing: 'border-box',
-      background: '#f5f5f5' // Fondo sutil para mejor contraste
+      background: '#f5f5f5'
     }}>
-      {/* Encabezado de la página */}
-      <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ 
-        marginBottom: '2rem',
-        padding: '0.5rem 0'
-      }}>
-        <Icon name="shopping-cart" style={{ marginRight: '1rem', fontSize: '2rem', color: '#0854a0' }} />
-        <Title level="H1" style={{ margin: 0, color: '#333' }}>Órdenes de Compra - Super Shoes</Title>
-      </FlexBox>
+      {/* Header */}
+      <ComprasProveedorHeader />
       
-      {/* Tarjeta principal de compras */}
+      {/* Tarjeta principal */}
       <Card 
         style={{ 
           marginBottom: '2rem',
@@ -722,359 +421,55 @@ const ComprasProveedor = () => {
         }
       >
         <div style={{ padding: '1.5rem' }}>
-          {/* Barra de herramientas */}
-          <Toolbar style={{ 
-            marginBottom: '1.5rem',
-            padding: '0.5rem 0'
-          }}>
-            <Button 
-              icon="download"
-              design="Emphasized"
-              onClick={handleExportData}
-              style={{
-                backgroundColor: '#0854a0',
-                color: 'white',
-                padding: '0.5rem 1rem',
-                height: 'auto'
-              }}
-            >
-              Exportar Catálogo
-            </Button>
-            <ToolbarSpacer />
-            <div style={{ position: 'relative', width: '300px' }}>
-              <Input
-                icon="search"
-                placeholder="Buscar orden..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ width: '100%' }}
-              />
-            </div>
-          </Toolbar>
+          {/* Toolbar */}
+          <ComprasToolbar 
+            onExport={handleExportData}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
           
-          {/* Tabla de compras */}
-          <div style={{ 
-            borderRadius: '4px',
-            overflow: 'hidden',
-            boxShadow: '0 1px 4px rgba(0, 0, 0, 0.05)'
-          }}>
-            <AnalyticalTable
-              data={currentItems} // Usamos los elementos paginados
-              columns={columns}
-              visibleRows={itemsPerPage}
-              minRows={itemsPerPage}
-              scaleWidthMode="Grow"
-              alternateRowColor
-              header={<div style={{ height: '0.5rem' }}></div>}
-              noDataText={
-                <IllustratedMessage
-                  name={IllustrationMessageType.SearchEarth}
-                  titleText="No se encontraron compras"
-                  subtitleText="Intenta cambiar tus criterios de búsqueda"
-                  style={{ margin: '2rem 0' }}
-                />
-              }
-            />
-          </div>
+          {/* Tabla */}
+          <ComprasTable 
+            data={currentItems}
+            itemsPerPage={itemsPerPage}
+            onViewDetails={handleViewDetails}
+            onConfirmCompra={handleConfirmCompra}
+            onRejectCompra={handleRejectCompra}
+          />
           
-          {/* Controles de paginación */}
-          {filteredCompras.length > 0 && (
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center', 
-              margin: '1.5rem 0',
-              padding: '1rem 0',
-              borderTop: '1px solid #e5e5e5'
-            }}>
-              {/* Selector de elementos por página */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <Text>Elementos por página:</Text>
-                <Select
-                  onChange={(e) => {
-                    setItemsPerPage(parseInt(e.detail.selectedOption.dataset.value));
-                    setCurrentPage(1); // Resetear a primera página
-                  }}
-                  style={{ width: '80px' }}
-                >
-                  <Option data-value="5" selected={itemsPerPage === 5}>5</Option>
-                  <Option data-value="10" selected={itemsPerPage === 10}>10</Option>
-                  <Option data-value="15" selected={itemsPerPage === 15}>15</Option>
-                </Select>
-              </div>
-              
-              {/* Controles de navegación */}
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                gap: '0.5rem'
-              }}>
-                <Button 
-                  icon="nav-back" 
-                  design="Transparent"
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  ariaLabel="Página anterior"
-                  style={{ minWidth: '36px', height: '36px', padding: '0' }}
-                />
-                
-                {/* Mostrar números de página */}
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  // Mostrar solo un subconjunto de páginas si hay muchas
-                  .filter(number => 
-                    number === 1 || 
-                    number === totalPages || 
-                    (number >= currentPage - 1 && number <= currentPage + 1)
-                  )
-                  .map((number, index, array) => (
-                    <React.Fragment key={number}>
-                      {/* Mostrar puntos suspensivos si hay saltos en la secuencia */}
-                      {index > 0 && array[index - 1] !== number - 1 && (
-                        <span style={{ margin: '0 4px' }}>...</span>
-                      )}
-                      <Button 
-                        design={number === currentPage ? "Emphasized" : "Default"}
-                        onClick={() => paginate(number)}
-                        style={{
-                          minWidth: '36px',
-                          height: '36px',
-                          padding: '0',
-                          borderRadius: '4px',
-                          ...(number === currentPage 
-                            ? { backgroundColor: '#0854a0', color: 'white' } 
-                            : {})
-                        }}
-                      >
-                        {number}
-                      </Button>
-                    </React.Fragment>
-                  ))
-                }
-                
-                <Button 
-                  icon="nav-forward" 
-                  design="Transparent"
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  ariaLabel="Página siguiente"
-                  style={{ minWidth: '36px', height: '36px', padding: '0' }}
-                />
-              </div>
-              
-              {/* Información de paginación */}
-              <div style={{ color: '#666', fontSize: '0.875rem' }}>
-                {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredCompras.length)} de {filteredCompras.length}
-              </div>
-            </div>
-          )}
+          {/* Paginación */}
+          <PaginationControls 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={filteredCompras.length}
+            indexOfFirstItem={indexOfFirstItem}
+            indexOfLastItem={indexOfLastItem}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={(newItemsPerPage) => {
+              setItemsPerPage(newItemsPerPage);
+              setCurrentPage(1);
+            }}
+          />
         </div>
       </Card>
 
-      {/* Diálogo de detalles personalizado */}
-      <CustomDialog
+      {/* Diálogos */}
+      <DetailsDialog 
         isOpen={showDetailsDialog}
         onClose={() => setShowDetailsDialog(false)}
-        title="Detalles de la Compra"
-        footer={
-          <FlexBox style={{ gap: '0.5rem', justifyContent: 'flex-end' }}>
-            <Button 
-              design="Default"
-              onClick={() => setShowDetailsDialog(false)}
-            >
-              Cerrar
-            </Button>
-            {selectedCompra && selectedCompra.estado === 'pendiente' && (
-              <>
-                <Button 
-                  design="Negative"
-                  icon="decline"
-                  onClick={() => {
-                    setActionType('reject');
-                    setShowRejectDialog(true);
-                  }}
-                  style={{ backgroundColor: '#bb0000', color: 'white' }}
-                >
-                  Rechazar Orden
-                </Button>
-                <Button 
-                  design="Emphasized"
-                  icon="accept"
-                  onClick={() => {
-                    setActionType('confirm');
-                    setShowConfirmDialog(true);
-                  }}
-                  style={{ backgroundColor: '#0854a0', color: 'white' }}
-                >
-                  Aceptar
-                </Button>
-              </>
-            )}
-          </FlexBox>
-        }
-      >
-        {selectedCompra && (
-          <div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
-              <div style={{ flex: '1 1 300px' }}>
-                <Form columnsL={1} columnsXL={1}>
-                  <FormItem label="Número de Orden:">
-                    <Title level="H5">{selectedCompra.id}</Title>
-                  </FormItem>
-                  
-                  <FormItem label="Proveedor:">
-                    <Text>{selectedCompra.proveedor}</Text>
-                  </FormItem>
-                  
-                  <FormItem label="Fecha:">
-                    <Text>{formatDate(selectedCompra.fecha)}</Text>
-                  </FormItem>
-                  
-                  <FormItem label="Estado:">
-                    <ObjectStatus
-                      state={getStatusValueState(selectedCompra.estado)}
-                      text={getStatusText(selectedCompra.estado)}
-                    />
-                  </FormItem>
-                  
-                  <FormItem label="Prioridad:">
-                    <Badge colorScheme={getPriorityBadgeColor(selectedCompra.prioridad)}>
-                      {getPriorityText(selectedCompra.prioridad)}
-                    </Badge>
-                  </FormItem>
-                </Form>
-              </div>
-              
-              <div style={{ flex: '1 1 300px' }}>
-                <Form columnsL={1} columnsXL={1}>
-                  <FormItem label="Producto:">
-                    <Text>{selectedCompra.producto}</Text>
-                  </FormItem>
-                  
-                  <FormItem label="Cantidad:">
-                    <Badge colorScheme="8">{selectedCompra.cantidad}</Badge>
-                  </FormItem>
-                  
-                  <FormItem label="Precio Unitario:">
-                    <Text>${selectedCompra.precioUnitario.toLocaleString()}</Text>
-                  </FormItem>
-                  
-                  <FormItem label="Total:">
-                    <Text style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                      ${selectedCompra.total.toLocaleString()}
-                    </Text>
-                  </FormItem>
-                  
-                  <FormItem label="Fecha Límite:">
-                    <Text>{formatDate(selectedCompra.fechaLimite)}</Text>
-                  </FormItem>
-                </Form>
-              </div>
-            </div>
+        selectedCompra={selectedCompra}
+        onConfirm={handleConfirmFromDetails}
+        onReject={handleRejectFromDetails}
+      />
 
-            <div style={{ marginTop: '2rem' }}>
-              <Title level="H5" style={{ marginBottom: '1rem' }}>Información de Entrega</Title>
-              <Form columnsL={1} columnsXL={1}>
-                <FormItem label="Método de Envío">
-                  <Text>{selectedCompra.metodoEnvio}</Text>
-                </FormItem>
-                <FormItem label="Dirección de Entrega">
-                  <Text>{selectedCompra.direccionEntrega}</Text>
-                </FormItem>
-                <FormItem label="Notas">
-                  <Text>{selectedCompra.notas !== "-" ? selectedCompra.notas : "No hay notas adicionales"}</Text>
-                </FormItem>
-              </Form>
-            </div>
-
-            <div style={{ marginTop: '2rem' }}>
-              <Title level="H5" style={{ marginBottom: '1rem' }}>Información de Pago</Title>
-              <Form columnsL={1} columnsXL={1}>
-                <FormItem label="Método de Pago">
-                  <Text>{selectedCompra.detalles.metodoPago}</Text>
-                </FormItem>
-                <FormItem label="Términos de Pago">
-                  <Text>{selectedCompra.detalles.terminosPago}</Text>
-                </FormItem>
-              </Form>
-            </div>
-          </div>
-        )}
-      </CustomDialog>
-
-      {/* Diálogo de confirmación personalizado */}
-      <CustomDialog
+      <ConfirmDialog 
         isOpen={showConfirmDialog}
         onClose={() => setShowConfirmDialog(false)}
-        title="Aceptar Compra"
-        width="500px"
-        footer={
-          <FlexBox style={{ gap: '0.5rem', justifyContent: 'flex-end' }}>
-            <Button 
-              design="Default"
-              onClick={() => setShowConfirmDialog(false)}
-              style={{ marginRight: '8px' }}
-            >
-              Cancelar
-            </Button>
-            <Button 
-              design="Emphasized" 
-              icon="accept"
-              onClick={handleConfirmAction}
-              style={{ backgroundColor: '#0854a0', color: 'white' }}
-            >
-              Aceptar
-            </Button>
-          </FlexBox>
-        }
-      >
-        <div>
-          <Text>¿Estás seguro que deseas aceptar la compra {selectedCompra?.id}?</Text>
-          <MessageStrip
-            design="Information"
-            style={{ marginTop: '1rem' }}
-          >
-            Esta acción cambiará el estado de la compra a "En proceso"
-          </MessageStrip>
-        </div>
-      </CustomDialog>
-
-      {/* Diálogo de rechazo personalizado */}
-      <CustomDialog
-        isOpen={showRejectDialog}
-        onClose={() => setShowRejectDialog(false)}
-        title="Rechazar Compra"
-        width="500px"
-        footer={
-          <FlexBox style={{ gap: '0.5rem', justifyContent: 'flex-end' }}>
-            <Button 
-              design="Default"
-              onClick={() => setShowRejectDialog(false)}
-              style={{ marginRight: '8px' }}
-            >
-              Cancelar
-            </Button>
-            <Button 
-              design="Negative" 
-              icon="decline"
-              onClick={handleConfirmAction}
-              style={{ backgroundColor: '#bb0000', color: 'white' }}
-            >
-              Rechazar
-            </Button>
-          </FlexBox>
-        }
-      >
-        <div>
-          <Text>¿Estás seguro que deseas rechazar la compra {selectedCompra?.id}?</Text>
-          <MessageStrip
-            design="Warning"
-            style={{ marginTop: '1rem' }}
-          >
-            Esta acción eliminará la compra del sistema
-          </MessageStrip>
-        </div>
-      </CustomDialog>
+        onConfirm={handleConfirmAction}
+        selectedCompra={selectedCompra}
+        actionType={actionType}
+      />
     </div>
   );
 };

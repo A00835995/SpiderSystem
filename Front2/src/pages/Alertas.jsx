@@ -74,7 +74,7 @@ export default function Alertas() {
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-
+  
   // Generar alertas basadas en datos
   useEffect(() => {
     const generateAlerts = () => {
@@ -199,7 +199,7 @@ export default function Alertas() {
     
     return () => clearInterval(intervalId);
   }, [refreshTrigger]);
-
+  
   // Filtrar alertas
   useEffect(() => {
     let filtered = [...allAlerts];
@@ -217,26 +217,26 @@ export default function Alertas() {
     setFilteredAlerts(filtered);
     setCurrentPage(1);
   }, [allAlerts, selectedFilter]);
-
+  
   // Obtener alertas para la página actual
   const currentAlerts = useMemo(() => {
     const startIndex = (currentPage - 1) * ALERTS_PER_PAGE;
     return filteredAlerts.slice(startIndex, startIndex + ALERTS_PER_PAGE);
   }, [filteredAlerts, currentPage]);
-
+  
   // Calcular total de páginas
   const totalPages = Math.ceil(filteredAlerts.length / ALERTS_PER_PAGE);
-
+  
   // Manejadores de eventos
   const handlePageChange = (event) => {
     setCurrentPage(event.detail.page);
   };
-
+  
   const handleAlertClick = (alert) => {
     setSelectedAlert(alert);
     setIsDetailDialogOpen(true);
   };
-
+  
   const handleResolveAlert = (alertId) => {
     setAllAlerts(prevAlerts => 
       prevAlerts.map(alert => 
@@ -253,11 +253,11 @@ export default function Alertas() {
     );
     setIsDetailDialogOpen(false);
   };
-
+  
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1);
   };
-
+  
   // Funciones auxiliares
   const getValueState = (type) => {
     switch (type) {
@@ -267,7 +267,7 @@ export default function Alertas() {
       default: return ValueState.Information;
     }
   };
-
+  
   const getCategoryIcon = (category) => {
     switch (category) {
       case "stock": return "inventory";
@@ -276,7 +276,7 @@ export default function Alertas() {
       default: return "check-availability";
     }
   };
-
+  
   return (
     <div style={styles.mainContent}>
       <AlertHeader />
@@ -291,15 +291,15 @@ export default function Alertas() {
         <AlertList
           alerts={currentAlerts}
           isLoading={isLoading}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
           onAlertClick={handleAlertClick}
           getValueState={getValueState}
           getCategoryIcon={getCategoryIcon}
-        />
+                />
       </div>
-
+      
       <AlertDetailDialog
         alert={selectedAlert}
         isOpen={isDetailDialogOpen}
