@@ -330,27 +330,27 @@ const ComprasProveedor = () => {
 
 
   const handleExportData = () => {
-    const getStatusText = (estado) => {
-      switch(estado) {
-        case 'pendiente': return 'Pendiente';
-        case 'en_proceso': return 'En proceso';
-        case 'en_transito': return 'En tránsito';
-        case 'confirmada': return 'Confirmada';
-        case 'completada': return 'Completada';
-        case 'rechazada': return 'Rechazada';
-        case 'cancelada': return 'Cancelada';
+  const getStatusText = (estado) => {
+    switch(estado) {
+      case 'pendiente': return 'Pendiente';
+      case 'en_proceso': return 'En proceso';
+      case 'en_transito': return 'En tránsito';
+      case 'confirmada': return 'Confirmada';
+      case 'completada': return 'Completada';
+      case 'rechazada': return 'Rechazada';
+      case 'cancelada': return 'Cancelada';
         default: return 'Pendiente';
-      }
-    };
+    }
+  };
 
-    const getPriorityText = (prioridad) => {
-      switch(prioridad) {
-        case 'alta': return 'Alta';
-        case 'media': return 'Media';
-        case 'baja': return 'Baja';
-        default: return prioridad;
-      }
-    };
+  const getPriorityText = (prioridad) => {
+    switch(prioridad) {
+      case 'alta': return 'Alta';
+      case 'media': return 'Media';
+      case 'baja': return 'Baja';
+      default: return prioridad;
+    }
+  };
 
     const header = [
       'Número de Orden',
@@ -426,7 +426,7 @@ const ComprasProveedor = () => {
             onExport={handleExportData}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-          />
+              />
           
           {/* Tabla */}
           <ComprasTable 

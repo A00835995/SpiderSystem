@@ -15,6 +15,7 @@ const LazyAdmin = React.lazy(() => import("../pages/Admin"));
 const LazyCompras = React.lazy(() => import("../pages/Compras"));
 const LazyGestionProveedores = React.lazy(() => import("../pages/Gestion_de_Proveedores"));
 const LazyComprasProveedor = React.lazy(() => import("../pages/ComprasProveedor"));
+const LazyVentas = React.lazy(() => import("../pages/Ventas"));
 const LazyCuenta = React.lazy(() => import("../pages/Cuenta"));
 const LazyChatPage = React.lazy(() => import("../pages/ChatPage"));
 
@@ -79,6 +80,7 @@ function Layout() {
             <Route path="/compras" element={<PageWrapper component={LazyCompras} />} />
             <Route path="/gestion_proveedores" element={<PageWrapper component={LazyGestionProveedores} />} />
             <Route path="/ordenes" element={<PageWrapper component={LazyComprasProveedor} />} />
+            <Route path="/ventas" element={<PageWrapper component={LazyVentas} />} />
             <Route path="/cuenta" element={<PageWrapper component={LazyCuenta} />} />
             <Route path="/chat" element={<PageWrapper component={LazyChatPage} />} />
           </Routes>

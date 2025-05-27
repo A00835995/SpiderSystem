@@ -19,7 +19,8 @@ export function Sidebar() {
     { path: "/chat", label: "Chat", icon: "💬" },
     { path: "/compras", label: "Compras", icon: "🛒" },
     { path: "/gestion_proveedores", label: "Gestión de Proveedores", icon: "🤝" },
-    { path: "/ordenes", label: "Órdenes", icon: "📋" }
+    { path: "/ordenes", label: "Órdenes", icon: "📋" },
+    { path: "/ventas", label: "Ventas", icon: "🛍️" }
   ];
 
   const handleNavigate = (path) => {
