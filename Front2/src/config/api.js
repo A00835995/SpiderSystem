@@ -17,6 +17,20 @@ export const API_CONFIG = {
         actualizarNombreUsuario: "/gestion/actualizar-nombre-usuario",
         actualizarEmailUsuario: "/gestion/actualizar-email-usuario",
         eliminarUsuario: "/gestion/eliminar-usuario",
-        getAlertas: "/alertas/getAlertas"
+        getAlertas: "/alertas/getAlertas",
+        getProveedoresResumen: "/gestion-proveedores/proveedores-resumen",
+        getDetalleProveedor: "/gestion-proveedores/detalle-proveedor/:id",
+        getTiposProveedores: "/gestion-proveedores/tipos-proveedores",
+        getTiposPagosProveedores: "/gestion-proveedores/tipos-pagos-proveedores",
+        crearProveedor: "/gestion-proveedores/crear-proveedor",
+        actualizarNombreProveedor: "/gestion-proveedores/actualizar-nombre/:id",
+        actualizarNombreContactoProveedor: "/gestion-proveedores/actualizar-nombre-contacto/:id",
+        actualizarDireccionProveedor: "/gestion-proveedores/actualizar-direccion/:id",
+        actualizarEmailProveedor: "/gestion-proveedores/actualizar-email/:id",
+        actualizarTelefonoProveedor: "/gestion-proveedores/actualizar-telefono/:id",
+        actualizarTipoProveedor: "/gestion-proveedores/actualizar-tipo/:id",
+        actualizarTipoPagoProveedor: "/gestion-proveedores/actualizar-tipo-pago/:id",
+        getResumenCategorias: "/gestion-proveedores/resumen-categorias",
+        getDistribucionProveedorInventario: "/gestion-proveedores/distribucion-proveedor-inventario",
     }
 };
