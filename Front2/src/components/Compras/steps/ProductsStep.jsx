@@ -65,7 +65,7 @@ const ProductsStep = ({
                 flexDirection: 'column',
                 gap: '1rem',
                 height: '400px',
-                boxShadow: 'var(--sapContent_Shadow0)',
+                //boxShadow: 'var(--sapContent_Shadow0)',
                 transition: 'all 0.2s ease-in-out',
                 '&:hover': {
                   boxShadow: 'var(--sapContent_Shadow2)'
@@ -77,7 +77,7 @@ const ProductsStep = ({
                 height: '200px',
                 overflow: 'hidden',
                 borderRadius: '8px',
-                backgroundColor: 'var(--sapContent_ImagePlaceholderBackground)',
+                //backgroundColor: 'var(--sapContent_ImagePlaceholderBackground)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -178,6 +178,7 @@ const ProductsStep = ({
                     />
                   </>
                 ) : (
+                  //Este botón se en encarga de agregar el producto al carrito
                   <Button
                     design="Emphasized"
                     onClick={() => onProductQuantityChange(product.id, 1)}

@@ -7,10 +7,13 @@ import ImagenZapatoDeVestir from '../Fotos/ImagenZapatoDeVestir.jpg';
 import ImagenBotas from '../Fotos/ImagenBotas.png';
 import ImagenSandalias from '../Fotos/ImagenSandalias.jpg';
 
+//Este hook se encarga de obtener los datos de las compras
 const useComprasData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  //Se está creando un estado para la data de las compras
   const [apiData, setApiData] = useState({
+    //articulos, proveedores, pagos son los datos que se obtienen del backends
     articulos: [],
     proveedores: [],
     pagos: []
@@ -20,7 +23,9 @@ const useComprasData = () => {
     const loadData = async () => {
       try {
         setLoading(true);
+        //Se está cargando la data del backend
         const data = await fetchComprasData();
+        //Se setea la data en el estado 
         setApiData(data);
         setError(null);
       } catch (err) {

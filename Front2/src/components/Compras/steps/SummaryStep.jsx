@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Title,
   Text,
   Button,
   FlexBox,
-  FlexBoxJustifyContent
+  FlexBoxJustifyContent,
+  BusyIndicator
 } from '@ui5/webcomponents-react';
 
 const SummaryStep = ({
@@ -20,10 +21,42 @@ const SummaryStep = ({
   tax,
   total,
   onConfirm,
-  onBack
+  onBack,
+  orderData
 }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
   const selectedDeliveryPoint = deliveryPoints.find(dp => dp.id === deliveryPoint);
   const selectedPaymentMethod = paymentMethods.find(pm => pm.id === paymentMethod);
+
+  // Función para formatear fechas
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const handleConfirmClick = async () => {
+    setIsProcessing(true);
+    try {
+      await onConfirm();
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  if (isProcessing) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        padding: '2rem'
+      }}>
+        <BusyIndicator active size="Large" />
+        <Text style={{ marginTop: '1rem' }}>Procesando su orden...</Text>
+      </div>
+    );
+  }
 
   return (
     <div style={{ 
@@ -44,8 +77,8 @@ const SummaryStep = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <Text>Proveedor: {providers.find(p => p.id === selectedProvider)?.name}</Text>
             <Text>Número de Orden: OC-2025-015</Text>
-            <Text>Fecha de Pedido: {new Date().toLocaleDateString()}</Text>
-            <Text>Fecha Estimada de Entrega: {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}</Text>
+            <Text>Fecha de Pedido: {formatDate(orderData.fechaPedido)}</Text>
+            <Text>Fecha Estimada de Entrega: {formatDate(orderData.fechaEntrega)}</Text>
             <Text>Método de Envío: Envío estándar (3-5 días hábiles)</Text>
             <Text>Punto de Entrega: {selectedDeliveryPoint?.name}</Text>
             <Text>Método de Pago: {selectedPaymentMethod?.name}</Text>
@@ -149,15 +182,17 @@ const SummaryStep = ({
           style={{
             minWidth: '120px'
           }}
+          disabled={isProcessing}
         >
           Atrás
         </Button>
         <Button
           design="Emphasized"
-          onClick={onConfirm}
+          onClick={handleConfirmClick}
           style={{
             minWidth: '120px'
           }}
+          disabled={isProcessing}
         >
           Confirmar Pedido
         </Button>
