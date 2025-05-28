@@ -28,6 +28,7 @@ const ProveedorDetailsDialog = ({
   onUpdateEmail,
   onUpdateTipo,
   onUpdateTipoPago,
+  onEliminarProveedor,
   tiposProveedores,
   tiposPagos
 }) => {
@@ -38,6 +39,8 @@ const ProveedorDetailsDialog = ({
   const [updateError, setUpdateError] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Inicializar valores de edición cuando se selecciona un proveedor
   useEffect(() => {
@@ -211,6 +214,45 @@ const ProveedorDetailsDialog = ({
       setUpdateError(`Error al actualizar ${field}: ${error.message}`);
     } finally {
       setUpdating(false);
+    }
+  };
+
+  // Función para manejar la eliminación del proveedor
+  const handleEliminarProveedor = async () => {
+    if (!selectedProveedor || !onEliminarProveedor) {
+      setUpdateError('No se puede eliminar el proveedor');
+      return;
+    }
+
+    const proveedorId = selectedProveedor.idProveedor || 
+                       selectedProveedor.id || 
+                       selectedProveedor.PROVID ||
+                       selectedProveedor.proveedorId;
+
+    if (!proveedorId) {
+      setUpdateError('No se pudo identificar el ID del proveedor');
+      return;
+    }
+
+    setDeleting(true);
+    setUpdateError(null);
+
+    try {
+      await onEliminarProveedor(proveedorId);
+      
+      // Mostrar toast de éxito
+      setToastMessage('Proveedor eliminado exitosamente');
+      setShowToast(true);
+      
+      // Cerrar el diálogo inmediatamente
+      onClose();
+      
+    } catch (error) {
+      console.error('Error al eliminar proveedor:', error);
+      setUpdateError(`Error al eliminar proveedor: ${error.message}`);
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -534,8 +576,22 @@ const ProveedorDetailsDialog = ({
           padding: '1rem 1.5rem',
           borderTop: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
           display: 'flex',
-          justifyContent: 'flex-end'
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
+          <Button 
+            design="Negative" 
+            onClick={() => setShowDeleteConfirm(true)}
+            disabled={deleting || updating}
+            style={{ 
+              minWidth: '5rem',
+              backgroundColor: '#bb0000',
+              color: 'white'
+            }}
+          >
+            {deleting ? 'Eliminando...' : 'Eliminar'}
+          </Button>
+          
           <Button 
             design="Emphasized" 
             onClick={onClose}
@@ -549,6 +605,106 @@ const ProveedorDetailsDialog = ({
           </Button>
         </div>
       </div>
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteConfirm && (
+        <>
+          {/* Backdrop para confirmación */}
+          <div 
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              backdropFilter: 'blur(2px)',
+              zIndex: 1001,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+            onClick={() => setShowDeleteConfirm(false)}
+          />
+          
+          {/* Modal de confirmación */}
+          <div
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 'fit-content',
+              minWidth: window.innerWidth <= 768 ? '90vw' : '400px',
+              maxWidth: '90vw',
+              backgroundColor: isDarkMode ? '#2d2d2d' : '#ffffff',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              borderRadius: '0.5rem',
+              border: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+              zIndex: 1002,
+              overflow: 'hidden'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header de confirmación */}
+            <div style={{
+              padding: '1rem 1.5rem',
+              borderBottom: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <Title level="H5" style={{ margin: 0, color: isDarkMode ? '#ffffff' : '#32363a' }}>
+                Confirmar Eliminación
+              </Title>
+            </div>
+
+            {/* Body de confirmación */}
+            <div style={{ padding: '1.5rem' }}>
+              <Text style={{ 
+                color: isDarkMode ? '#e0e0e0' : '#32363a',
+                fontSize: '1rem',
+                lineHeight: '1.5'
+              }}>
+                ¿Está seguro que desea eliminar el proveedor <strong>{selectedProveedor?.nombreProveedor}</strong>?
+                <br /><br />
+                Esta acción no se puede deshacer.
+              </Text>
+            </div>
+
+            {/* Footer de confirmación */}
+            <div style={{
+              padding: '1rem 1.5rem',
+              borderTop: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '0.5rem'
+            }}>
+              <Button 
+                design="Transparent" 
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deleting}
+                style={{ minWidth: '5rem' }}
+              >
+                Cancelar
+              </Button>
+              
+              <Button 
+                design="Negative" 
+                onClick={handleEliminarProveedor}
+                disabled={deleting}
+                style={{ 
+                  minWidth: '5rem',
+                  backgroundColor: '#bb0000',
+                  color: 'white'
+                }}
+              >
+                {deleting ? 'Eliminando...' : 'Eliminar'}
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

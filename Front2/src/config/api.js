@@ -30,6 +30,7 @@ export const API_CONFIG = {
         actualizarTelefonoProveedor: "/gestion-proveedores/actualizar-telefono/:id",
         actualizarTipoProveedor: "/gestion-proveedores/actualizar-tipo/:id",
         actualizarTipoPagoProveedor: "/gestion-proveedores/actualizar-tipo-pago/:id",
+        eliminarProveedor: "/gestion-proveedores/eliminar-proveedor/:id",
         getResumenCategorias: "/gestion-proveedores/resumen-categorias",
         getDistribucionProveedorInventario: "/gestion-proveedores/distribucion-proveedor-inventario",
         compras: {

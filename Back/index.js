@@ -11,6 +11,7 @@ const gestionRoutes = require('./Routes/gestionRutes');
 const alertasRoutes = require('./Routes/alertaRoutes');
 const gestionProvRoutes = require('./Routes/gestionProvRoutes');
 const comprasRoutes = require('./Routes/comprasRoutes');
+const permisosRoutes = require('./Routes/permisosRoutes');
 
 // Middleware
 app.use(cors());
@@ -25,6 +26,8 @@ app.use('/api/gestion', gestionRoutes);
 app.use('/api/alertas', alertasRoutes);
 app.use('/api/gestion-proveedores', gestionProvRoutes);
 app.use('/api/compras', comprasRoutes);
+app.use('/api/permisos', permisosRoutes);
+
 
 //El servidor link
 const PORT = process.env.PORT || 4000;

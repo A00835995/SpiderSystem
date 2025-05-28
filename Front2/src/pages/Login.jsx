@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUI5Theme } from "../components/UI5ThemeProvider";
+import { useAuth } from "../hooks/useAuth";
 import {
   Card,
   Form,
@@ -36,6 +37,7 @@ const LOGO_DARK = "/logo-light.png"; // Logo blanco para modo oscuro (fondo oscu
 export default function Login() {
   const navigate = useNavigate();
   const { isDarkMode } = useUI5Theme();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -69,15 +71,23 @@ export default function Login() {
         return;
       }
   
-      // Guarda el token (puedes usar localStorage o context)
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      console.log(localStorage.getItem("token"));
-      console.log(localStorage.getItem("user"));
-      console.log(JSON.parse(localStorage.getItem("user")).name);
-
-      // Redirecciona al dashboard
-      navigate("/home");
+      // Usar el hook de autenticación para manejar el login
+      const loginSuccess = await login(data.user, data.token);
+      
+      if (loginSuccess) {
+        console.log("Login exitoso, usuario:", data.user.name, "rol:", data.user.role);
+        
+        // Redirección basada en el rol del usuario
+        if (data.user.role === 4) {
+          // Rol 4 = PROVEEDOR -> redirigir a órdenes
+          navigate("/ordenes");
+        } else {
+          // Otros roles -> redirigir al dashboard principal
+          navigate("/home");
+        }
+      } else {
+        setError("Error al procesar el login");
+      }
     } catch (err) {
       console.error("Error al conectar con el servidor:", err);
       setError("No se pudo conectar al servidor");

@@ -369,17 +369,15 @@ exports.actualizarTipoPagoProveedor = async (req, res) => {
         }
 
         if (!tipoPago) {
-            console.log("tipoPago", tipoPago, "id", id);
             const response = GestionProveedoresResponseDto.validationErrorResponse(
-                'Se requiere el ID del tipo de pago',
+                'Se requiere el nuevo tipo de pago del proveedor',
                 ['tipoPago']
             );
             return res.status(400).json(response);
         }
 
         const result = await executeQuery(
-            'CALL ACTUALIZAR_TIPO_PAGO_PROVEEDOR(?, ?)', 
-            [id, tipoPago]
+            'CALL ACTUALIZAR_TIPO_PAGO_PROVEEDOR(?, ?)', [id, tipoPago]
         );
 
         const response = GestionProveedoresResponseDto.updateProveedorResponse("Tipo de pago", result);
@@ -389,6 +387,44 @@ exports.actualizarTipoPagoProveedor = async (req, res) => {
         console.error("Error en actualizarTipoPagoProveedor:", error.message);
         const response = GestionProveedoresResponseDto.errorResponse(
             "Error en el servidor al actualizar el tipo de pago del proveedor",
+            error.message
+        );
+        res.status(500).json(response);
+    }
+};
+
+exports.eliminarProveedor = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            const response = GestionProveedoresResponseDto.validationErrorResponse(
+                'Se requiere el ID del proveedor',
+                ['id']
+            );
+            return res.status(400).json(response);
+        }
+
+        // Verificar que el proveedor existe antes de eliminarlo
+        const proveedorExiste = await executeQuery('CALL GETDETALLEPROVEEDORPORID(?)', [id]);
+        
+        if (!proveedorExiste || proveedorExiste.length === 0) {
+            const response = GestionProveedoresResponseDto.notFoundResponse(
+                `No se encontró el proveedor con ID ${id}`,
+                "Proveedor"
+            );
+            return res.status(404).json(response);
+        }
+
+        const result = await executeQuery('CALL ELIMINAR_PROVEEDOR(?)', [id]);
+
+        const response = GestionProveedoresResponseDto.deleteProveedorResponse(result);
+        return res.status(200).json(response);
+
+    } catch (error) {
+        console.error("Error en eliminarProveedor:", error.message);
+        const response = GestionProveedoresResponseDto.errorResponse(
+            "Error en el servidor al eliminar el proveedor",
             error.message
         );
         res.status(500).json(response);
