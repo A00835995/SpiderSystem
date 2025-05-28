@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUI5Theme } from "./UI5ThemeProvider";
+import { usePermisos } from "../contexts/PermisosContext";
+import { useAuth } from "../hooks/useAuth";
 
 export function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useUI5Theme();
+  const { filtrarRutasSidebar, loading: permisosLoading } = usePermisos();
+  const { logout, user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const menuItems = [
+  // Definir todos los elementos del menú disponibles
+  const allMenuItems = [
     { path: "/home", label: "Inicio", icon: "🏠" },
     { path: "/sistema_de_alertas", label: "Sistema de Alertas", icon: "⚠️" },
     { path: "/analisis_predictivo", label: "Análisis Predictivo", icon: "📊" },
@@ -23,8 +28,22 @@ export function Sidebar() {
     { path: "/ventas", label: "Ventas", icon: "🛍️" }
   ];
 
+  // Filtrar elementos del menú basado en permisos
+  const menuItems = useMemo(() => {
+    if (permisosLoading) {
+      return []; // No mostrar elementos mientras se cargan los permisos
+    }
+    
+    return filtrarRutasSidebar(allMenuItems);
+  }, [filtrarRutasSidebar, permisosLoading]);
+
   const handleNavigate = (path) => {
     navigate(path);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
   return (
@@ -73,7 +92,15 @@ export function Sidebar() {
             Spider System
           </span>
         </div>
-        <div style={{ display: "flex", gap: "15px" }}>
+        <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
+          {user && (
+            <span style={{ 
+              color: isDarkMode ? "#fff" : "#000",
+              fontSize: "14px",
+              marginRight: "10px"
+            }}>Hola, {user.name}
+            </span>
+          )}
           <button
             onClick={toggleDarkMode}
             style={{
@@ -99,6 +126,20 @@ export function Sidebar() {
             aria-label="Mi cuenta"
           >
             👤
+          </button>
+          <button
+            onClick={handleLogout}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "20px",
+              cursor: "pointer",
+              color: isDarkMode ? "#fff" : "#000"
+            }}
+            aria-label="Cerrar sesión"
+            title="Cerrar sesión"
+          >
+            🚪
           </button>
         </div>
       </div>
@@ -132,56 +173,67 @@ export function Sidebar() {
           }}
         >
           <nav style={{ padding: "20px 0" }}>
-            {menuItems.map((item) => {
-              const active = location.pathname === item.path;
-              return (
-                <div
-                  key={item.path}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => handleNavigate(item.path)}
-                  onKeyDown={(e) => e.key === "Enter" && handleNavigate(item.path)}
-                  style={{
-                    padding: "12px 20px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    cursor: "pointer",
-                    backgroundColor: active
-                      ? isDarkMode
-                        ? "#333"
-                        : "#f0f0f0"
-                      : "transparent",
-                    color: isDarkMode ? "#fff" : "#000",
-                    transition: "background-color 0.2s",
-                    whiteSpace: "nowrap"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = isDarkMode
-                      ? "#444"
-                      : "#e0e0e0";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = active
-                      ? isDarkMode
-                        ? "#333"
-                        : "#f0f0f0"
-                      : "transparent";
-                  }}
-                >
-                  <span style={{ fontSize: "20px" }}>{item.icon}</span>
-                  <span
+            {permisosLoading ? (
+              // Mostrar loading mientras se cargan los permisos
+              <div style={{ 
+                padding: "20px", 
+                textAlign: "center",
+                color: isDarkMode ? "#fff" : "#000"
+              }}>
+                Cargando...
+              </div>
+            ) : (
+              menuItems.map((item) => {
+                const active = location.pathname === item.path;
+                return (
+                  <div
+                    key={item.path}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleNavigate(item.path)}
+                    onKeyDown={(e) => e.key === "Enter" && handleNavigate(item.path)}
                     style={{
-                      opacity: isOpen ? 1 : 0,
-                      transition: "opacity 0.3s",
-                      overflow: "hidden"
+                      padding: "12px 20px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      cursor: "pointer",
+                      backgroundColor: active
+                        ? isDarkMode
+                          ? "#333"
+                          : "#f0f0f0"
+                        : "transparent",
+                      color: isDarkMode ? "#fff" : "#000",
+                      transition: "background-color 0.2s",
+                      whiteSpace: "nowrap"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = isDarkMode
+                        ? "#444"
+                        : "#e0e0e0";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = active
+                        ? isDarkMode
+                          ? "#333"
+                          : "#f0f0f0"
+                        : "transparent";
                     }}
                   >
-                    {item.label}
-                  </span>
-                </div>
-              );
-            })}
+                    <span style={{ fontSize: "20px" }}>{item.icon}</span>
+                    <span
+                      style={{
+                        opacity: isOpen ? 1 : 0,
+                        transition: "opacity 0.3s",
+                        overflow: "hidden"
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
+                );
+              })
+            )}
           </nav>
         </aside>
 

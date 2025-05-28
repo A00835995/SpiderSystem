@@ -12,6 +12,7 @@ import {
   actualizarDireccionProveedor as apiActualizarDireccion,
   actualizarTipoProveedor as apiActualizarTipo,
   actualizarTipoPagoProveedor as apiActualizarTipoPago,
+  eliminarProveedor as apiEliminarProveedor,
   fetchResumenCategorias,
   fetchDistribucionProveedorInventario
 } from '../services/ProveedoresService';
@@ -222,6 +223,22 @@ export function useProveedores() {
   };
 
   /**
+   * Elimina un proveedor (soft delete)
+   * @param {number} id - ID del proveedor
+   * @returns {Promise<Object>} Resultado de la operación
+   */
+  const eliminarProveedor = async (id) => {
+    try {
+      const result = await apiEliminarProveedor(id);
+      refreshData();
+      return result;
+    } catch (err) {
+      setError('Error al eliminar el proveedor: ' + err.message);
+      throw err;
+    }
+  };
+
+  /**
    * Recarga solo los proveedores (útil para actualizaciones específicas)
    * @returns {Promise<void>}
    */
@@ -287,6 +304,9 @@ export function useProveedores() {
     // Funciones de recarga
     refreshData,
     recargarProveedores,
-    recargarAnalisis
+    recargarAnalisis,
+    
+    // Funciones de eliminación
+    eliminarProveedor
   };
 }

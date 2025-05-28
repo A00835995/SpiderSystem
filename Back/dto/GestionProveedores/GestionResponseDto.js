@@ -72,6 +72,19 @@ class GestionProveedoresResponseDto {
         };
     }
 
+    // DTO para la respuesta de eliminación de proveedor
+    static deleteProveedorResponse(result) {
+        return {
+            success: true,
+            message: "Proveedor eliminado exitosamente",
+            data: {
+                deleted: true,
+                affectedRows: result.affectedRows || 1
+            },
+            timestamp: new Date().toISOString()
+        };
+    }
+
     // DTO para la respuesta de resumen de categorías
     static resumenCategoriasResponse(categorias) {
         return {

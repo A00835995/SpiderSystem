@@ -223,3 +223,22 @@ export async function fetchDistribucionProveedorInventario() {
   const json = await response.json();
   return json;
 }
+
+// Eliminar proveedor (soft delete)
+export async function eliminarProveedor(id) {
+  const url = `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.eliminarProveedor.replace(':id', id)}`;
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error al eliminar proveedor: ${errorText}`);
+  }
+  
+  const json = await response.json();
+  return json;
+}

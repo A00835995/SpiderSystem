@@ -43,7 +43,8 @@ const Gestion_de_Proveedores = () => {
     actualizarDireccionProveedor,
     actualizarTipoProveedor,
     actualizarTipoPagoProveedor,
-    actualizarEmailProveedor
+    actualizarEmailProveedor,
+    eliminarProveedor
   } = useProveedores();
 
   // Estados locales para UI
@@ -397,6 +398,7 @@ const Gestion_de_Proveedores = () => {
         onUpdateTipoPago={actualizarTipoPagoProveedor}
         tiposProveedores={tiposProveedores}
         tiposPagos={tiposPagos}
+        onEliminarProveedor={eliminarProveedor}
       />
 
       <AddProveedorDialog

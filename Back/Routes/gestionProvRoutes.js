@@ -14,7 +14,8 @@ const {
     getTiposProveedores,
     getTiposPagosProveedores,
     actualizarDireccionProveedor,
-    actualizarEmailProveedor
+    actualizarEmailProveedor,
+    eliminarProveedor
 } = require('../Controllers/gestionProveedores');
 
 // GET - Obtener lista de proveedores con resumen
@@ -52,6 +53,9 @@ router.put('/actualizar-tipo/:id', actualizarTipoProveedor);
 
 // PUT - Actualizar tipo de pago del proveedor
 router.put('/actualizar-tipo-pago/:id', actualizarTipoPagoProveedor);
+
+// DELETE - Eliminar proveedor (soft delete)
+router.delete('/eliminar-proveedor/:id', eliminarProveedor);
 
 // GET - Obtener resumen por categorías de productos
 router.get('/resumen-categorias', getResumenCategorias);
