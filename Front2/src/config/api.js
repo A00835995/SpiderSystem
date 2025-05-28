@@ -32,5 +32,9 @@ export const API_CONFIG = {
         actualizarTipoPagoProveedor: "/gestion-proveedores/actualizar-tipo-pago/:id",
         getResumenCategorias: "/gestion-proveedores/resumen-categorias",
         getDistribucionProveedorInventario: "/gestion-proveedores/distribucion-proveedor-inventario",
+        compras: {
+            getData: "/compras/getdata",
+            crearOrden: "/compras/crearOrden"
+        }
     }
 };
