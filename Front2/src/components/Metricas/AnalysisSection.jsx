@@ -1,16 +1,19 @@
 import React from 'react';
 import VentasPorCategoria from './VentasPorCategoria';
-import DistribucionVentas from './DistribucionVentas';
+import StockPorCategoria from './StockPorCategoria';
 
-const AnalysisSection = ({ metrics }) => {
+const AnalysisSection = ({ metrics, vista = 'general' }) => {
   return (
     <div style={{ 
       display: 'grid', 
-      gridTemplateColumns: '2fr 1fr', 
+      gridTemplateColumns: '1fr', 
       gap: '1rem' 
     }}>
-      <VentasPorCategoria ventasPorCategoria={metrics.ventasPorCategoria} />
-      <DistribucionVentas distribucionVentas={metrics.distribucionVentas} />
+      {vista === 'general' ? (
+        <VentasPorCategoria ventasPorCategoria={metrics.ventasPorCategoria} />
+      ) : (
+        <StockPorCategoria stockPorCategoria={metrics.stockPorCategoria} />
+      )}
     </div>
   );
 };
