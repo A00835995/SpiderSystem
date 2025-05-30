@@ -2,7 +2,15 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { connectToHANA } = require('./Config/confDB');
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST']
+    }
+});
 
 const loginRoutes = require('./Routes/loginRutas');
 const articuloRoutes = require('./Routes/articuloRutes');
@@ -13,6 +21,8 @@ const gestionProvRoutes = require('./Routes/gestionProvRoutes');
 const comprasRoutes = require('./Routes/comprasRoutes');
 const permisosRoutes = require('./Routes/permisosRoutes');
 const metricasRoutes = require('./Routes/metricasRoutes');
+const chatRoutes = require('./Routes/chatRoutes');
+const { connectToHANA } = require('./Config/confDB');
 
 // Middleware
 app.use(cors());
@@ -29,11 +39,27 @@ app.use('/api/gestion-proveedores', gestionProvRoutes);
 app.use('/api/compras', comprasRoutes);
 app.use('/api/permisos', permisosRoutes);
 app.use('/api/metricas', metricasRoutes);
+app.use('/api/chat', chatRoutes);
+
 
 
 //El servidor link
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, async () => {
+server.listen(PORT, async () => {
     await connectToHANA();
     console.log(`Backend corriendo en http://localhost:${PORT}`);
+});
+
+// Socket.io para chat en tiempo real
+io.on('connection', (socket) => {
+    console.log('Usuario conectado al chat:', socket.id);
+
+    socket.on('sendMessage', (message) => {
+        // Emitir el mensaje a todos los clientes (o puedes filtrar por sala)
+        io.emit('newMessage', message);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Usuario desconectado del chat:', socket.id);
+    });
 });

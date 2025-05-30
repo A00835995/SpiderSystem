@@ -21,102 +21,13 @@ import {
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
-
-// Importar iconos de manera general en lugar de individualmente
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
+import CustomAvatar from './CustomAvatar';
+import StatusIndicator from './StatusIndicator';
+import MessageContent from './MessageContent';
+import { getInitial } from './utils';
 
-// Función para obtener la inicial del nombre
-const getInitial = (name) => {
-  if (!name) return "";
-  return name.charAt(0).toUpperCase();
-};
-
-// Datos de proveedores para el chat
-const mockProveedores = [
-  { 
-    id: 1, 
-    nombre: "Distribuidora del Norte", 
-    email: "contacto@distribuidoradelnorte.com", 
-    status: "online", 
-    lastMessage: "El pedido #1234 ha sido enviado",
-    keywords: ["norte", "distribuidora", "pedidos", "envíos"],
-    avatar: "supplier" 
-  },
-  { 
-    id: 2, 
-    nombre: "Calzado Martínez", 
-    email: "ventas@calzadomartinez.com", 
-    status: "away", 
-    lastMessage: "Nuevos modelos disponibles en catálogo",
-    keywords: ["calzado", "zapatos", "modelos", "catálogo"],
-    avatar: "supplier" 
-  },
-  { 
-    id: 3, 
-    nombre: "Importadora González", 
-    email: "pedidos@importadoragonzalez.com", 
-    status: "online", 
-    lastMessage: "Confirmación de recepción de mercancía",
-    keywords: ["importadora", "importación", "mercancía", "pedidos"],
-    avatar: "shipping-status" 
-  },
-  { 
-    id: 4, 
-    nombre: "Suelas y Más", 
-    email: "ventas@suelasymas.com", 
-    status: "offline", 
-    lastMessage: "Actualización de precios para el próximo mes",
-    keywords: ["suelas", "materiales", "precios"],
-    avatar: "product" 
-  },
-  { 
-    id: 5, 
-    nombre: "Distribuidora de Pieles SA", 
-    email: "info@distpieles.com", 
-    status: "online", 
-    lastMessage: "Stock disponible de pieles premium",
-    keywords: ["pieles", "cuero", "stock", "premium"],
-    avatar: "factory" 
-  }
-];
-
-// Componente del indicador de estado
-const StatusIndicator = ({ status }) => {
-  const statusColors = {
-    online: "#22c55e", // verde
-    away: "#f59e0b",   // ámbar
-    offline: "#94a3b8"  // gris
-  };
-  
-  return (
-    <div style={{ 
-      width: "10px", 
-      height: "10px", 
-      borderRadius: "50%", 
-      backgroundColor: statusColors[status] || statusColors.offline,
-      marginLeft: "8px",
-      boxShadow: `0 0 0 2px white, 0 0 0 3px ${statusColors[status] || statusColors.offline}`
-    }} />
-  );
-};
-
-// Componente Avatar personalizado con iniciales
-const CustomAvatar = ({ user, size = "S", style = {} }) => {
-  const initial = getInitial(user.nombre);
-  
-  // Siempre mostrar la inicial, incluso cuando hay un icono definido
-  return (
-    <Avatar 
-      style={style}
-      size={size}
-      backgroundColor={user.status === "online" ? "Accent6" : user.status === "away" ? "Accent4" : "Accent8"}
-    >
-      {initial}
-    </Avatar>
-  );
-};
-
-const SOCKET_URL = 'http://localhost:4000'; // Cambia si tu backend está en otra URL
+const SOCKET_URL = 'http://localhost:4000';
 const API_URL = 'http://localhost:4000/api/chat';
 const USERS_URL = 'http://localhost:4000/api/gestion/usuarios';
 
@@ -124,6 +35,22 @@ const ChatPage = () => {
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const fileUploaderRef = useRef(null);
+  // Obtener usuario autenticado desde localStorage
+  const storedUser = localStorage.getItem('user');
+  let currentUser = null;
+  try {
+    currentUser = storedUser ? JSON.parse(storedUser) : null;
+  } catch (e) {
+    currentUser = null;
+  }
+
+  // Si no hay usuario, redirigir a login
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
+
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState("");
@@ -131,7 +58,6 @@ const ChatPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [socket, setSocket] = useState(null);
   const [users, setUsers] = useState([]);
-  const currentUser = { id: 1, nombre: "Usuario Actual", avatar: "employee" }; // TODO: Reemplaza esto por el usuario real del login
 
   // Estilos solo para modo claro
   const styles = {
@@ -284,14 +210,12 @@ const ChatPage = () => {
     }
   };
 
-  // Obtener usuarios reales para la agenda
   useEffect(() => {
     axios.get(USERS_URL)
       .then(res => setUsers(res.data.filter(u => u.id !== currentUser.id)))
       .catch(() => setUsers([]));
   }, [currentUser.id]);
 
-  // Búsqueda optimizada con useMemo
   const filteredProveedores = useMemo(() => {
     const searchTermLower = searchTerm.toLowerCase().trim();
     if (!searchTermLower) return users;
@@ -316,25 +240,20 @@ const ChatPage = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Conectar socket.io al montar
   useEffect(() => {
     const newSocket = io(SOCKET_URL);
     setSocket(newSocket);
     return () => newSocket.disconnect();
   }, []);
 
-  // Obtener mensajes al seleccionar usuario
   useEffect(() => {
     if (!selectedUser) return;
     setIsLoading(true);
     axios.get(`${API_URL}/${currentUser.id}/${selectedUser.id}`)
       .then(res => {
-        // Adaptar los mensajes al formato del frontend
         const msgs = res.data.map(m => ({
           id: m.id,
           text: m.messageText,
-          imageUrl: m.imageUrl,
-          isImage: !!m.imageUrl,
           timestamp: new Date(m.timestamp),
           isSent: m.senderId === currentUser.id
         }));
@@ -344,11 +263,9 @@ const ChatPage = () => {
       .catch(() => setIsLoading(false));
   }, [selectedUser]);
 
-  // Escuchar nuevos mensajes por socket.io
   useEffect(() => {
     if (!socket) return;
     const handleNewMessage = (msg) => {
-      // Solo agregar si el mensaje es para el usuario actual o lo envió el usuario actual
       if (
         (msg.senderId === currentUser.id && msg.receiverId === selectedUser?.id) ||
         (msg.senderId === selectedUser?.id && msg.receiverId === currentUser.id)
@@ -356,8 +273,6 @@ const ChatPage = () => {
         setMessages(prev => [...prev, {
           id: msg.id,
           text: msg.messageText,
-          imageUrl: msg.imageUrl,
-          isImage: !!msg.imageUrl,
           timestamp: new Date(msg.timestamp),
           isSent: msg.senderId === currentUser.id
         }]);
@@ -367,18 +282,15 @@ const ChatPage = () => {
     return () => socket.off('newMessage', handleNewMessage);
   }, [socket, selectedUser]);
 
-  // Enviar mensaje
   const handleSendMessage = async () => {
     if (!newMessage || !selectedUser) return;
     const msgPayload = {
       senderId: currentUser.id,
       receiverId: selectedUser.id,
-      imageUrl: null,
       messageText: newMessage
     };
     try {
       await axios.post(API_URL, msgPayload);
-      // Emitir por socket.io para tiempo real
       if (socket) socket.emit('sendMessage', {
         ...msgPayload,
         id: Date.now(),
@@ -392,72 +304,11 @@ const ChatPage = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    // No necesita hacer nada más, ya que el filtrado se realiza automáticamente con useMemo
   };
 
   const handleSelectUser = (user) => {
     setSelectedUser(user);
-    // Limpiar mensajes previos al cambiar de usuario
     setMessages([]);
-  };
-
-  const handleUploadClick = () => {
-    // Activar el input de archivo oculto
-    fileUploaderRef.current?.click();
-  };
-
-  // Enviar imagen (opcional, si quieres soportar imágenes)
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    if (!file || !selectedUser) return;
-    if (!file.type.startsWith('image/')) {
-      alert('Por favor selecciona una imagen');
-      return;
-    }
-    // Subir la imagen a un servidor o usar base64 (no implementado aquí)
-    // Aquí solo se simula el envío de la URL local
-    const imageUrl = URL.createObjectURL(file);
-    const msgPayload = {
-      senderId: currentUser.id,
-      receiverId: selectedUser.id,
-      imageUrl,
-      messageText: ''
-    };
-    try {
-      await axios.post(API_URL, msgPayload);
-      if (socket) socket.emit('sendMessage', {
-        ...msgPayload,
-        id: Date.now(),
-        timestamp: new Date().toISOString()
-      });
-    } catch (e) {
-      alert('Error al enviar la imagen');
-    }
-    event.target.value = '';
-  };
-
-  // Componente para renderizar un mensaje (puede ser texto o imagen)
-  const MessageContent = ({ message }) => {
-    if (message.isImage) {
-      return (
-        <>
-          <img 
-            src={message.imageUrl} 
-            alt={message.fileName} 
-            style={styles.imageMessage} 
-          />
-          <Text style={{ color: message.isSent ? 'white' : 'inherit' }}>
-            {message.fileName}
-          </Text>
-        </>
-      );
-    }
-    
-    return (
-      <Text style={{ color: message.isSent ? 'white' : 'inherit' }}>
-        {message.text}
-      </Text>
-    );
   };
 
   return (
@@ -470,7 +321,7 @@ const ChatPage = () => {
             placeholder="Buscar proveedor..."
             value={searchTerm}
             onChange={handleSearch}
-            onInput={handleSearch} // Añadir onInput para que responda en tiempo real
+            onInput={handleSearch}
             showClearIcon
             style={{ width: '100%' }}
           />
@@ -566,34 +417,6 @@ const ChatPage = () => {
           {/* Contenedor de entrada de mensaje - MODIFICADO */}
           <div style={styles.inputContainer}>
             <FlexBox alignItems={FlexBoxAlignItems.Center}>
-              {/* Botón de imagen completamente rediseñado */}
-              <div 
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '36px',
-                  height: '36px',
-                  marginRight: '8px',
-                  backgroundColor: 'var(--sapButton_Background)',
-                  border: '1px solid var(--sapButton_BorderColor)',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-                onClick={handleUploadClick}
-              >
-                <span style={{ fontSize: '18px' }}>📷</span>
-              </div>
-              
-              {/* Archivo oculto */}
-              <input 
-                type="file" 
-                ref={fileUploaderRef}
-                onChange={handleFileChange}
-                accept="image/*"
-                style={{ display: 'none' }}
-              />
-              
               <Input
                 style={{ flex: 1, marginRight: '0.5rem' }}
                 placeholder="Escribe un mensaje..."
@@ -641,4 +464,4 @@ const ChatPage = () => {
   );
 };
 
-export { default } from '../components/chat/ChatPage'; 
+export default ChatPage; 
