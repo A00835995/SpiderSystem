@@ -246,10 +246,29 @@ const ChatPage = () => {
     
     // Unirse a la sala personal del usuario cuando se conecta
     newSocket.on('connect', () => {
+      console.log('🔌 Conectado al servidor con socket ID:', newSocket.id);
       if (currentUser?.id) {
         newSocket.emit('joinRoom', currentUser.id);
-        console.log(`Usuario ${currentUser.id} se unió a su sala personal`);
+        console.log(`📡 Solicitando unirse a sala: user_${currentUser.id}`);
       }
+    });
+    
+    // Confirmar que se unió a la sala
+    newSocket.on('joinedRoom', (data) => {
+      console.log('✅ Confirmación: unido a sala personal', data);
+    });
+    
+    // Para debugging - obtener salas activas
+    newSocket.on('currentRooms', (data) => {
+      console.log('🏠 Información de salas recibida:', data);
+      console.log('   - Mis salas:', data.myRooms);
+      console.log('   - Todas las salas:', data.allRooms);
+      console.log('   - Total conexiones:', data.totalConnections);
+    });
+    
+    // Debugging de conexión
+    newSocket.on('disconnect', () => {
+      console.log('❌ Desconectado del servidor');
     });
     
     return () => newSocket.disconnect();
@@ -274,21 +293,59 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (!socket) return;
+    
+    // LISTENER GLOBAL - Para verificar si llegan sockets (sin filtros)
+    const globalMessageListener = (msg) => {
+      console.log('🌍 SOCKET RECIBIDO (GLOBAL - sin filtros):', {
+        timestamp: new Date().toLocaleTimeString(),
+        senderId: msg.senderId,
+        receiverId: msg.receiverId,
+        messageText: msg.messageText,
+        socketId: socket.id
+      });
+    };
+    
     const handleNewMessage = (msg) => {
+      console.log('📨 Mensaje recibido por socket:', {
+        msgSenderId: msg.senderId,
+        msgReceiverId: msg.receiverId,
+        currentUserId: currentUser.id,
+        selectedUserId: selectedUser?.id,
+        messageText: msg.messageText
+      });
+      
       if (
         (msg.senderId === currentUser.id && msg.receiverId === selectedUser?.id) ||
         (msg.senderId === selectedUser?.id && msg.receiverId === currentUser.id)
       ) {
-        setMessages(prev => [...prev, {
-          id: msg.id,
-          text: msg.messageText,
-          timestamp: new Date(msg.timestamp),
-          isSent: msg.senderId === currentUser.id
-        }]);
+        console.log('✅ Mensaje agregado a la conversación actual');
+        setMessages(prev => {
+          const newMessages = [...prev, {
+            id: msg.id,
+            text: msg.messageText,
+            timestamp: new Date(msg.timestamp),
+            isSent: msg.senderId === currentUser.id
+          }];
+          console.log('📋 Estado de messages actualizado:', {
+            previousCount: prev.length,
+            newCount: newMessages.length,
+            lastMessage: newMessages[newMessages.length - 1]
+          });
+          return newMessages;
+        });
+      } else {
+        console.log('❌ Mensaje descartado - no corresponde a la conversación actual');
       }
     };
+    
+    // Agregar ambos listeners
+    socket.on('newMessage', globalMessageListener);
     socket.on('newMessage', handleNewMessage);
-    return () => socket.off('newMessage', handleNewMessage);
+    
+    return () => {
+      socket.off('newMessage', globalMessageListener);
+      socket.off('newMessage', handleNewMessage);
+    };
   }, [socket, selectedUser]);
 
   const handleSendMessage = async () => {
@@ -315,6 +372,60 @@ const ChatPage = () => {
     setSelectedUser(user);
     setMessages([]);
   };
+
+  // Función de debugging - agregar al objeto window para acceso desde consola
+  useEffect(() => {
+    window.chatDebug = {
+      checkRooms: () => {
+        if (socket) {
+          socket.emit('getRooms');
+        }
+      },
+      getCurrentState: () => {
+        console.log('📊 Estado actual del chat:', {
+          currentUser: currentUser,
+          selectedUser: selectedUser,
+          messagesCount: messages.length,
+          messages: messages,
+          socketConnected: socket?.connected,
+          socketId: socket?.id
+        });
+        return {
+          messagesCount: messages.length,
+          messages: messages
+        };
+      },
+      testConnection: () => {
+        console.log('🧪 Probando conexión socket...');
+        console.log('Socket conectado:', socket?.connected);
+        console.log('Socket ID:', socket?.id);
+        if (socket) {
+          socket.emit('getRooms');
+        }
+      },
+      simulateMessage: () => {
+        // Simular recepción de mensaje para probar el frontend
+        const testMsg = {
+          id: Date.now(),
+          senderId: selectedUser?.id || 999,
+          receiverId: currentUser.id,
+          messageText: `Mensaje de prueba - ${new Date().toLocaleTimeString()}`,
+          timestamp: new Date().toISOString()
+        };
+        console.log('🧪 Simulando mensaje:', testMsg);
+        socket.emit('newMessage', testMsg);
+      },
+      currentUser: currentUser,
+      selectedUser: selectedUser,
+      socketConnected: socket?.connected,
+      socketId: socket?.id,
+      messagesCount: messages.length
+    };
+    
+    return () => {
+      delete window.chatDebug;
+    };
+  }, [socket, currentUser, selectedUser, messages]);
 
   return (
     <div style={styles.pageContainer}>
@@ -379,6 +490,7 @@ const ChatPage = () => {
 
           {/* Contenedor de mensajes */}
           <div style={styles.messagesContainer}>
+            {console.log('🎨 Renderizando mensajes:', { count: messages.length, messages: messages.map(m => ({ id: m.id, text: m.text, isSent: m.isSent })) })}
             {messages.map((message) => (
               <div 
                 key={message.id} 

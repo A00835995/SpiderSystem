@@ -54,28 +54,38 @@ server.listen(PORT, async () => {
 
 // Socket.io para chat en tiempo real
 io.on('connection', (socket) => {
-    console.log('Usuario conectado al chat:', socket.id);
+    console.log('🔌 Usuario conectado al chat:', socket.id);
+    console.log('📊 Total conexiones activas:', io.sockets.sockets.size);
 
     // Unirse a una sala específica cuando se autentica el usuario
     socket.on('joinRoom', (userId) => {
         socket.join(`user_${userId}`);
-        console.log(`Usuario ${userId} se unió a su sala personal`);
+        console.log(`✅ Usuario ${userId} se unió a su sala personal (Socket: ${socket.id})`);
+        
+        // Mostrar todas las salas activas
+        const allRooms = [...io.sockets.adapter.rooms.keys()];
+        console.log('🏠 Todas las salas activas:', allRooms);
+        
+        // Confirmar que se unió a la sala
+        socket.emit('joinedRoom', { userId, socketId: socket.id });
     });
 
-    socket.on('sendMessage', (message) => {
-        // Emitir el mensaje solo a los usuarios involucrados en la conversación
-        const { senderId, receiverId } = message;
+    // Evento para debugging - ver qué salas están activas
+    socket.on('getRooms', () => {
+        const socketRooms = [...socket.rooms];
+        const allRooms = [...io.sockets.adapter.rooms.keys()];
+        console.log(`🏠 Salas del socket ${socket.id}:`, socketRooms);
+        console.log('🌍 Todas las salas del servidor:', allRooms);
         
-        // Enviar al receptor
-        socket.to(`user_${receiverId}`).emit('newMessage', message);
-        
-        // También enviar al emisor (para confirmar que se envió) si no está en la misma sala
-        socket.to(`user_${senderId}`).emit('newMessage', message);
-        
-        console.log(`Mensaje enviado de ${senderId} a ${receiverId}`);
+        socket.emit('currentRooms', {
+            myRooms: socketRooms,
+            allRooms: allRooms,
+            totalConnections: io.sockets.sockets.size
+        });
     });
 
     socket.on('disconnect', () => {
-        console.log('Usuario desconectado del chat:', socket.id);
+        console.log('❌ Usuario desconectado del chat:', socket.id);
+        console.log('📊 Total conexiones restantes:', io.sockets.sockets.size);
     });
 });

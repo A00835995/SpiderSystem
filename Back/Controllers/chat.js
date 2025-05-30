@@ -38,15 +38,29 @@ const sendMessage = async (req, res) => {
         timestamp: new Date().toISOString()
       };
       
-      // Emitir el mensaje a los usuarios involucrados
-      io.to(`user_${receiverId}`).emit('newMessage', socketMessage);
-      io.to(`user_${senderId}`).emit('newMessage', socketMessage);
+      // Verificar qué sockets están en cada sala
+      const receiverRoom = `user_${receiverId}`;
+      const senderRoom = `user_${senderId}`;
       
-      console.log(`Mensaje emitido por socket de ${senderId} a ${receiverId}`);
+      const receiverSockets = io.sockets.adapter.rooms.get(receiverRoom);
+      const senderSockets = io.sockets.adapter.rooms.get(senderRoom);
+      
+      console.log(`📤 Enviando mensaje de ${senderId} a ${receiverId}`);
+      console.log(`👥 Receptor sala ${receiverRoom}: ${receiverSockets ? receiverSockets.size : 0} sockets`);
+      console.log(`👥 Emisor sala ${senderRoom}: ${senderSockets ? senderSockets.size : 0} sockets`);
+      
+      // Emitir el mensaje a los usuarios involucrados
+      io.to(receiverRoom).emit('newMessage', socketMessage);
+      io.to(senderRoom).emit('newMessage', socketMessage);
+      
+      console.log(`✅ Mensaje emitido por socket de ${senderId} a ${receiverId}`);
+    } else {
+      console.log('❌ No se pudo obtener la instancia de socket.io');
     }
     
     res.status(201).json({ message: 'Mensaje enviado correctamente' });
   } catch (error) {
+    console.log('❌ Error al enviar mensaje:', error.message);
     res.status(500).json({ error: 'Error al enviar el mensaje', details: error.message });
   }
 };
