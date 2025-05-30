@@ -243,6 +243,15 @@ const ChatPage = () => {
   useEffect(() => {
     const newSocket = io(SOCKET_URL);
     setSocket(newSocket);
+    
+    // Unirse a la sala personal del usuario cuando se conecta
+    newSocket.on('connect', () => {
+      if (currentUser?.id) {
+        newSocket.emit('joinRoom', currentUser.id);
+        console.log(`Usuario ${currentUser.id} se unió a su sala personal`);
+      }
+    });
+    
     return () => newSocket.disconnect();
   }, []);
 
@@ -291,11 +300,7 @@ const ChatPage = () => {
     };
     try {
       await axios.post(API_URL, msgPayload);
-      if (socket) socket.emit('sendMessage', {
-        ...msgPayload,
-        id: Date.now(),
-        timestamp: new Date().toISOString()
-      });
+      // El backend ahora emite automáticamente el socket después de guardar en la BD
       setNewMessage("");
     } catch (e) {
       alert('Error al enviar el mensaje');
