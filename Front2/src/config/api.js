@@ -44,6 +44,9 @@ export const API_CONFIG = {
                 categoria: "/metricas/ventas-categoria/mes/:mes/:anio",
                 categoriaAnio: "/metricas/ventas-categoria/anio/:anio"
             }
-        }
+        },
+        ordenesProveedor: "/ordenes-proveedor",
+        consultarOrdenCompra: "/ordenes-proveedor/consultar",
+        actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso"
     }
 };

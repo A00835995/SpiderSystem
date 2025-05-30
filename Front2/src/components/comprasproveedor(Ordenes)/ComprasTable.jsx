@@ -12,8 +12,7 @@ const ComprasTable = ({
   data, 
   itemsPerPage, 
   onViewDetails, 
-  onConfirmCompra, 
-  onRejectCompra 
+  onConfirmCompra
 }) => {
   // Obtener texto del estado
   const getStatusText = (estado) => {
@@ -26,26 +25,6 @@ const ComprasTable = ({
       case 'rechazada': return 'Rechazada';
       case 'cancelada': return 'Cancelada';
       default: return 'Pendiente';
-    }
-  };
-
-  // Obtener color de badge de prioridad
-  const getPriorityBadgeColor = (prioridad) => {
-    switch(prioridad) {
-      case 'alta': return '3'; // Rojo
-      case 'media': return '7'; // Naranja
-      case 'baja': return '8'; // Azul
-      default: return '10';
-    }
-  };
-
-  // Obtener texto de prioridad
-  const getPriorityText = (prioridad) => {
-    switch(prioridad) {
-      case 'alta': return 'Alta';
-      case 'media': return 'Media';
-      case 'baja': return 'Baja';
-      default: return prioridad;
     }
   };
 
@@ -69,24 +48,9 @@ const ComprasTable = ({
       Cell: ({ value }) => formatDate(value)
     },
     {
-      Header: "Producto",
-      accessor: "producto",
-      width: 200
-    },
-    {
-      Header: "Cantidad",
-      accessor: "cantidad",
-      width: 100,
-      Cell: ({ value }) => (
-        <Badge colorScheme={value > 30 ? "8" : "10"}>
-          {value}
-        </Badge>
-      )
-    },
-    {
       Header: "Estado",
       accessor: "estado",
-      width: 120,
+      width: 150,
       Cell: ({ value }) => {
         const estado = value || 'pendiente';
         let backgroundColor;
@@ -127,30 +91,10 @@ const ComprasTable = ({
       }
     },
     {
-      Header: "Prioridad",
-      accessor: "prioridad",
-      width: 120,
-      Cell: ({ value }) => (
-        <Badge colorScheme={getPriorityBadgeColor(value)}>
-          {getPriorityText(value)}
-        </Badge>
-      )
-    },
-    {
       Header: "Fecha Límite",
       accessor: "fechaLimite",
       width: 150,
       Cell: ({ value }) => formatDate(value)
-    },
-    {
-      Header: "Notas",
-      accessor: "notas",
-      width: 200
-    },
-    {
-      Header: "Método de Envío",
-      accessor: "metodoEnvio",
-      width: 180
     },
     {
       Header: "Dirección de Entrega",
@@ -173,14 +117,6 @@ const ComprasTable = ({
           </Button>
           {row.original.estado === 'pendiente' && (
             <>
-              <Button 
-                design="Negative"
-                icon="decline"
-                onClick={() => onRejectCompra(row.original)}
-                style={{ backgroundColor: '#bb0000', color: 'white' }}
-              >
-                Rechazar
-              </Button>
               <Button 
                 design="Emphasized"
                 icon="accept"

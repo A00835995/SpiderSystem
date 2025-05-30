@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Input, Toolbar, ToolbarSpacer } from '@ui5/webcomponents-react';
 
-const ComprasToolbar = ({ onExport, searchQuery, onSearchChange }) => {
+const ComprasToolbar = ({ onExport, searchQuery, onSearchChange, onRefresh }) => {
   return (
     <Toolbar style={{ 
       marginBottom: '1.5rem',
@@ -20,6 +20,19 @@ const ComprasToolbar = ({ onExport, searchQuery, onSearchChange }) => {
       >
         Exportar Catálogo
       </Button>
+      
+      <Button
+        icon="refresh"
+        design="Transparent"
+        onClick={onRefresh}
+        tooltip="Actualizar datos"
+        style={{
+          marginLeft: '0.5rem',
+          padding: '0.5rem 1rem',
+          height: 'auto'
+        }}
+      />
+      
       <ToolbarSpacer />
       <div style={{ position: 'relative', width: '300px' }}>
         <Input

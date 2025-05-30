@@ -23,6 +23,7 @@ const permisosRoutes = require('./Routes/permisosRoutes');
 const metricasRoutes = require('./Routes/metricasRoutes');
 const chatRoutes = require('./Routes/chatRoutes');
 const { connectToHANA } = require('./Config/confDB');
+const ordenesProveedorRoutes = require('./Routes/ordenesProveedor');
 
 // Middleware
 app.use(cors());
@@ -44,6 +45,7 @@ app.use('/api/metricas', metricasRoutes);
 app.use('/api/chat', chatRoutes);
 
 
+app.use('/api/ordenes-proveedor', ordenesProveedorRoutes);
 
 //El servidor link
 const PORT = process.env.PORT || 4000;

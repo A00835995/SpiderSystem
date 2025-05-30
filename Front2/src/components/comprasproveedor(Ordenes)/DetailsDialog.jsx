@@ -6,9 +6,14 @@ import {
   FormItem, 
   Title, 
   Text, 
-  ObjectStatus, 
   Badge, 
-  ValueState 
+  Loader,
+  Table,
+  TableColumn,
+  TableRow,
+  TableCell,
+  Label,
+  MessageStrip
 } from '@ui5/webcomponents-react';
 import CustomDialog from './CustomDialog';
 
@@ -16,64 +21,28 @@ const DetailsDialog = ({
   isOpen, 
   onClose, 
   selectedCompra, 
-  onConfirm, 
-  onReject 
+  onConfirm,
+  detalleOrdenCompra,
+  loadingDetalle
 }) => {
   if (!selectedCompra) return null;
 
-  // Obtener color del estado
-  const getStatusValueState = (estado) => {
-    switch(estado) {
-      case 'pendiente': return ValueState.Warning;
-      case 'en_proceso': return ValueState.Information;
-      case 'en_transito': return ValueState.Information;
-      case 'confirmada': return ValueState.Success;
-      case 'completada': return ValueState.Success;
-      case 'rechazada': return ValueState.Error;
-      case 'cancelada': return ValueState.Error;
-      default: return ValueState.Warning;
-    }
-  };
-
-  // Obtener texto del estado
-  const getStatusText = (estado) => {
-    switch(estado) {
-      case 'pendiente': return 'Pendiente';
-      case 'en_proceso': return 'En proceso';
-      case 'en_transito': return 'En tránsito';
-      case 'confirmada': return 'Confirmada';
-      case 'completada': return 'Completada';
-      case 'rechazada': return 'Rechazada';
-      case 'cancelada': return 'Cancelada';
-      default: return 'Pendiente';
-    }
-  };
-
-  // Obtener color de badge de prioridad
-  const getPriorityBadgeColor = (prioridad) => {
-    switch(prioridad) {
-      case 'alta': return '3';
-      case 'media': return '7';
-      case 'baja': return '8';
-      default: return '10';
-    }
-  };
-
-  // Obtener texto de prioridad
-  const getPriorityText = (prioridad) => {
-    switch(prioridad) {
-      case 'alta': return 'Alta';
-      case 'media': return 'Media';
-      case 'baja': return 'Baja';
-      default: return prioridad;
-    }
-  };
-
   // Formatear fecha
   const formatDate = (dateString) => {
+    if (!dateString) return '';
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     return new Date(dateString).toLocaleDateString('es-MX', options);
   };
+
+  // Formatear número
+  const formatNumber = (number) => {
+    if (number === null || number === undefined) return '-';
+    return number.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  // Log para depuración
+  console.log("Datos de la orden seleccionada:", selectedCompra);
+  console.log("Datos de la API:", detalleOrdenCompra);
 
   return (
     <CustomDialog
@@ -88,16 +57,8 @@ const DetailsDialog = ({
           >
             Cerrar
           </Button>
-          {selectedCompra.estado === 'pendiente' && (
+          {selectedCompra.estado === 'pendiente' && detalleOrdenCompra?.estadoOrden?.toLowerCase() !== 'en proceso' && (
             <>
-              <Button 
-                design="Negative"
-                icon="decline"
-                onClick={onReject}
-                style={{ backgroundColor: '#bb0000', color: 'white' }}
-              >
-                Rechazar Orden
-              </Button>
               <Button 
                 design="Emphasized"
                 icon="accept"
@@ -112,92 +73,133 @@ const DetailsDialog = ({
       }
     >
       <div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
-          <div style={{ flex: '1 1 300px' }}>
-            <Form columnsL={1} columnsXL={1}>
-              <FormItem label="Número de Orden:">
-                <Title level="H5">{selectedCompra.id}</Title>
-              </FormItem>
-              
-              <FormItem label="Proveedor:">
-                <Text>{selectedCompra.proveedor}</Text>
-              </FormItem>
-              
-              <FormItem label="Fecha:">
-                <Text>{formatDate(selectedCompra.fecha)}</Text>
-              </FormItem>
-              
-              <FormItem label="Estado:">
-                <ObjectStatus
-                  state={getStatusValueState(selectedCompra.estado)}
-                  text={getStatusText(selectedCompra.estado)}
-                />
-              </FormItem>
-              
-              <FormItem label="Prioridad:">
-                <Badge colorScheme={getPriorityBadgeColor(selectedCompra.prioridad)}>
-                  {getPriorityText(selectedCompra.prioridad)}
-                </Badge>
-              </FormItem>
-            </Form>
+        {loadingDetalle && (
+          <div style={{ textAlign: 'center', padding: '1rem', marginBottom: '1rem' }}>
+            <Loader />
+            <Text style={{ marginTop: '0.5rem' }}>Cargando detalles de la orden...</Text>
           </div>
-          
-          <div style={{ flex: '1 1 300px' }}>
-            <Form columnsL={1} columnsXL={1}>
-              <FormItem label="Producto:">
-                <Text>{selectedCompra.producto}</Text>
-              </FormItem>
-              
-              <FormItem label="Cantidad:">
-                <Badge colorScheme="8">{selectedCompra.cantidad}</Badge>
-              </FormItem>
-              
-              <FormItem label="Precio Unitario:">
-                <Text>${selectedCompra.precioUnitario.toLocaleString()}</Text>
-              </FormItem>
-              
-              <FormItem label="Total:">
-                <Text style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                  ${selectedCompra.total.toLocaleString()}
-                </Text>
-              </FormItem>
-              
-              <FormItem label="Fecha Límite:">
-                <Text>{formatDate(selectedCompra.fechaLimite)}</Text>
-              </FormItem>
-            </Form>
-          </div>
-        </div>
+        )}
 
-        <div style={{ marginTop: '2rem' }}>
-          <Title level="H5" style={{ marginBottom: '1rem' }}>Información de Entrega</Title>
-          <Form columnsL={1} columnsXL={1}>
-            <FormItem label="Método de Envío">
-              <Text>{selectedCompra.metodoEnvio}</Text>
-            </FormItem>
-            <FormItem label="Dirección de Entrega">
-              <Text>{selectedCompra.direccionEntrega}</Text>
-            </FormItem>
-            <FormItem label="Notas">
-              <Text>{selectedCompra.notas !== "-" ? selectedCompra.notas : "No hay notas adicionales"}</Text>
-            </FormItem>
-          </Form>
-        </div>
+        {!loadingDetalle && (
+          <>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
+              <div style={{ flex: '1 1 300px' }}>
+                <Form columnsL={1} columnsXL={1}>
+                  <FormItem label="Número de Orden:">
+                    <Title level="H5">{selectedCompra.id}</Title>
+                  </FormItem>
+                  
+                  <FormItem label="Proveedor:">
+                    <Text>{detalleOrdenCompra?.proveedorNombre || selectedCompra.proveedor}</Text>
+                  </FormItem>
+                  
+                  <FormItem label="Fecha:">
+                    <Text>{detalleOrdenCompra?.fechaMovimiento 
+                      ? formatDate(detalleOrdenCompra.fechaMovimiento) 
+                      : formatDate(selectedCompra.fecha)}
+                    </Text>
+                  </FormItem>
+                </Form>
+              </div>
+              
+              <div style={{ flex: '1 1 300px' }}>
+                <Form columnsL={1} columnsXL={1}>
+                  <FormItem label="Fecha Límite:">
+                    <Text>{detalleOrdenCompra?.fechaEntrega 
+                      ? formatDate(detalleOrdenCompra.fechaEntrega) 
+                      : formatDate(selectedCompra.fechaLimite)}
+                    </Text>
+                  </FormItem>
+                  
+                  <FormItem label="Método de Pago:">
+                    <Text>{detalleOrdenCompra?.metodoPago || selectedCompra.detalles.metodoPago}</Text>
+                  </FormItem>
+                </Form>
+              </div>
+            </div>
 
-        <div style={{ marginTop: '2rem' }}>
-          <Title level="H5" style={{ marginBottom: '1rem' }}>Información de Pago</Title>
-          <Form columnsL={1} columnsXL={1}>
-            <FormItem label="Método de Pago">
-              <Text>{selectedCompra.detalles.metodoPago}</Text>
-            </FormItem>
-            <FormItem label="Términos de Pago">
-              <Text>{selectedCompra.detalles.terminosPago}</Text>
-            </FormItem>
-          </Form>
-        </div>
+            {/* Tabla de artículos */}
+            <div style={{ marginTop: '2rem' }}>
+              <Title level="H5" style={{ marginBottom: '1rem' }}>Artículos de la Orden</Title>
+              
+              {detalleOrdenCompra?.articulos && detalleOrdenCompra.articulos.length > 0 ? (
+                <>
+                  <Table
+                    columns={
+                      <>
+                        <TableColumn style={{ width: '40%' }}>Producto</TableColumn>
+                        <TableColumn style={{ width: '15%' }}>Cantidad</TableColumn>
+                        <TableColumn style={{ width: '20%' }}>Precio Unitario</TableColumn>
+                        <TableColumn style={{ width: '25%' }}>Subtotal</TableColumn>
+                      </>
+                    }
+                  >
+                    {detalleOrdenCompra.articulos.map((articulo, index) => (
+                      <TableRow key={`${articulo.articuloId}-${index}`}>
+                        <TableCell>{articulo.nombreArticulo}</TableCell>
+                        <TableCell>
+                          <Badge colorScheme="8">{articulo.cantidad}</Badge>
+                        </TableCell>
+                        <TableCell>${formatNumber(articulo.precioUnitario)}</TableCell>
+                        <TableCell>${formatNumber(articulo.subtotal)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </Table>
+                  
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'flex-end', 
+                    marginTop: '1rem',
+                    padding: '0.75rem 1rem',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '4px'
+                  }}>
+                    <Label style={{ marginRight: '1rem', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                      Total:
+                    </Label>
+                    <Text style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
+                      ${formatNumber(detalleOrdenCompra.totalGeneral)}
+                    </Text>
+                  </div>
+                </>
+              ) : (
+                <MessageStrip 
+                  design="Information"
+                  style={{ marginTop: '1rem' }}
+                >
+                  No hay información detallada de artículos disponible para esta orden.
+                </MessageStrip>
+              )}
+            </div>
+
+            <div style={{ marginTop: '2rem' }}>
+              <Title level="H5" style={{ marginBottom: '1rem' }}>Información de Entrega</Title>
+              <Form columnsL={1} columnsXL={1}>
+                <FormItem label="Dirección de Entrega">
+                  <Text>{selectedCompra.direccionEntrega}</Text>
+                </FormItem>
+              </Form>
+            </div>
+          </>
+        )}
       </div>
     </CustomDialog>
   );
+};
+
+// Función auxiliar para mapear el estado
+const mapearEstado = (estadoBackend) => {
+  if (!estadoBackend) return 'pendiente';
+  
+  switch(estadoBackend.toLowerCase()) {
+    case 'pendiente': return 'pendiente';
+    case 'en proceso': return 'en_proceso';
+    case 'en tránsito': return 'en_transito';
+    case 'completada': return 'completada';
+    case 'rechazada': return 'rechazada';
+    case 'cancelada': return 'cancelada';
+    default: return 'pendiente';
+  }
 };
 
 export default DetailsDialog; 
