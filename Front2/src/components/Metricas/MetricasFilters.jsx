@@ -13,15 +13,23 @@ const MetricasFilters = ({ periodo, setPeriodo, vista, setVista }) => {
       boxShadow: "var(--sapContent_Shadow0)"
     }}>
       <FlexBox alignItems={FlexBoxAlignItems.Center} gap="1rem">
-        <Label>Período:</Label>
-        <Select value={periodo} onChange={(e) => setPeriodo(e.detail.selectedOption.value)}>
-          <Option value="mesActual">Mes Actual</Option>
-          <Option value="mesAnterior">Mes Anterior</Option>
-        </Select>
+        {/* Filtro de período - solo mostrar en vista general */}
+        {vista === 'general' && (
+          <>
+            <Label>Período:</Label>
+            <Select value={periodo} onChange={(e) => setPeriodo(e.detail.selectedOption.value)}>
+              <Option value="mesActual">Mes Actual</Option>
+              <Option value="mesAnterior">Mes Anterior</Option>
+              <Option value="anioActual">Año Actual</Option>
+              <Option value="anioAnterior">Año Anterior</Option>
+            </Select>
+          </>
+        )}
+        
         <Label>Vista:</Label>
         <Select value={vista} onChange={(e) => setVista(e.detail.selectedOption.value)}>
           <Option value="general">General</Option>
-          <Option value="detallada">Detallada</Option>
+          <Option value="inventario">Inventario</Option>
         </Select>
       </FlexBox>
     </div>

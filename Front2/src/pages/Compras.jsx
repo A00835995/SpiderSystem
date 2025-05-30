@@ -1,31 +1,7 @@
-import React from 'react';
-import {
-  Title,
-  Text,
-  Button,
-  Icon,
-  Label,
-  FlexBox,
-  FlexBoxJustifyContent,
-  FlexBoxAlignItems,
-  FlexBoxDirection,
-  RadioButton,
-  Card,
-  Input,
-  Select,
-  Option,
-  List,
-  StandardListItem,
-  Avatar,
-  Table,
-  TableColumn,
-  TableRow,
-  Bar,
-  BarDesign,
-  AnalyticalTable,
-  Toast
-} from '@ui5/webcomponents-react';
+import React, { useState } from 'react';
+
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
+
 import Header from '../components/Compras/Header';
 import ProgressSteps from '../components/Compras/ProgressSteps';
 import OrderHistory from '../components/Compras/OrderHistory';
@@ -34,17 +10,24 @@ import ProductsStep from '../components/Compras/steps/ProductsStep';
 import DeliveryStep from '../components/Compras/steps/DeliveryStep';
 import PaymentStep from '../components/Compras/steps/PaymentStep';
 import SummaryStep from '../components/Compras/steps/SummaryStep';
+import OrderConfirmationDialog from '../components/Compras/OrderConfirmationDialog';
 import useComprasData from '../hooks/useComprasData';
 import useOrderSteps from '../hooks/useOrderSteps';
 import useOrderCalculations from '../hooks/useOrderCalculations';
+import { useOrderData } from '../hooks/useOrderData';
 
 // Importar imágenes
-import ImagenZapatoDeportivo from '../Fotos/ImagenZapatoDeportivo.jpg';
-import ImagenZapatoDeVestir from '../Fotos/ImagenZapatoDeVestir.jpg';
-import ImagenBotas from '../Fotos/ImagenBotas.png';
-import ImagenSandalias from '../Fotos/ImagenSandalias.jpg';
+
 
 const Compras = () => {
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogInfo, setDialogInfo] = useState({ 
+    type: 'Success', 
+    title: '', 
+    message: '',
+    ordenId: null 
+  });
+  //Este const  lo que hace es obtener los datos de las compras con la función useComprasData
   const { loading, error, providers, products, paymentMethods } = useComprasData();
   const {
     currentStep,
@@ -66,6 +49,16 @@ const Compras = () => {
 
   const { subtotal, tax, total, getProductById } = useOrderCalculations(selectedProducts, products);
 
+  const {
+    order,
+    addToCart,
+    removeItem,
+    setOrderProvider,
+    setOrderPaymentMethod,
+    setOrderDeliveryDate,
+    clearOrder,
+  } = useOrderData();
+
   const deliveryPoints = [
     {
       id: 1,
@@ -74,14 +67,131 @@ const Compras = () => {
     }
   ];
 
+  // Handle provider selection with order 
+  //Este método se encarga de seleccionar el proveedor
+  const handleProviderSelect = (providerId) => {
+    setSelectedProvider(providerId); //guarda el id del proveedor en el estadoel id del proveedor en el estado
+    setOrderProvider(providerId);//guarda el id del proveedor en el Json
+  };
+
+  // Handle product quantity changes with order data
+  //Este método se encarga de cambiar la cantidad de productos
+  const handleProductChange = (productId, quantity) => {
+    handleProductQuantityChange(productId, quantity); //Actualiza la cantidad localmente
+    const product = getProductById(productId);//Obtiene el producto por su id
+    if (product) {
+      if (quantity === 0) {
+        removeItem(productId);
+      } else {
+        addToCart(
+          productId,
+          product.name,
+          quantity,
+          product.price,
+          16 // Default tax rate
+        );
+      }
+    }
+  };
+
+  // Handle payment method selection with order data
+  const handlePaymentSelect = (paymentId) => {
+    setPaymentMethod(paymentId);
+    setOrderPaymentMethod(paymentId);
+  };
+
+  // Handle delivery point selection with order data
+  const handleDeliverySelect = (point) => {
+    setDeliveryPoint(point);
+    setOrderDeliveryDate(new Date().toISOString()); // You might want to add a date picker in the UI
+  };
+
+  const createOrder = async (orderData) => {
+    try {
+      const response = await fetch('http://localhost:4000/api/compras/crearOrden', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Error al crear la orden');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error al crear la orden:', error);
+      throw error;
+    }
+  };
+
+  // Handle final confirmation
+  const handleFinalConfirm = async () => {
+    try {
+      // Preparar los datos de la orden
+      const fechaPedido = new Date().toISOString().split('T')[0];
+      const fechaEntrega = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      
+      const orderData = {
+        idProv: order.idProv,
+        idPago: order.idPago,
+        fechaPedido: fechaPedido,
+        fechaEntrega: fechaEntrega,
+        items: Object.values(order.items).map(item => ({
+          ItemId: item.ItemId,
+          ItemQuantity: item.ItemQuantity,
+          ItemPrice: item.ItemPrice
+        }))
+      };
+
+      // Log del JSON que se enviará al backend
+      console.log('JSON a enviar al backend:', JSON.stringify(orderData, null, 2));
+
+      // Llamar al endpoint
+      const result = await createOrder(orderData);
+
+      // Mostrar diálogo de éxito
+      setDialogInfo({
+        type: 'Success',
+        title: '¡Orden Creada!',
+        message: 'Su orden ha sido creada exitosamente.',
+        ordenId: result.ordenId
+      });
+      setShowDialog(true);
+
+      // Limpiar el carrito y avanzar
+      handleConfirm();
+      clearOrder();
+    } catch (error) {
+      // Mostrar diálogo de error
+      setDialogInfo({
+        type: 'Error',
+        title: 'Error',
+        message: error.message || 'Error al crear la orden',
+        ordenId: null
+      });
+      setShowDialog(true);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+  };
+
   const steps = [
     {
       title: "Proveedor",
       content: (
+        //Este componente se encarga de mostrar el paso de proveedor
         <ProviderStep
+          //providers es el array de proveedores, el {providers} viene de useComprasData
           providers={providers}
           selectedProvider={selectedProvider}
-          onProviderSelect={setSelectedProvider}
+          onProviderSelect={handleProviderSelect}
           onNext={handleNext}
           onBack={handleBack}
         />
@@ -93,7 +203,7 @@ const Compras = () => {
         <ProductsStep
           products={products}
           selectedProducts={selectedProducts}
-          onProductQuantityChange={handleProductQuantityChange}
+          onProductQuantityChange={handleProductChange}
           onNext={handleNext}
           onBack={handleBack}
         />
@@ -105,7 +215,7 @@ const Compras = () => {
         <DeliveryStep
           deliveryPoints={deliveryPoints}
           selectedDeliveryPoint={deliveryPoint}
-          onDeliveryPointSelect={setDeliveryPoint}
+          onDeliveryPointSelect={handleDeliverySelect}
           onNext={handleNext}
           onBack={handleBack}
         />
@@ -117,7 +227,7 @@ const Compras = () => {
         <PaymentStep
           paymentMethods={paymentMethods}
           selectedPaymentMethod={paymentMethod}
-          onPaymentMethodSelect={setPaymentMethod}
+          onPaymentMethodSelect={handlePaymentSelect}
           onNext={handleNext}
           onBack={handleBack}
         />
@@ -138,8 +248,9 @@ const Compras = () => {
           subtotal={subtotal}
           tax={tax}
           total={total}
-          onConfirm={handleConfirm}
+          onConfirm={handleFinalConfirm}
           onBack={handleBack}
+          orderData={order}
         />
       )
     }
@@ -156,6 +267,15 @@ const Compras = () => {
       paddingTop: "2rem"
     }}>
       <Header onShowHistory={() => setShowHistory(true)} />
+
+      <OrderConfirmationDialog
+        open={showDialog}
+        onClose={handleCloseDialog}
+        type={dialogInfo.type}
+        title={dialogInfo.title}
+        message={dialogInfo.message}
+        ordenId={dialogInfo.ordenId}
+      />
 
       {showHistory ? (
         <OrderHistory 

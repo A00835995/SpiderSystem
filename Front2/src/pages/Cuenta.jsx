@@ -34,10 +34,16 @@ const Cuenta = () => {
     ultimoAcceso: '2024-03-15 14:30:00'
   });
 
-  const handleLogout = () => {
-    // Aquí podrías agregar lógica para cerrar la sesión si es necesario
-    // Por ahora, simplemente navegamos a la página de login
-    navigate('/login');
+  const handleLogout = () => { 
+    // Limpiar localStorage manualmente
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Redirigir al login
+    navigate("/");
+    
+    // Recargar la página para limpiar completamente el estado
+    window.location.reload();
   };
 
   return (

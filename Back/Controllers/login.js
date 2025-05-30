@@ -60,7 +60,6 @@ exports.login = async (req, res) => {
                   id: user.IDUSR,
                   name: user.NAMEUSR,
                   email: user.EMAILUSR,
-                  profilePic: user.PROFILEPIC,
                   role: user.IDROL
                 }
             });

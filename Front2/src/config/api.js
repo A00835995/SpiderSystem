@@ -30,7 +30,20 @@ export const API_CONFIG = {
         actualizarTelefonoProveedor: "/gestion-proveedores/actualizar-telefono/:id",
         actualizarTipoProveedor: "/gestion-proveedores/actualizar-tipo/:id",
         actualizarTipoPagoProveedor: "/gestion-proveedores/actualizar-tipo-pago/:id",
+        eliminarProveedor: "/gestion-proveedores/eliminar-proveedor/:id",
         getResumenCategorias: "/gestion-proveedores/resumen-categorias",
         getDistribucionProveedorInventario: "/gestion-proveedores/distribucion-proveedor-inventario",
+        compras: {
+            getData: "/compras/getdata",
+            crearOrden: "/compras/crearOrden"
+        },
+        metricas: {
+            resumenFinanciero: {
+                mes: "/metricas/resumen-financiero/mes/:mes/:anio",
+                anio: "/metricas/resumen-financiero/anio/:anio",
+                categoria: "/metricas/ventas-categoria/mes/:mes/:anio",
+                categoriaAnio: "/metricas/ventas-categoria/anio/:anio"
+            }
+        }
     }
 };

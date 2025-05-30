@@ -26,8 +26,8 @@ const VentasPorCategoria = ({ ventasPorCategoria }) => {
             }}>
               {categoria.ranking}
             </div>
-            <div style={{ flex: 1 }}>
-              <Text style={{ fontWeight: 'bold' }}>{categoria.categoria}</Text>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Text style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>{categoria.categoria}</Text>
               <Text style={{ color: 'var(--sapContent_LabelColor)', fontSize: '0.875rem' }}>
                 {categoria.porcentaje} en ventas este mes
               </Text>

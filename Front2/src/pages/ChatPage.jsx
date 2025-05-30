@@ -19,7 +19,8 @@ import {
   FileUploader
 } from '@ui5/webcomponents-react';
 import { useNavigate } from 'react-router-dom';
-import { useUI5Theme } from '../components/UI5ThemeProvider';
+import axios from 'axios';
+import { io } from 'socket.io-client';
 
 // Importar iconos de manera general en lugar de individualmente
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
@@ -101,7 +102,6 @@ const StatusIndicator = ({ status }) => {
 
 // Componente Avatar personalizado con iniciales
 const CustomAvatar = ({ user, size = "S", style = {} }) => {
-  const { isDarkMode } = useUI5Theme();
   const initial = getInitial(user.nombre);
   
   // Siempre mostrar la inicial, incluso cuando hay un icono definido
@@ -116,38 +116,44 @@ const CustomAvatar = ({ user, size = "S", style = {} }) => {
   );
 };
 
+const SOCKET_URL = 'http://localhost:4000'; // Cambia si tu backend está en otra URL
+const API_URL = 'http://localhost:4000/api/chat';
+const USERS_URL = 'http://localhost:4000/api/gestion/usuarios';
+
 const ChatPage = () => {
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const fileUploaderRef = useRef(null);
-  const { isDarkMode } = useUI5Theme();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const [users, setUsers] = useState([]);
+  const currentUser = { id: 1, nombre: "Usuario Actual", avatar: "employee" }; // TODO: Reemplaza esto por el usuario real del login
 
-  // Estilos con soporte para tema claro/oscuro
+  // Estilos solo para modo claro
   const styles = {
     pageContainer: {
       display: 'flex',
-      height: 'calc(100vh - 56px)', // Ajustar altura según el header principal
-      backgroundColor: isDarkMode ? 'var(--sapBackgroundColor)' : 'var(--sapBackgroundColor)',
-      paddingTop: '56px', // Añadir padding superior para compensar el header fijo
+      height: 'calc(100vh - 56px)',
+      backgroundColor: 'var(--sapBackgroundColor)',
+      paddingTop: '56px',
       position: 'relative',
-      marginTop: '20px' // Espacio adicional desde la parte superior
+      marginTop: '20px'
     },
     sidebar: {
       width: '320px',
-      borderRight: `1px solid ${isDarkMode ? 'var(--sapContent_ShadowColor)' : 'var(--sapList_BorderColor)'}`,
+      borderRight: '1px solid var(--sapList_BorderColor)',
       display: 'flex',
       flexDirection: 'column',
       height: '100%'
     },
     searchContainer: {
       padding: '1rem',
-      borderBottom: `1px solid ${isDarkMode ? 'var(--sapContent_ShadowColor)' : 'var(--sapList_BorderColor)'}`,
-      backgroundColor: isDarkMode ? 'var(--sapList_HeaderBackground)' : 'var(--sapList_HeaderBackground)'
+      borderBottom: '1px solid var(--sapList_BorderColor)',
+      backgroundColor: 'var(--sapList_HeaderBackground)'
     },
     userList: {
       flex: 1,
@@ -158,15 +164,13 @@ const ChatPage = () => {
       alignItems: 'center',
       padding: '0.75rem 1rem',
       cursor: 'pointer',
-      backgroundColor: isSelected 
-        ? isDarkMode ? 'var(--sapList_SelectionBackgroundColor)' : 'var(--sapList_SelectionBackgroundColor)'
-        : 'transparent',
-      borderBottom: `1px solid ${isDarkMode ? 'var(--sapContent_ShadowColor)' : 'var(--sapList_BorderColor)'}`,
+      backgroundColor: isSelected ? 'var(--sapList_SelectionBackgroundColor)' : 'transparent',
+      borderBottom: '1px solid var(--sapList_BorderColor)',
       transition: 'background-color 0.2s ease'
     }),
     userAvatar: {
       marginRight: '12px',
-      backgroundColor: isDarkMode ? 'var(--sapButton_Background)' : 'var(--sapButton_Background)'
+      backgroundColor: 'var(--sapButton_Background)'
     },
     userInfo: {
       flex: 1
@@ -174,11 +178,11 @@ const ChatPage = () => {
     userName: {
       fontWeight: 600,
       fontSize: '0.875rem',
-      color: isDarkMode ? 'var(--sapTextColor)' : 'var(--sapTextColor)'
+      color: 'var(--sapTextColor)'
     },
     lastMessage: {
       fontSize: '0.75rem',
-      color: isDarkMode ? 'var(--sapContent_LabelColor)' : 'var(--sapContent_LabelColor)',
+      color: 'var(--sapContent_LabelColor)',
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
@@ -194,29 +198,25 @@ const ChatPage = () => {
       display: 'flex',
       alignItems: 'center',
       padding: '1rem',
-      borderBottom: `1px solid ${isDarkMode ? 'var(--sapContent_ShadowColor)' : 'var(--sapList_BorderColor)'}`,
-      backgroundColor: isDarkMode ? 'var(--sapList_HeaderBackground)' : 'var(--sapList_HeaderBackground)'
+      borderBottom: '1px solid var(--sapList_BorderColor)',
+      backgroundColor: 'var(--sapList_HeaderBackground)'
     },
     messagesContainer: {
       flex: 1,
       padding: '1rem',
       overflowY: 'auto',
-      backgroundColor: isDarkMode ? 'var(--sapBackgroundColor)' : 'var(--sapBackgroundColor)',
+      backgroundColor: 'var(--sapBackgroundColor)',
       display: 'flex',
       flexDirection: 'column'
     },
     inputContainer: {
       padding: '1rem',
-      borderTop: `1px solid ${isDarkMode ? 'var(--sapContent_ShadowColor)' : 'var(--sapList_BorderColor)'}`,
-      backgroundColor: isDarkMode ? 'var(--sapList_FooterBackground)' : 'var(--sapList_FooterBackground)'
+      borderTop: '1px solid var(--sapList_BorderColor)',
+      backgroundColor: 'var(--sapList_FooterBackground)'
     },
     messageBox: (isSent) => ({
-      backgroundColor: isSent 
-        ? isDarkMode ? 'var(--sapButton_Emphasized_Background)' : 'var(--sapButton_Emphasized_Background)'
-        : isDarkMode ? 'var(--sapList_Background)' : 'var(--sapList_Background)',
-      color: isSent 
-        ? 'white' 
-        : isDarkMode ? 'var(--sapTextColor)' : 'var(--sapTextColor)',
+      backgroundColor: isSent ? 'var(--sapButton_Emphasized_Background)' : 'var(--sapList_Background)',
+      color: isSent ? 'white' : 'var(--sapTextColor)',
       padding: '0.75rem 1rem',
       borderRadius: '0.75rem',
       maxWidth: '70%',
@@ -227,7 +227,7 @@ const ChatPage = () => {
     }),
     messageTime: {
       fontSize: '0.7rem',
-      color: isDarkMode ? 'var(--sapContent_LabelColor)' : 'var(--sapContent_LabelColor)',
+      color: 'var(--sapContent_LabelColor)',
       textAlign: 'right',
       marginTop: '0.25rem',
       opacity: 0.8
@@ -239,7 +239,7 @@ const ChatPage = () => {
       justifyContent: 'center',
       alignItems: 'center',
       padding: '2rem',
-      backgroundColor: isDarkMode ? 'var(--sapBackgroundColor)' : 'var(--sapBackgroundColor)'
+      backgroundColor: 'var(--sapBackgroundColor)'
     },
     chatHeaderTitle: {
       display: 'flex',
@@ -258,7 +258,7 @@ const ChatPage = () => {
       marginRight: '8px'
     },
     myAvatar: {
-      backgroundColor: isDarkMode ? 'var(--sapButton_Accept_Background)' : 'var(--sapButton_Accept_Background)'
+      backgroundColor: 'var(--sapButton_Accept_Background)'
     },
     photoButton: {
       marginRight: '0.5rem',
@@ -270,7 +270,7 @@ const ChatPage = () => {
       height: '36px',
     },
     uploadIcon: {
-      color: isDarkMode ? 'var(--sapButton_TextColor)' : 'var(--sapButton_TextColor)',
+      color: 'var(--sapButton_TextColor)',
       fontSize: '1.2rem'
     },
     imageMessage: {
@@ -284,29 +284,29 @@ const ChatPage = () => {
     }
   };
 
+  // Obtener usuarios reales para la agenda
+  useEffect(() => {
+    axios.get(USERS_URL)
+      .then(res => setUsers(res.data.filter(u => u.id !== currentUser.id)))
+      .catch(() => setUsers([]));
+  }, [currentUser.id]);
+
   // Búsqueda optimizada con useMemo
   const filteredProveedores = useMemo(() => {
     const searchTermLower = searchTerm.toLowerCase().trim();
-    
-    if (!searchTermLower) return mockProveedores;
-
-    return mockProveedores.filter(proveedor => {
+    if (!searchTermLower) return users;
+    return users.filter(user => {
       const searchFields = [
-        proveedor.nombre.toLowerCase(),
-        proveedor.email.toLowerCase(),
-        proveedor.lastMessage.toLowerCase(),
-        ...(proveedor.keywords || []).map(k => k.toLowerCase())
+        user.nombre.toLowerCase(),
+        user.email.toLowerCase(),
+        user.rol.toLowerCase()
       ];
-
-      // Dividir el término de búsqueda en palabras para búsqueda parcial
       const searchWords = searchTermLower.split(/\s+/);
-
-      // Verificar si todas las palabras de búsqueda coinciden con algún campo
       return searchWords.every(word =>
         searchFields.some(field => field.includes(word))
       );
     });
-  }, [searchTerm]);
+  }, [searchTerm, users]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -316,34 +316,78 @@ const ChatPage = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = () => {
-    // Solo proceder si hay un mensaje y un usuario seleccionado
-    if (!newMessage || !selectedUser) return;
-    
-    // Crear el mensaje
-    const message = {
-      id: Date.now(),
-      text: newMessage,
-      timestamp: new Date(),
-      isSent: true
-    };
-    
-    // Añadir mensaje a la lista y limpiar el input
-    setMessages(prev => [...prev, message]);
-    setNewMessage("");
-    
-    // Simular respuesta
+  // Conectar socket.io al montar
+  useEffect(() => {
+    const newSocket = io(SOCKET_URL);
+    setSocket(newSocket);
+    return () => newSocket.disconnect();
+  }, []);
+
+  // Obtener mensajes al seleccionar usuario
+  useEffect(() => {
+    if (!selectedUser) return;
     setIsLoading(true);
-    setTimeout(() => {
-      const response = {
-        id: Date.now() + 1,
-        text: "Mensaje recibido, te responderemos pronto.",
-        timestamp: new Date(),
-        isSent: false
-      };
-      setMessages(prev => [...prev, response]);
-      setIsLoading(false);
-    }, 1000);
+    axios.get(`${API_URL}/${currentUser.id}/${selectedUser.id}`)
+      .then(res => {
+        // Adaptar los mensajes al formato del frontend
+        const msgs = res.data.map(m => ({
+          id: m.id,
+          text: m.messageText,
+          imageUrl: m.imageUrl,
+          isImage: !!m.imageUrl,
+          timestamp: new Date(m.timestamp),
+          isSent: m.senderId === currentUser.id
+        }));
+        setMessages(msgs);
+        setIsLoading(false);
+      })
+      .catch(() => setIsLoading(false));
+  }, [selectedUser]);
+
+  // Escuchar nuevos mensajes por socket.io
+  useEffect(() => {
+    if (!socket) return;
+    const handleNewMessage = (msg) => {
+      // Solo agregar si el mensaje es para el usuario actual o lo envió el usuario actual
+      if (
+        (msg.senderId === currentUser.id && msg.receiverId === selectedUser?.id) ||
+        (msg.senderId === selectedUser?.id && msg.receiverId === currentUser.id)
+      ) {
+        setMessages(prev => [...prev, {
+          id: msg.id,
+          text: msg.messageText,
+          imageUrl: msg.imageUrl,
+          isImage: !!msg.imageUrl,
+          timestamp: new Date(msg.timestamp),
+          isSent: msg.senderId === currentUser.id
+        }]);
+      }
+    };
+    socket.on('newMessage', handleNewMessage);
+    return () => socket.off('newMessage', handleNewMessage);
+  }, [socket, selectedUser]);
+
+  // Enviar mensaje
+  const handleSendMessage = async () => {
+    if (!newMessage || !selectedUser) return;
+    const msgPayload = {
+      senderId: currentUser.id,
+      receiverId: selectedUser.id,
+      imageUrl: null,
+      messageText: newMessage
+    };
+    try {
+      await axios.post(API_URL, msgPayload);
+      // Emitir por socket.io para tiempo real
+      if (socket) socket.emit('sendMessage', {
+        ...msgPayload,
+        id: Date.now(),
+        timestamp: new Date().toISOString()
+      });
+      setNewMessage("");
+    } catch (e) {
+      alert('Error al enviar el mensaje');
+    }
   };
 
   const handleSearch = (event) => {
@@ -362,49 +406,35 @@ const ChatPage = () => {
     fileUploaderRef.current?.click();
   };
 
-  const handleFileChange = (event) => {
+  // Enviar imagen (opcional, si quieres soportar imágenes)
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (!file || !selectedUser) return;
-
-    // Validar que sea una imagen
     if (!file.type.startsWith('image/')) {
       alert('Por favor selecciona una imagen');
       return;
     }
-
-    // Crear un objeto URL para la imagen
+    // Subir la imagen a un servidor o usar base64 (no implementado aquí)
+    // Aquí solo se simula el envío de la URL local
     const imageUrl = URL.createObjectURL(file);
-
-    // Crear mensaje con imagen
-    const imageMessage = {
-      id: Date.now(),
-      isImage: true,
-      imageUrl: imageUrl,
-      fileName: file.name,
-      timestamp: new Date(),
-      isSent: true
+    const msgPayload = {
+      senderId: currentUser.id,
+      receiverId: selectedUser.id,
+      imageUrl,
+      messageText: ''
     };
-
-    setMessages(prev => [...prev, imageMessage]);
-
-    // Limpiar el input file para permitir cargar la misma imagen nuevamente
+    try {
+      await axios.post(API_URL, msgPayload);
+      if (socket) socket.emit('sendMessage', {
+        ...msgPayload,
+        id: Date.now(),
+        timestamp: new Date().toISOString()
+      });
+    } catch (e) {
+      alert('Error al enviar la imagen');
+    }
     event.target.value = '';
-
-    // Simular respuesta
-    setIsLoading(true);
-    setTimeout(() => {
-      const response = {
-        id: Date.now() + 1,
-        text: "Mensaje recibido, te responderemos pronto.",
-        timestamp: new Date(),
-        isSent: false
-      };
-      setMessages(prev => [...prev, response]);
-      setIsLoading(false);
-    }, 1000);
   };
-
-  const currentUser = { nombre: "Mi Usuario", avatar: "employee" };
 
   // Componente para renderizar un mensaje (puede ser texto o imagen)
   const MessageContent = ({ message }) => {
@@ -611,4 +641,4 @@ const ChatPage = () => {
   );
 };
 
-export default ChatPage; 
+export { default } from '../components/chat/ChatPage'; 

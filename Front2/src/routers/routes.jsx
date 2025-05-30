@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar";
-
+import { useUI5Theme } from "../components/UI5ThemeProvider";
+import { PermisosProvider } from "../contexts/PermisosContext";
+import ProtectedRoute from "../components/ProtectedRoute";
+import AppInitializer from "../components/AppInitializer";
 
 // Lazy loading de las páginas
 const LazyLogin = React.lazy(() => import("../pages/Login"));
@@ -43,7 +46,9 @@ const Loading = () => (
 
 const PageWrapper = ({ component: Component }) => (
   <React.Suspense fallback={<Loading />}>
-    <Component />
+    <ProtectedRoute>
+      <Component />
+    </ProtectedRoute>
   </React.Suspense>
 );
 
@@ -52,7 +57,7 @@ function Layout() {
   const [sidebarWidth, setSidebarWidth] = useState(64);
   const [isMobile, setIsMobile] = useState(false);
 
-  const isLoginPage = location.pathname === "/login" || location.pathname === "/";
+  const isLoginPage = location.pathname === "/";
 
   useEffect(() => {
     const checkIfMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -90,8 +95,11 @@ function Layout() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<PageWrapper component={LazyLogin} />} />
+      <Route path="/" element={
+        <React.Suspense fallback={<Loading />}>
+          <LazyLogin />
+        </React.Suspense>
+      } />
     </Routes>
   );
 }
@@ -99,7 +107,11 @@ function Layout() {
 export function MyRoutes() {
   return (
     <BrowserRouter>
-      <Layout />
+      <PermisosProvider>
+        <AppInitializer>
+          <Layout />
+        </AppInitializer>
+      </PermisosProvider>
     </BrowserRouter>
   );
 }
