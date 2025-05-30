@@ -35,6 +35,9 @@ export const API_CONFIG = {
         compras: {
             getData: "/compras/getdata",
             crearOrden: "/compras/crearOrden"
-        }
+        },
+        ordenesProveedor: "/ordenes-proveedor",
+        consultarOrdenCompra: "/ordenes-proveedor/consultar",
+        actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso"
     }
 };

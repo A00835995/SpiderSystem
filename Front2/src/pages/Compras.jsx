@@ -190,6 +190,7 @@ const Compras = () => {
         <ProviderStep
           //providers es el array de proveedores, el {providers} viene de useComprasData
           providers={providers}
+          //SelectedProvider es el proveedor seleccionado, el {selectedProvider} viene de useOrderSteps
           selectedProvider={selectedProvider}
           onProviderSelect={handleProviderSelect}
           onNext={handleNext}
