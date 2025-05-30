@@ -28,6 +28,8 @@ const { connectToHANA } = require('./Config/confDB');
 app.use(cors());
 app.use(express.json());
 
+// Hacer io disponible en los controladores
+app.set('io', io);
 
 // Rutas de la API
 app.use('/api/login', loginRoutes);
@@ -54,9 +56,23 @@ server.listen(PORT, async () => {
 io.on('connection', (socket) => {
     console.log('Usuario conectado al chat:', socket.id);
 
+    // Unirse a una sala específica cuando se autentica el usuario
+    socket.on('joinRoom', (userId) => {
+        socket.join(`user_${userId}`);
+        console.log(`Usuario ${userId} se unió a su sala personal`);
+    });
+
     socket.on('sendMessage', (message) => {
-        // Emitir el mensaje a todos los clientes (o puedes filtrar por sala)
-        io.emit('newMessage', message);
+        // Emitir el mensaje solo a los usuarios involucrados en la conversación
+        const { senderId, receiverId } = message;
+        
+        // Enviar al receptor
+        socket.to(`user_${receiverId}`).emit('newMessage', message);
+        
+        // También enviar al emisor (para confirmar que se envió) si no está en la misma sala
+        socket.to(`user_${senderId}`).emit('newMessage', message);
+        
+        console.log(`Mensaje enviado de ${senderId} a ${receiverId}`);
     });
 
     socket.on('disconnect', () => {

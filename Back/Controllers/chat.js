@@ -24,6 +24,27 @@ const sendMessage = async (req, res) => {
     const query = `CALL SP_INSERT_MESSAGE(?, ?, ?, ?)`;
     const params = [senderId, receiverId, imageUrl || null, messageText];
     await executeQuery(query, params);
+    
+    // Obtener la instancia de socket.io del app context
+    const io = req.app.get('io');
+    if (io) {
+      // Crear el mensaje para socket.io
+      const socketMessage = {
+        id: Date.now(), // ID temporal para el frontend
+        senderId,
+        receiverId,
+        imageUrl,
+        messageText,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Emitir el mensaje a los usuarios involucrados
+      io.to(`user_${receiverId}`).emit('newMessage', socketMessage);
+      io.to(`user_${senderId}`).emit('newMessage', socketMessage);
+      
+      console.log(`Mensaje emitido por socket de ${senderId} a ${receiverId}`);
+    }
+    
     res.status(201).json({ message: 'Mensaje enviado correctamente' });
   } catch (error) {
     res.status(500).json({ error: 'Error al enviar el mensaje', details: error.message });
