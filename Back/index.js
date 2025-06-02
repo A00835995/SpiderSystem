@@ -22,8 +22,9 @@ const comprasRoutes = require('./Routes/comprasRoutes');
 const permisosRoutes = require('./Routes/permisosRoutes');
 const metricasRoutes = require('./Routes/metricasRoutes');
 const chatRoutes = require('./Routes/chatRoutes');
-const { connectToHANA } = require('./Config/confDB');
 const ordenesProveedorRoutes = require('./Routes/ordenesProveedor');
+const ventasRoutes = require('./Routes/ventasRoutes');
+const { connectToHANA } = require('./Config/confDB');
 
 // Middleware
 app.use(cors());
@@ -43,9 +44,8 @@ app.use('/api/compras', comprasRoutes);
 app.use('/api/permisos', permisosRoutes);
 app.use('/api/metricas', metricasRoutes);
 app.use('/api/chat', chatRoutes);
-
-
 app.use('/api/ordenes-proveedor', ordenesProveedorRoutes);
+app.use('/api/ventas', ventasRoutes);
 
 //El servidor link
 const PORT = process.env.PORT || 4000;
