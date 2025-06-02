@@ -12,9 +12,9 @@ const connection = hana.createConnection();
 function connectToHANA() {
   return new Promise((resolve, reject) => {
     const connParams = {
-      serverNode: process.env.HANA_SERVER,
-      uid: process.env.HANA_USER,
-      pwd: process.env.HANA_PASSWORD,
+      serverNode: process.env.HANA_SERVER1,
+      uid: process.env.HANA_USER1,
+      pwd: process.env.HANA_PASSWORD1,
     };
 
     try {

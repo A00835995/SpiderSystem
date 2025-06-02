@@ -3,6 +3,11 @@ const { connectToHANA5 } = require('../Config/confDB');
 const fs = require('fs');
 require('dotenv').config();
 
+// Función para escapar comillas simples en SQL
+function escapeSQLString(str) {
+  return str.replace(/'/g, "''");
+}
+
 async function insertArticulos() {
   try {
     const conn = await connectToHANA5();
@@ -16,15 +21,15 @@ async function insertArticulos() {
       ];
 
 
-    for (let i = 11; i <= 30; i++) {
+    for (let i = 26; i <= 50; i++) {
       const artCodigo = `COD${i.toString().padStart(4, '0')}`;
-      const artNombre = `${faker.commerce.productMaterial()} ${tiposZapato[Math.floor(Math.random() * tiposZapato.length)]}`;
-      const artDesc = faker.commerce.productDescription();
+      const artNombre = escapeSQLString(`${faker.commerce.productMaterial()} ${tiposZapato[Math.floor(Math.random() * tiposZapato.length)]}`);
+      const artDesc = escapeSQLString(faker.commerce.productDescription());
       const artPrecioCompra = Number(faker.commerce.price({ min: 50, max: 1000 }));
       const margen = Math.floor(Math.random() * (50 - 20 + 1)) + 20;
       const artPrecioVenta = +(artPrecioCompra * (1 + margen / 100)).toFixed(2);
       const artIva = 1.600;
-      const artUbi = ubicaciones[Math.floor(Math.random() * ubicaciones.length)];
+      const artUbi = escapeSQLString(ubicaciones[Math.floor(Math.random() * ubicaciones.length)]);
       const artExistencia = Math.floor(Math.random() * 51);
       const categId = Math.floor(Math.random() * 4) + 1;
       const idProv = Math.floor(Math.random() * 4) + 1;

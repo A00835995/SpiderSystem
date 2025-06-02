@@ -18,7 +18,7 @@ export default function InventoryStats({
         <CardHeader titleText="Total de Productos" avatar={<Icon name="inventory" />} />
         <div className={styles.statInfo}>
           <Title className={styles.statValue}>{inventoryStats.total}</Title>
-          <Text className={styles.statLabel}>Productos en el inventario</Text>
+          <Text className={styles.statLabel}>Productos Registrados en el inventario</Text>
         </div>
       </Card>
 

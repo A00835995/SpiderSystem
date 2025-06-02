@@ -6,7 +6,6 @@ import {
   Icon,
   AnalyticalTable,
   BusyIndicator,
-  MessageBox,
   FlexBox,
   Select,
   Option,
@@ -132,22 +131,19 @@ const OrderHistory = ({ onClose }) => {
       
       if (response.data && response.data.success) {
         // Mostrar mensaje de éxito
-        MessageBox.success("Orden completada exitosamente. El inventario ha sido actualizado.", {
-          onClose: () => {
-            // Cerrar el diálogo si está abierto
-            if (showDetailDialog) {
-              handleCloseDetail();
-            }
-            // Actualizar la lista de órdenes
-            fetchOrdenesEnProgreso();
-          }
-        });
+        alert("Orden completada exitosamente. El inventario ha sido actualizado.");
+        // Cerrar el diálogo si está abierto
+        if (showDetailDialog) {
+          handleCloseDetail();
+        }
+        // Actualizar la lista de órdenes
+        fetchOrdenesEnProgreso();
       } else {
         throw new Error(response.data?.message || "Error al completar la orden");
       }
     } catch (err) {
       console.error('Error al completar la orden:', err);
-      MessageBox.error(err.response?.data?.error || "Error al completar la orden. Por favor, inténtalo de nuevo.");
+      alert("Error al completar la orden. Por favor, inténtalo de nuevo.");
     } finally {
       setCompletingOrder(false);
     }
@@ -323,19 +319,9 @@ const OrderHistory = ({ onClose }) => {
                         design="Transparent"
                         tooltip="Completar orden"
                         onClick={() => {
-                          MessageBox.confirm(
-                            "¿Estás seguro de que quieres completar esta orden? Esta acción actualizará el inventario.",
-                            {
-                              title: "Completar Orden",
-                              actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-                              emphasizedAction: MessageBox.Action.OK,
-                              onClose: (action) => {
-                                if (action === MessageBox.Action.OK) {
-                                  handleCompleteOrder(row.original.id);
-                                }
-                              }
-                            }
-                          );
+                          if (window.confirm("¿Estás seguro de que quieres completar esta orden? Esta acción actualizará el inventario.")) {
+                            handleCompleteOrder(row.original.id);
+                          }
                         }}
                         style={{ color: '#107e3e' }}
                         disabled={completingOrder}
@@ -467,19 +453,9 @@ const OrderHistory = ({ onClose }) => {
         onComplete={() => {
           // Implementar acción de completar orden desde el diálogo
           if (selectedOrder) {
-            MessageBox.confirm(
-              "¿Estás seguro de que quieres completar esta orden? Esta acción actualizará el inventario.",
-              {
-                title: "Completar Orden",
-                actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-                emphasizedAction: MessageBox.Action.OK,
-                onClose: (action) => {
-                  if (action === MessageBox.Action.OK) {
-                    handleCompleteOrder(selectedOrder.id);
-                  }
-                }
-              }
-            );
+            if (window.confirm("¿Estás seguro de que quieres completar esta orden? Esta acción actualizará el inventario.")) {
+              handleCompleteOrder(selectedOrder.id);
+            }
           }
         }}
       />
