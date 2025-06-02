@@ -44,19 +44,59 @@ export async function fetchVentasPorCategoriaAnio(anio) {
   return json;
 }
 
+// Obtener indicadores de cliente mensual
+export async function fetchIndicadoresClienteMes(mes, anio) {
+  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/indicadores-cliente/mes/${mes}/${anio}`);
+  if (!response.ok) {
+    throw new Error(`Error al obtener indicadores de cliente mensual: ${response.statusText}`);
+  }
+  const json = await response.json();
+  return json;
+}
+
+// Obtener indicadores de cliente anual
+export async function fetchIndicadoresClienteAnio(anio) {
+  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/indicadores-cliente/anio/${anio}`);
+  if (!response.ok) {
+    throw new Error(`Error al obtener indicadores de cliente anual: ${response.statusText}`);
+  }
+  const json = await response.json();
+  return json;
+}
+
+// Obtener indicadores completos mensual (NUEVO)
+export async function fetchIndicadoresCompletosMes(mes, anio) {
+  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/indicadores-completos/mes/${mes}/${anio}`);
+  if (!response.ok) {
+    throw new Error(`Error al obtener indicadores completos mensual: ${response.statusText}`);
+  }
+  const json = await response.json();
+  return json;
+}
+
+// Obtener indicadores completos anual (NUEVO)
+export async function fetchIndicadoresCompletosAnio(anio) {
+  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/indicadores-completos/anio/${anio}`);
+  if (!response.ok) {
+    throw new Error(`Error al obtener indicadores completos anual: ${response.statusText}`);
+  }
+  const json = await response.json();
+  return json;
+}
+
 // Función helper para obtener métricas completas según el período
 export async function fetchMetricasCompletas(periodo, mes = null, anio = null) {
   try {
-    let resumenFinanciero, ventasPorCategoria;
+    let indicadoresCompletos, ventasPorCategoria;
 
     if (periodo === 'mensual' && mes && anio) {
-      [resumenFinanciero, ventasPorCategoria] = await Promise.all([
-        fetchResumenFinancieroMes(mes, anio),
+      [indicadoresCompletos, ventasPorCategoria] = await Promise.all([
+        fetchIndicadoresCompletosMes(mes, anio),
         fetchVentasPorCategoriaMes(mes, anio)
       ]);
     } else if (periodo === 'anual' && anio) {
-      [resumenFinanciero, ventasPorCategoria] = await Promise.all([
-        fetchResumenFinancieroAnio(anio),
+      [indicadoresCompletos, ventasPorCategoria] = await Promise.all([
+        fetchIndicadoresCompletosAnio(anio),
         fetchVentasPorCategoriaAnio(anio)
       ]);
     } else {
@@ -64,7 +104,7 @@ export async function fetchMetricasCompletas(periodo, mes = null, anio = null) {
     }
 
     return {
-      resumenFinanciero,
+      indicadoresCompletos,
       ventasPorCategoria,
       periodo,
       mes,
@@ -73,4 +113,24 @@ export async function fetchMetricasCompletas(periodo, mes = null, anio = null) {
   } catch (error) {
     throw new Error(`Error al obtener métricas completas: ${error.message}`);
   }
+}
+
+// Obtener resumen de inventario completo
+export async function fetchResumenInventarioCompleto() {
+  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/resumen-inventario-completo`);
+  if (!response.ok) {
+    throw new Error(`Error al obtener resumen de inventario completo: ${response.statusText}`);
+  }
+  const json = await response.json();
+  return json;
+}
+
+// Obtener stock por categoría
+export async function fetchStockPorCategoria() {
+  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/stock-por-categoria`);
+  if (!response.ok) {
+    throw new Error(`Error al obtener stock por categoría: ${response.statusText}`);
+  }
+  const json = await response.json();
+  return json;
 }

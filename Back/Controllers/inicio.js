@@ -78,7 +78,7 @@ exports.getProductosInventario = async (req, res) => {
 
 exports.getVentasMesAnterior = async (req, res) => {
     try{
-        const result = await executeQuery('CALL "PorcentajeVentasMesAnterior"()');
+        const result = await executeQuery('CALL PORCENTAJEVENTASMESANTERIOR()');
 
         if (!result || result.length === 0) {
             return res.status(404).json({ message: "No se encontraron ventas mensuales anteriores" });
@@ -128,7 +128,7 @@ exports.getOrdenesRecientes = async (req, res) => {
 
 exports.getVentasXCategoria = async (req, res) => {
     try{
-        const result = await executeQuery('CALL "VentasPorCategoria"()');
+        const result = await executeQuery('CALL "VENTASPORCATEGORIA"()');
 
         if (!result || result.length === 0) {
             return res.status(404).json({ message: "No se encontraron ventas por categoria" });
@@ -153,7 +153,7 @@ exports.getVentasXCategoria = async (req, res) => {
 
 exports.getProductosMasVendidosMesActual = async (req, res) => {
     try{
-        const result = await executeQuery('CALL "TOP3_PRODUCTOS_MES_ACTUAL"()');
+        const result = await executeQuery('CALL TOP3_PRODUCTOS_MES_ACTUAL()');
 
         if (!result || result.length === 0) {
             return res.status(404).json({ message: "No se encontraron productos mas vendidos del mes actual" });

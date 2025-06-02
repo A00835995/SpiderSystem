@@ -4,7 +4,11 @@ import {
   fetchResumenFinancieroAnio,
   fetchVentasPorCategoriaMes,
   fetchVentasPorCategoriaAnio,
-  fetchMetricasCompletas
+  fetchIndicadoresCompletosMes,
+  fetchIndicadoresCompletosAnio,
+  fetchMetricasCompletas,
+  fetchResumenInventarioCompleto,
+  fetchStockPorCategoria
 } from '../services/MetricasService';
 
 /**
@@ -14,7 +18,11 @@ import {
 export function useMetricas() {
   const [resumenFinanciero, setResumenFinanciero] = useState(null);
   const [ventasPorCategoria, setVentasPorCategoria] = useState([]);
+  const [indicadoresCliente, setIndicadoresCliente] = useState(null);
+  const [resumenInventario, setResumenInventario] = useState(null);
+  const [stockPorCategoria, setStockPorCategoria] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingInventario, setLoadingInventario] = useState(false);
   const [error, setError] = useState(null);
   const [periodoActual, setPeriodoActual] = useState({
     tipo: 'mensual', // 'mensual' o 'anual'
@@ -109,7 +117,146 @@ export function useMetricas() {
   }, []);
 
   /**
-   * Obtiene todas las métricas para un período específico
+   * Obtiene indicadores completos mensual
+   * @param {number} mes - Mes (1-12)
+   * @param {number} anio - Año
+   * @returns {Promise<Object>} Datos de indicadores completos
+   */
+  const obtenerIndicadoresCompletosMes = useCallback(async (mes, anio) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetchIndicadoresCompletosMes(mes, anio);
+      const data = response.data || response; // Extraer data si existe, sino usar respuesta completa
+      
+      // Los indicadores completos incluyen tanto resumen financiero como indicadores de cliente
+      setResumenFinanciero(data);
+      setIndicadoresCliente(data);
+      return data;
+    } catch (err) {
+      setError('Error al obtener indicadores completos mensual: ' + err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /**
+   * Obtiene indicadores completos anual
+   * @param {number} anio - Año
+   * @returns {Promise<Object>} Datos de indicadores completos
+   */
+  const obtenerIndicadoresCompletosAnio = useCallback(async (anio) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetchIndicadoresCompletosAnio(anio);
+      const data = response.data || response; // Extraer data si existe, sino usar respuesta completa
+      
+      // Los indicadores completos incluyen tanto resumen financiero como indicadores de cliente
+      setResumenFinanciero(data);
+      setIndicadoresCliente(data);
+      return data;
+    } catch (err) {
+      setError('Error al obtener indicadores completos anual: ' + err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /**
+   * Obtiene resumen de inventario completo
+   * @returns {Promise<Object>} Datos del resumen de inventario
+   */
+  const obtenerResumenInventarioCompleto = useCallback(async () => {
+    try {
+      setLoadingInventario(true);
+      setError(null);
+      const response = await fetchResumenInventarioCompleto();
+      const data = response.data || response;
+      setResumenInventario(data);
+      return data;
+    } catch (err) {
+      setError('Error al obtener resumen de inventario: ' + err.message);
+      throw err;
+    } finally {
+      setLoadingInventario(false);
+    }
+  }, []);
+
+  /**
+   * Obtiene stock por categoría
+   * @returns {Promise<Array>} Datos del stock por categoría
+   */
+  const obtenerStockPorCategoria = useCallback(async () => {
+    try {
+      setLoadingInventario(true);
+      setError(null);
+      const response = await fetchStockPorCategoria();
+      const data = response.data || response;
+      setStockPorCategoria(Array.isArray(data) ? data : []);
+      return data;
+    } catch (err) {
+      setError('Error al obtener stock por categoría: ' + err.message);
+      throw err;
+    } finally {
+      setLoadingInventario(false);
+    }
+  }, []);
+
+  /**
+   * Obtiene todas las métricas incluyendo inventario
+   * @param {string} periodo - 'mensual' o 'anual'
+   * @param {number} mes - Mes (solo para período mensual)
+   * @param {number} anio - Año
+   * @returns {Promise<Object>} Todas las métricas del período
+   */
+  const obtenerMetricasCompletasConInventario = useCallback(async (periodo, mes = null, anio = null) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Obtener métricas financieras y de inventario en paralelo
+      const [metricasData, inventarioData] = await Promise.all([
+        fetchMetricasCompletas(periodo, mes, anio),
+        fetchResumenInventarioCompleto()
+      ]);
+      
+      // Los indicadores completos ahora incluyen todo en una sola respuesta
+      const indicadoresData = metricasData.indicadoresCompletos?.data || metricasData.indicadoresCompletos;
+      const ventasData = metricasData.ventasPorCategoria?.data || metricasData.ventasPorCategoria;
+      const inventarioResponseData = inventarioData.data || inventarioData;
+      
+      // Actualizar estados
+      setResumenFinanciero(indicadoresData);
+      setIndicadoresCliente(indicadoresData);
+      setVentasPorCategoria(Array.isArray(ventasData) ? ventasData : []);
+      setResumenInventario(inventarioResponseData);
+      setStockPorCategoria(Array.isArray(inventarioResponseData.stockPorCategoria) ? inventarioResponseData.stockPorCategoria : []);
+      setPeriodoActual({
+        tipo: periodo,
+        mes: mes,
+        anio: anio
+      });
+      
+      return {
+        resumenFinanciero: indicadoresData,
+        ventasPorCategoria: ventasData,
+        indicadoresCliente: indicadoresData,
+        resumenInventario: inventarioResponseData,
+        stockPorCategoria: inventarioResponseData.stockPorCategoria
+      };
+    } catch (err) {
+      setError('Error al obtener métricas completas: ' + err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /**
+   * Obtiene todas las métricas para un período específico (sin inventario)
    * @param {string} periodo - 'mensual' o 'anual'
    * @param {number} mes - Mes (solo para período mensual)
    * @param {number} anio - Año
@@ -122,12 +269,13 @@ export function useMetricas() {
       
       const data = await fetchMetricasCompletas(periodo, mes, anio);
       
-      // Extraer datos correctamente de las respuestas
-      const resumenData = data.resumenFinanciero?.data || data.resumenFinanciero;
+      // Los indicadores completos ahora incluyen todo en una sola respuesta
+      const indicadoresData = data.indicadoresCompletos?.data || data.indicadoresCompletos;
       const ventasData = data.ventasPorCategoria?.data || data.ventasPorCategoria;
       
-      // Actualizar estados
-      setResumenFinanciero(resumenData);
+      // Actualizar estados - resumenFinanciero e indicadoresCliente vienen del mismo endpoint
+      setResumenFinanciero(indicadoresData);
+      setIndicadoresCliente(indicadoresData);
       setVentasPorCategoria(Array.isArray(ventasData) ? ventasData : []);
       setPeriodoActual({
         tipo: periodo,
@@ -136,8 +284,9 @@ export function useMetricas() {
       });
       
       return {
-        resumenFinanciero: resumenData,
-        ventasPorCategoria: ventasData
+        resumenFinanciero: indicadoresData,
+        ventasPorCategoria: ventasData,
+        indicadoresCliente: indicadoresData
       };
     } catch (err) {
       setError('Error al obtener métricas completas: ' + err.message);
@@ -155,11 +304,11 @@ export function useMetricas() {
    */
   const cambiarPeriodo = useCallback(async (tipoPeriodo, mes = null, anio = null) => {
     try {
-      await obtenerMetricasCompletas(tipoPeriodo, mes, anio);
+      await obtenerMetricasCompletasConInventario(tipoPeriodo, mes, anio);
     } catch (err) {
       console.error('Error al cambiar período:', err);
     }
-  }, [obtenerMetricasCompletas]);
+  }, [obtenerMetricasCompletasConInventario]);
 
   /**
    * Recarga las métricas del período actual
@@ -167,11 +316,11 @@ export function useMetricas() {
   const recargarMetricas = useCallback(async () => {
     try {
       const { tipo, mes, anio } = periodoActual;
-      await obtenerMetricasCompletas(tipo, mes, anio);
+      await obtenerMetricasCompletasConInventario(tipo, mes, anio);
     } catch (err) {
       console.error('Error al recargar métricas:', err);
     }
-  }, [periodoActual, obtenerMetricasCompletas]);
+  }, [periodoActual, obtenerMetricasCompletasConInventario]);
 
   /**
    * Limpia los datos y errores
@@ -179,20 +328,27 @@ export function useMetricas() {
   const limpiarDatos = useCallback(() => {
     setResumenFinanciero(null);
     setVentasPorCategoria([]);
+    setIndicadoresCliente(null);
+    setResumenInventario(null);
+    setStockPorCategoria([]);
     setError(null);
   }, []);
 
   // Cargar métricas iniciales al montar el componente
   useEffect(() => {
     const { tipo, mes, anio } = periodoActual;
-    obtenerMetricasCompletas(tipo, mes, anio);
+    obtenerMetricasCompletasConInventario(tipo, mes, anio);
   }, []); // Solo se ejecuta al montar
 
   return {
     // Estados
     resumenFinanciero,
     ventasPorCategoria,
+    indicadoresCliente,
+    resumenInventario,
+    stockPorCategoria,
     loading,
+    loadingInventario,
     error,
     periodoActual,
     
@@ -201,9 +357,14 @@ export function useMetricas() {
     obtenerResumenFinancieroAnio,
     obtenerVentasPorCategoriaMes,
     obtenerVentasPorCategoriaAnio,
+    obtenerIndicadoresCompletosMes,
+    obtenerIndicadoresCompletosAnio,
+    obtenerResumenInventarioCompleto,
+    obtenerStockPorCategoria,
     
     // Funciones combinadas
     obtenerMetricasCompletas,
+    obtenerMetricasCompletasConInventario,
     cambiarPeriodo,
     recargarMetricas,
     

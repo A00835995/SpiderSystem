@@ -43,6 +43,18 @@ export const API_CONFIG = {
                 anio: "/metricas/resumen-financiero/anio/:anio",
                 categoria: "/metricas/ventas-categoria/mes/:mes/:anio",
                 categoriaAnio: "/metricas/ventas-categoria/anio/:anio"
+            },
+            indicadoresCliente: {
+                mes: "/metricas/indicadores-cliente/mes/:mes/:anio",
+                anio: "/metricas/indicadores-cliente/anio/:anio"
+            },
+            indicadoresCompletos: {
+                mes: "/metricas/indicadores-completos/mes/:mes/:anio",
+                anio: "/metricas/indicadores-completos/anio/:anio"
+            },
+            inventario: {
+                resumenCompleto: "/metricas/resumen-inventario-completo",
+                stockPorCategoria: "/metricas/stock-por-categoria"
             }
         },
         ordenesProveedor: "/ordenes-proveedor",

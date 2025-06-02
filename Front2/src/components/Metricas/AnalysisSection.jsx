@@ -2,7 +2,10 @@ import React from 'react';
 import VentasPorCategoria from './VentasPorCategoria';
 import StockPorCategoria from './StockPorCategoria';
 
-const AnalysisSection = ({ metrics, vista = 'general' }) => {
+const AnalysisSection = ({ metrics, vista = 'general', periodo = 'mesActual' }) => {
+  // Determinar si el período es anual o mensual
+  const tipoDisplay = periodo.includes('anio') ? 'anio' : 'mes';
+  
   return (
     <div style={{ 
       display: 'grid', 
@@ -10,7 +13,10 @@ const AnalysisSection = ({ metrics, vista = 'general' }) => {
       gap: '1rem' 
     }}>
       {vista === 'general' ? (
-        <VentasPorCategoria ventasPorCategoria={metrics.ventasPorCategoria} />
+        <VentasPorCategoria 
+          ventasPorCategoria={metrics.ventasPorCategoria} 
+          periodo={tipoDisplay}
+        />
       ) : (
         <StockPorCategoria stockPorCategoria={metrics.stockPorCategoria} />
       )}

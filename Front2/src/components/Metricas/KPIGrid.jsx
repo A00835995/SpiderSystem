@@ -25,24 +25,6 @@ const KPIGrid = ({ metrics, vista = 'general' }) => {
           additionalInfo={`Productos afectados: ${metrics.stockCritico.productosAfectados}`}
           isMonetary={false}
         />
-        
-        <InventoryKPICard
-          title="Rotación de Stock"
-          icon="refresh"
-          value={metrics.rotacionStock.valor}
-          additionalInfo={`Días promedio: ${metrics.rotacionStock.diasPromedio}`}
-          isMonetary={false}
-          showDecimals={true}
-        />
-        
-        <InventoryKPICard
-          title="Inventario Inactivo"
-          icon="return"
-          value={`${metrics.devoluciones.valor}%`}
-          additionalInfo={`Unidades: ${metrics.devoluciones.unidades}`}
-          isMonetary={false}
-          showDecimals={true}
-        />
       </div>
     );
   }
@@ -77,16 +59,16 @@ const KPIGrid = ({ metrics, vista = 'general' }) => {
         icon="customer"
         value={metrics.clientesNuevos.valor}
         change={metrics.clientesNuevos.cambio}
-        additionalInfo={`Tasa de conversión: ${metrics.clientesNuevos.tasaConversion}%`}
+        additionalInfo={`Día con más ventas: ${metrics.clientesNuevos.diaMasVentas}`}
         isMonetary={false}
       />
       
       <KPICard
-        title="Ticket Promedio"
+        title="Venta Promedio"
         icon="cart"
-        value={metrics.ticketPromedio.valor}
-        change={metrics.ticketPromedio.cambio}
-        additionalInfo={`Productos por venta: ${metrics.ticketPromedio.productosPorVenta}`}
+        value={metrics.ventaPromedio.valor}
+        change={metrics.ventaPromedio.cambio}
+        additionalInfo={`Promedio de productos por venta: ${metrics.ventaPromedio.productosPorVenta}`}
         isMonetary={true}
       />
     </div>

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Card, Title, Text } from '@ui5/webcomponents-react';
 
-const VentasPorCategoria = ({ ventasPorCategoria }) => {
+const VentasPorCategoria = ({ ventasPorCategoria, periodo = 'mes' }) => {
+  const textoTemporalidad = periodo === 'anio' ? 'en ventas este año' : 'en ventas este mes';
+  
   return (
     <Card>
       <div style={{ padding: '1rem' }}>
@@ -29,7 +31,7 @@ const VentasPorCategoria = ({ ventasPorCategoria }) => {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Text style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>{categoria.categoria}</Text>
               <Text style={{ color: 'var(--sapContent_LabelColor)', fontSize: '0.875rem' }}>
-                {categoria.porcentaje} en ventas este mes
+                {categoria.porcentaje} {textoTemporalidad}
               </Text>
             </div>
             <Text style={{ color: 'var(--sapPositiveColor)' }}>

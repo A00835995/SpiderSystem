@@ -26,7 +26,7 @@ export default function InicioRecentOrders() {
         columns={[
           {
             Header: "Orden #",
-            accessor: row => `OD-${String(row.numeroOrden).padStart(2, '0')}-${String(row.numeroProveedor).padStart(2, '0')}`,
+            accessor: row => `OD-${String(row.numeroOrden).padStart(2, '0')}`,
             id: "ordenCombinada",
             width: 120
           },

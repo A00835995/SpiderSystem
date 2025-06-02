@@ -12,7 +12,8 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
-        "@sap/hana-client": "^2.24.24",
+        "@faker-js/faker": "^9.8.0",
+        "@sap/hana-client": "^2.24.26",
         "bcryptjs": "^3.0.2",
         "cors": "^2.8.5",
         "dotenv": "^16.5.0",

@@ -25,7 +25,7 @@ class InicioResponseDto {
     // Para las ventas mensuales anteriores
     static toVentasMesAnteriorResponse(dbResult) {
         return {
-            porcentaje: dbResult[0]?.PORCENTAJEVARIACION || 0
+            porcentaje: dbResult[0]?.PORCENTAJE_VARIACION || 0
         };
     }
 
@@ -51,7 +51,7 @@ class InicioResponseDto {
     static toVentasXCategoriaResponse(dbVentasXCategoria) {
         return {
             categoria: dbVentasXCategoria.CATEGORIA,
-            total: dbVentasXCategoria.TOTALVENTAS,
+            total: dbVentasXCategoria.TOTAL_VENTAS,
             porcentaje: dbVentasXCategoria.PORCENTAJE
         };
     }

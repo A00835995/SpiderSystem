@@ -21,6 +21,9 @@ const Metricas = () => {
   const {
     resumenFinanciero,
     ventasPorCategoria,
+    indicadoresCliente,
+    resumenInventario,
+    stockPorCategoria,
     loading,
     error,
     cambiarPeriodo
@@ -56,72 +59,8 @@ const Metricas = () => {
 
   // Función para transformar datos de la API al formato esperado por los componentes
   const transformarDatosParaComponentes = () => {
-    // Datos por defecto para clientes nuevos y ticket promedio (temporalmente)
-    const datosEstaticos = {
-      clientesNuevos: {
-        valor: 0,
-        cambio: 0,
-        tasaConversion: 0
-      },
-      ticketPromedio: {
-        valor: 0,
-        cambio: 0,
-        productosPorVenta: 0
-      }
-    };
-
-    // Datos estáticos para inventario (temporalmente)
-    const datosInventario = {
-      stockTotal: {
-        valor: 12450,
-        cambio: 5.1,
-        productosUnicos: 842
-      },
-      stockCritico: {
-        valor: 45,
-        cambio: 21.6,
-        productosAfectados: 12
-      },
-      rotacionStock: {
-        valor: 3.2,
-        cambio: 10.3,
-        diasPromedio: 92
-      },
-      devoluciones: {
-        valor: 2.4,
-        cambio: -17.2,
-        unidades: 298
-      },
-      stockPorCategoria: [
-        {
-          categoria: "Calzado Deportivo",
-          unidades: 5602,
-          productos: 380,
-          color: "#28a745"
-        },
-        {
-          categoria: "Calzado Casual",
-          unidades: 3735,
-          productos: 252,
-          color: "#007bff"
-        },
-        {
-          categoria: "Calzado Formal",
-          unidades: 1867,
-          productos: 126,
-          color: "#6f42c1"
-        },
-        {
-          categoria: "Accesorios",
-          unidades: 1246,
-          productos: 84,
-          color: "#6c757d"
-        }
-      ]
-    };
-
     // Si no hay datos de la API, usar valores por defecto
-    if (!resumenFinanciero) {
+    if (!resumenFinanciero && !indicadoresCliente && !resumenInventario) {
       return {
         ventasTotales: {
           valor: 0,
@@ -133,25 +72,98 @@ const Metricas = () => {
           cambio: 0,
           margenPromedio: 0
         },
-        ...datosEstaticos,
-        ...datosInventario,
-        ventasPorCategoria: ventasPorCategoria || []
+        clientesNuevos: {
+          valor: 0,
+          cambio: 0,
+          diaMasVentas: 'No disponible'
+        },
+        ventaPromedio: {
+          valor: 0,
+          cambio: 0,
+          productosPorVenta: 0
+        },
+        // Datos de inventario por defecto
+        stockTotal: {
+          valor: 0,
+          cambio: 0,
+          productosUnicos: 0
+        },
+        stockCritico: {
+          valor: 0,
+          cambio: 0,
+          productosAfectados: 0
+        },
+        rotacionStock: {
+          valor: 0,
+          cambio: 0,
+          diasPromedio: 0
+        },
+        devoluciones: {
+          valor: 0,
+          cambio: 0,
+          unidades: 0
+        },
+        stockPorCategoria: [],
+        ventasPorCategoria: []
       };
     }
 
-    // Transformar datos de la API
+    // Determinar qué datos de stock por categoría usar
+    const stockCategoriaData = resumenInventario?.stockPorCategoria || stockPorCategoria || [];
+
+    // Transformar datos de inventario de la API
+    const datosInventario = resumenInventario ? {
+      stockTotal: {
+        valor: resumenInventario.resumenGeneral?.stockTotal || 0,
+        cambio: 5.1, // Temporalmente estático hasta que se agregue al SP
+        productosUnicos: resumenInventario.resumenGeneral?.productosUnicos || 0
+      },
+      stockCritico: {
+        valor: resumenInventario.resumenGeneral?.productosBajoStock || 0,
+        cambio: 21.6, // Temporalmente estático hasta que se agregue al SP
+        productosAfectados: resumenInventario.resumenGeneral?.unidadesBajoStock || 0
+      },
+      rotacionStock: {
+        valor: 3.2, // Temporalmente estático hasta que se agregue al SP
+        cambio: 10.3, // Temporalmente estático hasta que se agregue al SP
+        diasPromedio: 92 // Temporalmente estático hasta que se agregue al SP
+      },
+      devoluciones: {
+        valor: 2.4, // Temporalmente estático hasta que se agregue al SP
+        cambio: -17.2, // Temporalmente estático hasta que se agregue al SP
+        unidades: 298 // Temporalmente estático hasta que se agregue al SP
+      },
+      stockPorCategoria: Array.isArray(stockCategoriaData) ? stockCategoriaData : []
+    } : {
+      stockTotal: { valor: 0, cambio: 0, productosUnicos: 0 },
+      stockCritico: { valor: 0, cambio: 0, productosAfectados: 0 },
+      rotacionStock: { valor: 0, cambio: 0, diasPromedio: 0 },
+      devoluciones: { valor: 0, cambio: 0, unidades: 0 },
+      stockPorCategoria: []
+    };
+
+    // Transformar datos de métricas financieras
     return {
       ventasTotales: {
-        valor: resumenFinanciero.ventasTotales?.valor || 0,
-        cambio: resumenFinanciero.ventasTotales?.cambio || 0,
-        modeloMasVendido: resumenFinanciero.ventasTotales?.modeloMasVendido || "N/A"
+        valor: resumenFinanciero?.ventasTotales?.valor || 0,
+        cambio: resumenFinanciero?.ventasTotales?.cambio || 0,
+        modeloMasVendido: resumenFinanciero?.ventasTotales?.modeloMasVendido || "N/A"
       },
       ganancias: {
-        valor: resumenFinanciero.ganancias?.valor || 0,
-        cambio: resumenFinanciero.ganancias?.cambio || 0,
-        margenPromedio: resumenFinanciero.ganancias?.margenPromedio || 0
+        valor: resumenFinanciero?.ganancias?.valor || 0,
+        cambio: resumenFinanciero?.ganancias?.cambio || 0,
+        margenPromedio: resumenFinanciero?.ganancias?.margenPromedio || 0
       },
-      ...datosEstaticos,
+      clientesNuevos: {
+        valor: indicadoresCliente?.clientesNuevos?.valor || 0,
+        cambio: indicadoresCliente?.clientesNuevos?.cambio || 0,
+        diaMasVentas: indicadoresCliente?.clientesNuevos?.diaMasVentas || 'No disponible'
+      },
+      ventaPromedio: {
+        valor: indicadoresCliente?.ventaPromedio?.valor || 0,
+        cambio: indicadoresCliente?.ventaPromedio?.cambio || 0,
+        productosPorVenta: indicadoresCliente?.ventaPromedio?.productosPorVenta || 0
+      },
       ...datosInventario,
       ventasPorCategoria: Array.isArray(ventasPorCategoria) ? ventasPorCategoria : []
     };
@@ -220,7 +232,7 @@ const Metricas = () => {
           <KPIGrid metrics={metricsData} vista={vista} />
 
           {/* Sección de Análisis */}
-          <AnalysisSection metrics={metricsData} vista={vista} />
+          <AnalysisSection metrics={metricsData} vista={vista} periodo={periodo} />
         </>
       )}
     </div>
