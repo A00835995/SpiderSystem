@@ -55,7 +55,7 @@ export default function Alertas() {
           const mappedAlerts = response.data.map(alert => {
             // Determinar el tipo de alerta basado en el estado
             let type = "information";
-            if (alert.estado === "Bajo Stock") {
+            if (alert.estado === "Bajo Stock" || alert.estado === "Bajo stock") {
               type = "warning";
             } else if (alert.estado === "Agotado") {
               type = "error";
