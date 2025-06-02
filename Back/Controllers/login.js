@@ -39,30 +39,48 @@ exports.login = async (req, res) => {
               return res.status(401).json({ message: "Contraseña incorrecta" });
             }
 
-            //Generamos un JWT con payload mínimo (id, nombre, email, rol)
-            //    y expiración en 1 hora            
-            const token = jwt.sign(
-                {
-                  id: user.IDUSR,
-                  name: user.NAMEUSR,
-                  email: user.EMAILUSR,
-                  role: user.IDROL
-                },
-                SECRET_KEY,
-                { expiresIn: '1h' }
-              );
-              
-              // Respondemos con el token y datos públicos del usuario
-              return res.status(200).json({
-                message: 'Login exitoso',
-                token,
-                user: {
-                  id: user.IDUSR,
-                  name: user.NAMEUSR,
-                  email: user.EMAILUSR,
-                  role: user.IDROL
+            // Información base del usuario
+            const userData = {
+                id: user.IDUSR,
+                name: user.NAMEUSR,
+                email: user.EMAILUSR,
+                role: user.IDROL
+            };
+
+            // Si el usuario es proveedor (rol 4), buscar su ID de proveedor
+            if (user.IDROL === 4) {
+                console.log('Usuario es proveedor (rol 4), verificando IDPROV para:', user.EMAILUSR);
+                
+                // Verificar si el usuario tiene IDPROV directamente en la tabla de usuarios
+                if (user.IDPROV) {
+                    console.log('ID de proveedor encontrado directamente en usuario:', user.IDPROV);
+                    userData.proveedorId = user.IDPROV;
+                    console.log('Datos de usuario actualizados con ID de proveedor:', userData);
+                } else {
+                    console.warn('Usuario con rol de proveedor pero sin IDPROV asignado');
                 }
-            });
+                
+                // Generar token con los datos actualizados
+                generarTokenYResponder(userData);
+            } else {
+                console.log('Usuario no es proveedor, rol:', user.IDROL);
+                // No es proveedor, generar token normal
+                generarTokenYResponder(userData);
+            }
+
+            // Función para generar token y enviar respuesta
+            function generarTokenYResponder(userData) {
+                //Generamos un JWT con payload (id, nombre, email, rol, proveedorId si existe)
+                console.log('Generando token con datos:', userData);
+                const token = jwt.sign(userData, SECRET_KEY, { expiresIn: '1h' });
+                
+                // Respondemos con el token y datos públicos del usuario
+                return res.status(200).json({
+                    message: 'Login exitoso',
+                    token,
+                    user: userData
+                });
+            }
         });
 
     } catch (error) {

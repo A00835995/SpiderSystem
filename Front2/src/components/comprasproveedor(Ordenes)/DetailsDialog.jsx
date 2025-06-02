@@ -22,6 +22,7 @@ const DetailsDialog = ({
   onClose, 
   selectedCompra, 
   onConfirm,
+  onComplete,
   detalleOrdenCompra,
   loadingDetalle
 }) => {
@@ -66,6 +67,18 @@ const DetailsDialog = ({
                 style={{ backgroundColor: '#0854a0', color: 'white' }}
               >
                 Aceptar
+              </Button>
+            </>
+          )}
+          {(selectedCompra.estado === 'en_proceso' || selectedCompra.estado === 'en proceso') && onComplete && (
+            <>
+              <Button 
+                design="Emphasized"
+                icon="complete"
+                onClick={onComplete}
+                style={{ backgroundColor: '#107e3e', color: 'white' }}
+              >
+                Completar
               </Button>
             </>
           )}

@@ -280,7 +280,6 @@ const Compras = () => {
 
       {showHistory ? (
         <OrderHistory 
-          orderHistory={orderHistory} 
           onClose={() => setShowHistory(false)} 
         />
       ) : (

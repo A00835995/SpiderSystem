@@ -109,10 +109,17 @@ class OrdenCompraConsultaDto {
      * @returns {Object} - Datos formateados para el stored procedure
      */
     static toDatabase(requestData) {
-        return {
+        const result = {
             IdOrden: requestData.IdOrden
             // Ya no necesitamos ArtiId porque consultamos todos los artículos
         };
+        
+        // Incluir el ID del proveedor si está disponible
+        if (requestData.IdProveedor) {
+            result.IdProveedor = requestData.IdProveedor;
+        }
+        
+        return result;
     }
 }
 

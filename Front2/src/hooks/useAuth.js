@@ -6,6 +6,7 @@ export const useAuth = () => {
   const [token, setToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [proveedorId, setProveedorId] = useState(null);
   const { cargarPermisos } = usePermisos();
 
   // Inicializar autenticación desde localStorage
@@ -20,6 +21,12 @@ export const useAuth = () => {
           setToken(storedToken);
           setUser(userData);
           setIsAuthenticated(true);
+
+          // Si el usuario tiene ID de proveedor, guardarlo
+          if (userData.proveedorId) {
+            setProveedorId(userData.proveedorId);
+            console.log('ID de proveedor recuperado:', userData.proveedorId);
+          }
 
           // Cargar permisos si el usuario tiene rol
           if (userData.role) {
@@ -67,6 +74,12 @@ export const useAuth = () => {
       setUser(userData);
       setIsAuthenticated(true);
 
+      // Si el usuario tiene ID de proveedor, guardarlo
+      if (userData.proveedorId) {
+        setProveedorId(userData.proveedorId);
+        console.log('ID de proveedor guardado:', userData.proveedorId);
+      }
+
       // Cargar permisos
       if (userData.role) {
         try {
@@ -91,6 +104,7 @@ export const useAuth = () => {
     setToken(null);
     setUser(null);
     setIsAuthenticated(false);
+    setProveedorId(null);
     // Intentar limpiar permisos, pero no fallar si hay error
     try {
       cargarPermisos(null);
@@ -104,6 +118,13 @@ export const useAuth = () => {
     try {
       localStorage.setItem('user', JSON.stringify(newUserData));
       setUser(newUserData);
+
+      // Actualizar el ID del proveedor si cambia
+      if (newUserData.proveedorId) {
+        setProveedorId(newUserData.proveedorId);
+      } else {
+        setProveedorId(null);
+      }
 
       // Recargar permisos si cambió el rol
       if (newUserData.role !== user?.role) {
@@ -121,11 +142,18 @@ export const useAuth = () => {
     }
   };
 
+  // Función para verificar si el usuario es proveedor
+  const isProveedor = useCallback(() => {
+    return user?.role === 4;
+  }, [user]);
+
   return {
     user,
     token,
     isAuthenticated,
     loading,
+    proveedorId,
+    isProveedor,
     login,
     logout,
     updateUser

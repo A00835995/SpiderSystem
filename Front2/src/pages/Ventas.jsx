@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Title, MessageStrip } from '@ui5/webcomponents-react';
+import { Card, Title, MessageStrip, BusyIndicator } from '@ui5/webcomponents-react';
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
+import axiosInstance from '../config/axiosConfig';
+import { API_CONFIG } from '../config/api';
 
 // Importar componentes
 import VentasHeader from '../components/Ventas/VentasHeader';
@@ -16,131 +18,114 @@ const Ventas = () => {
   const [carrito, setCarrito] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Datos de productos simulados
+  // Obtener productos disponibles desde la API
   useEffect(() => {
-    setTimeout(() => {
-      setProductos([
-        {
-          id: 1,
-          nombre: "Nike Air Max 270",
-          categoria: "deportivos",
-          precio: 3500,
-          stock: 25,
-          descripcion: "Zapatillas deportivas con tecnología Air Max para máxima comodidad y estilo urbano.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 2,
-          nombre: "Adidas Ultraboost 22",
-          categoria: "deportivos",
-          precio: 4200,
-          stock: 18,
-          descripcion: "Zapatillas de running con tecnología Boost para un retorno de energía excepcional.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 3,
-          nombre: "Zapatos Oxford Clásicos",
-          categoria: "formales",
-          precio: 2800,
-          stock: 12,
-          descripcion: "Zapatos formales de cuero genuino, perfectos para ocasiones especiales y oficina.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 4,
-          nombre: "Converse Chuck Taylor",
-          categoria: "casuales",
-          precio: 1800,
-          stock: 30,
-          descripcion: "Zapatillas casuales icónicas, perfectas para el día a día con estilo retro.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 5,
-          nombre: "Botas Dr. Martens 1460",
-          categoria: "botas",
-          precio: 5200,
-          stock: 8,
-          descripcion: "Botas de cuero resistentes con suela AirWair, ideales para cualquier clima.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 6,
-          nombre: "Sandalias Birkenstock Arizona",
-          categoria: "sandalias",
-          precio: 2200,
-          stock: 15,
-          descripcion: "Sandalias ergonómicas con plantilla de corcho natural para máximo confort.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 7,
-          nombre: "Zapatos Escolares Niño",
-          categoria: "infantiles",
-          precio: 1200,
-          stock: 22,
-          descripcion: "Zapatos escolares resistentes y cómodos, perfectos para el uso diario escolar.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 8,
-          nombre: "Vans Old Skool",
-          categoria: "casuales",
-          precio: 2100,
-          stock: 20,
-          descripcion: "Zapatillas de skate clásicas con diseño atemporal y gran durabilidad.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 9,
-          nombre: "Mocasines de Cuero",
-          categoria: "formales",
-          precio: 3200,
-          stock: 10,
-          descripcion: "Mocasines elegantes de cuero italiano, perfectos para looks business casual.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 10,
-          nombre: "New Balance 574",
-          categoria: "deportivos",
-          precio: 2900,
-          stock: 16,
-          descripcion: "Zapatillas retro-running con excelente amortiguación y estilo vintage.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 11,
-          nombre: "Botas de Montaña",
-          categoria: "botas",
-          precio: 4800,
-          stock: 6,
-          descripcion: "Botas impermeables para senderismo y actividades al aire libre.",
-          imagen: "/api/placeholder/300/200"
-        },
-        {
-          id: 12,
-          nombre: "Ballerinas Clásicas",
-          categoria: "formales",
-          precio: 1800,
-          stock: 0,
-          descripcion: "Zapatos planos elegantes y cómodos para uso diario y ocasiones especiales.",
-          imagen: "/api/placeholder/300/200"
+    const fetchProductos = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get(API_CONFIG.endpoints.ventas.articulosDisponibles);
+        
+        if (response.data && response.data.success) {
+          // Transformar los datos recibidos al formato esperado por el componente
+          const productosFormateados = response.data.data.map(articulo => ({
+            id: articulo.id,
+            nombre: articulo.nombre,
+            categoria: "general", // Agregar categoría por defecto si no viene en la respuesta
+            precio: articulo.precioVenta,
+            precioConIva: articulo.precioConIva,
+            stock: articulo.existencia,
+            descripcion: `${articulo.nombre} - IVA: ${articulo.iva}%`,
+            imagen: "/api/placeholder/300/200" // Imagen de placeholder
+          }));
+          
+          setProductos(productosFormateados);
+          setError(null);
+        } else {
+          throw new Error(response.data?.message || "Error al obtener productos");
         }
-      ]);
-      setLoading(false);
-    }, 1000);
+      } catch (error) {
+        console.error("Error al obtener productos:", error);
+        setError("No se pudieron cargar los productos. Por favor, intenta nuevamente.");
+        // Cargar datos de muestra si falla la petición
+        cargarDatosDeMuestra();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductos();
   }, []);
+
+  // Función para cargar datos de muestra en caso de error
+  const cargarDatosDeMuestra = () => {
+    setProductos([
+      {
+        id: 1,
+        nombre: "Nike Air Max 270",
+        categoria: "deportivos",
+        precio: 3500,
+        stock: 25,
+        descripcion: "Zapatillas deportivas con tecnología Air Max para máxima comodidad y estilo urbano.",
+        imagen: "/api/placeholder/300/200"
+      },
+      {
+        id: 2,
+        nombre: "Adidas Ultraboost 22",
+        categoria: "deportivos",
+        precio: 4200,
+        stock: 18,
+        descripcion: "Zapatillas de running con tecnología Boost para un retorno de energía excepcional.",
+        imagen: "/api/placeholder/300/200"
+      },
+      {
+        id: 3,
+        nombre: "Zapatos Oxford Clásicos",
+        categoria: "formales",
+        precio: 2800,
+        stock: 12,
+        descripcion: "Zapatos formales de cuero genuino, perfectos para ocasiones especiales y oficina.",
+        imagen: "/api/placeholder/300/200"
+      },
+      {
+        id: 4,
+        nombre: "Converse Chuck Taylor",
+        categoria: "casuales",
+        precio: 1800,
+        stock: 30,
+        descripcion: "Zapatillas casuales icónicas, perfectas para el día a día con estilo retro.",
+        imagen: "/api/placeholder/300/200"
+      },
+      {
+        id: 5,
+        nombre: "Botas Dr. Martens 1460",
+        categoria: "botas",
+        precio: 5200,
+        stock: 8,
+        descripcion: "Botas de cuero resistentes con suela AirWair, ideales para cualquier clima.",
+        imagen: "/api/placeholder/300/200"
+      },
+      {
+        id: 6,
+        nombre: "Sandalias Birkenstock Arizona",
+        categoria: "sandalias",
+        precio: 2200,
+        stock: 15,
+        descripcion: "Sandalias ergonómicas con plantilla de corcho natural para máximo confort.",
+        imagen: "/api/placeholder/300/200"
+      }
+    ]);
+  };
 
   // Filtrar productos
   const filteredProducts = productos.filter(producto => {
     const matchesSearch = producto.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         producto.categoria.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         producto.descripcion.toLowerCase().includes(searchQuery.toLowerCase());
+                         (producto.categoria && producto.categoria.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                         (producto.descripcion && producto.descripcion.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    const matchesCategory = selectedCategory === 'todas' || producto.categoria === selectedCategory;
+    const matchesCategory = selectedCategory === 'todas' || 
+                           (producto.categoria && producto.categoria === selectedCategory);
     
     return matchesSearch && matchesCategory;
   });
@@ -154,6 +139,13 @@ const Ventas = () => {
   // Manejar agregar al carrito
   const handleAddToCart = (producto) => {
     const existingItem = carrito.find(item => item.id === producto.id);
+    const currentQuantity = existingItem ? existingItem.cantidad : 0;
+    
+    // Verificar si hay suficiente stock
+    if (currentQuantity + 1 > producto.stock) {
+      showNotification(`No hay suficiente stock de ${producto.nombre}. Disponible: ${producto.stock}`, 'Negative');
+      return;
+    }
 
     if (existingItem) {
       // Si ya existe, incrementar cantidad
@@ -180,6 +172,15 @@ const Ventas = () => {
       handleRemoveFromCart(productId);
       return;
     }
+    
+    // Encontrar el producto en el carrito
+    const item = carrito.find(item => item.id === productId);
+    
+    // Verificar si hay suficiente stock para la nueva cantidad
+    if (item && newQuantity > item.stock) {
+      showNotification(`No hay suficiente stock de ${item.nombre}. Disponible: ${item.stock}`, 'Negative');
+      return;
+    }
 
     setCarrito(carrito.map(item =>
       item.id === productId
@@ -201,18 +202,58 @@ const Ventas = () => {
   };
 
   // Proceder al checkout
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
     const itemCount = carrito.reduce((sum, item) => sum + item.cantidad, 0);
     
-    alert(`¡Gracias por tu compra!\n\nResumen:\n- ${itemCount} artículos\n- Total: $${total.toLocaleString()}\n\nProcediendo al pago...`);
+    // Generar JSON para la venta según el formato requerido por el stored procedure
+    const fechaActual = new Date();
     
-    // Simular proceso de pago
-    setTimeout(() => {
-      setCarrito([]);
-      setIsCartOpen(false);
-      showNotification('¡Compra realizada exitosamente!', 'Success');
-    }, 1000);
+    const ventaJSON = {
+      venta: {
+        FECHAVta: fechaActual.toISOString().split('T')[0], // Fecha en formato YYYY-MM-DD
+      },
+      detalles: carrito.map(item => ({
+        ARTIID: item.id,
+        VtaCant: item.cantidad,
+        VtaPRECIOCOMP: item.precio,
+        VtaPRECIOIVA: item.precioConIva || item.precio * 1.16
+      }))
+    };
+    
+    // Mostrar el JSON en la consola para depuración
+    console.log("DATOS DE VENTA A ENVIAR:");
+    console.log(JSON.stringify(ventaJSON, null, 2));
+    
+    // Mostrar mensaje de procesamiento
+    showNotification('Procesando tu compra...', 'Information');
+    
+    try {
+      // Enviar el JSON al backend
+      const response = await axiosInstance.post(
+        API_CONFIG.endpoints.ventas.registrar, 
+        ventaJSON
+      );
+      
+      if (response.data && response.data.success) {
+        // Si la venta se registró correctamente
+        alert(`¡Gracias por tu compra!\n\nResumen:\n- ${itemCount} artículos\n- Total: $${total.toLocaleString()}\n\nVenta registrada con ID: ${response.data.data.IdVenta}`);
+        
+        // Limpiar carrito y cerrar modal
+        setCarrito([]);
+        setIsCartOpen(false);
+        showNotification('¡Compra realizada exitosamente!', 'Success');
+      } else {
+        // Si hubo un error en el servidor
+        throw new Error(response.data?.message || 'Error al procesar la venta');
+      }
+    } catch (error) {
+      console.error("Error al procesar la venta:", error);
+      showNotification(`Error: ${error.message}`, 'Negative');
+      
+      // Mostrar alerta con mensaje de error
+      alert(`No se pudo completar la compra. Error: ${error.message}`);
+    }
   };
 
   if (loading) {
@@ -225,7 +266,7 @@ const Ventas = () => {
         alignItems: 'center',
         minHeight: '60vh'
       }}>
-        <Title level="H3">Cargando productos...</Title>
+        <BusyIndicator active size="Large" />
       </div>
     );
   }
@@ -260,6 +301,17 @@ const Ventas = () => {
 
       {/* Header */}
       <VentasHeader />
+      
+      {/* Mensaje de error */}
+      {error && (
+        <MessageStrip
+          design="Negative"
+          onClose={() => setError(null)}
+          style={{ marginBottom: '1rem' }}
+        >
+          {error}
+        </MessageStrip>
+      )}
       
       {/* Tarjeta principal */}
       <Card 
@@ -301,8 +353,6 @@ const Ventas = () => {
         onClearCart={handleClearCart}
         onCheckout={handleCheckout}
       />
-
-
     </div>
   );
 };

@@ -35,7 +35,13 @@ export const API_CONFIG = {
         getDistribucionProveedorInventario: "/gestion-proveedores/distribucion-proveedor-inventario",
         compras: {
             getData: "/compras/getdata",
-            crearOrden: "/compras/crearOrden"
+            crearOrden: "/compras/crearOrden",
+            ordenesProgreso: "/compras/ordenesProgreso",
+            completarOrden: "/compras/completarOrden"
+        },
+        ventas: {
+            articulosDisponibles: "/ventas/articulos-disponibles",
+            registrar: "/ventas/registrar"
         },
         metricas: {
             resumenFinanciero: {
