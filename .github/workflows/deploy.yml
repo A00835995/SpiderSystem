@@ -41,6 +41,7 @@ jobs:
         working-directory: Back
         run: |
           npm install --omit=dev
+          cf create-route $CF_SPACE cfapps.us10-001.hana.ondemand.com --hostname SPIDERSAP-BACKEND || echo "Route already exists"
           cf push SPIDERSAP-BACKEND
           cf set-env SPIDERSAP-BACKEND HANA_SERVER_NODE "${{ secrets.HANA_SERVER_NODE }}"
           cf set-env SPIDERSAP-BACKEND HANA_USER "${{ secrets.HANA_USER }}"
