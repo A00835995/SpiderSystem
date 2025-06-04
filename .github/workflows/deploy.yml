@@ -1,5 +1,4 @@
 name: 🚀 Deploy SpiderSystem to SAP BTP Cloud Foundry
-
 on:
   workflow_dispatch:
 
