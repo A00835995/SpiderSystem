@@ -16,10 +16,12 @@ jobs:
           node-version: 18
       - name: ☁️ Install Cloud Foundry CLI v8
         run: |
-            wget -q https://packages.cloudfoundry.org/stable?release=linux64 -O cf-cli.tgz
-            mkdir cf-cli
-            tar -xzf cf-cli.tgz -C cf-cli
-            sudo mv cf-cli/cf /usr/local/bin/cf
+            wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | \
+              sudo gpg --dearmor -o /usr/share/keyrings/cli.cloudfoundry.org.gpg
+            echo "deb [signed-by=/usr/share/keyrings/cli.cloudfoundry.org.gpg] https://packages.cloudfoundry.org/debian stable main" | \
+              sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+            sudo apt-get update
+            sudo apt-get install -y cf8-cli || sudo apt-get install -y cf-cli
             cf version
         
 
