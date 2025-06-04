@@ -67,10 +67,6 @@ jobs:
           npm run build
           echo "root: ." > build/Staticfile
 
-      - name: 🚫 Remove manifest.yml to avoid CF conflict
-        working-directory: Front2
-        run: rm -f manifest.yml
-
       - name: 📁 Check build output
         working-directory: Front2
         run: |
@@ -79,9 +75,5 @@ jobs:
         
 
       - name: 🌍 Deploy Frontend (spidersap-frontend)
-        run: |
-          cf push spidersap-frontend \
-            --random-route \
-            -p Front2/build \
-            -m 128M \
-            -b https://github.com/cloudfoundry/staticfile-buildpack.git
+        working-directory: Front2
+        run: cf push spidersap-frontend
