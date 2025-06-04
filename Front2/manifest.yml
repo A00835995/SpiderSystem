@@ -1,9 +1,6 @@
----
 applications:
-  - name: SPIDERSAP-FRONTEND
+  - name: spidersap-frontend
+    path: build
+    memory: 128M
     buildpacks:
       - https://github.com/cloudfoundry/staticfile-buildpack.git
-    memory: 64M
-    path: build
-    routes:
-        - route: SPIDERSAP-FRONTEND.cfapps.us10-001.hana.ondemand.com
