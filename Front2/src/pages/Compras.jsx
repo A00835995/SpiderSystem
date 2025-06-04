@@ -15,6 +15,7 @@ import useComprasData from '../hooks/useComprasData';
 import useOrderSteps from '../hooks/useOrderSteps';
 import useOrderCalculations from '../hooks/useOrderCalculations';
 import { useOrderData } from '../hooks/useOrderData';
+import { createOrder } from '../services/comprasService';
 
 // Importar imágenes
 
@@ -106,28 +107,7 @@ const Compras = () => {
     setOrderDeliveryDate(new Date().toISOString()); // You might want to add a date picker in the UI
   };
 
-  const createOrder = async (orderData) => {
-    try {
-      const response = await fetch('http://localhost:4000/api/compras/crearOrden', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || 'Error al crear la orden');
-      }
-
-      return result;
-    } catch (error) {
-      console.error('Error al crear la orden:', error);
-      throw error;
-    }
-  };
+  // El método createOrder ahora está importado directamente desde el servicio
 
   // Handle final confirmation
   const handleFinalConfirm = async () => {
@@ -151,7 +131,7 @@ const Compras = () => {
       // Log del JSON que se enviará al backend
       console.log('JSON a enviar al backend:', JSON.stringify(orderData, null, 2));
 
-      // Llamar al endpoint
+      // Llamar al servicio de creación de orden que usa axiosInstance con JWT
       const result = await createOrder(orderData);
 
       // Mostrar diálogo de éxito

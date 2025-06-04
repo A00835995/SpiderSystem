@@ -19,17 +19,19 @@ import {
   FileUploader
 } from '@ui5/webcomponents-react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { io } from 'socket.io-client';
+import axiosInstance from '../../config/axiosConfig';
+import { API_CONFIG } from '../../config/api';
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
 import CustomAvatar from './CustomAvatar';
 import StatusIndicator from './StatusIndicator';
 import MessageContent from './MessageContent';
 import { getInitial } from './utils';
 
-const SOCKET_URL = 'http://localhost:4000';
-const API_URL = 'http://localhost:4000/api/chat';
-const USERS_URL = 'http://localhost:4000/api/gestion/usuarios';
+// Actualizar URLs para usar API_CONFIG
+const SOCKET_URL = API_CONFIG.endpoints.socketURL || 'http://localhost:4000';
+const API_URL = API_CONFIG.baseUrl + API_CONFIG.endpoints.chat;
+const USERS_URL = API_CONFIG.baseUrl + API_CONFIG.endpoints.usuarios;
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -211,7 +213,7 @@ const ChatPage = () => {
   };
 
   useEffect(() => {
-    axios.get(USERS_URL)
+    axiosInstance.get(USERS_URL)
       .then(res => setUsers(res.data.filter(u => u.id !== currentUser.id)))
       .catch(() => setUsers([]));
   }, [currentUser.id]);
@@ -262,7 +264,7 @@ const ChatPage = () => {
   useEffect(() => {
     if (!selectedUser) return;
     setIsLoading(true);
-    axios.get(`${API_URL}/${currentUser.id}/${selectedUser.id}`)
+    axiosInstance.get(`${API_URL}/${currentUser.id}/${selectedUser.id}`)
       .then(res => {
         const msgs = res.data.map(m => ({
           id: m.id,
@@ -308,7 +310,7 @@ const ChatPage = () => {
       messageText: newMessage
     };
     try {
-      await axios.post(API_URL, msgPayload);
+      await axiosInstance.post(API_URL, msgPayload);
       // El backend ahora emite automáticamente el socket después de guardar en la BD
       setNewMessage("");
     } catch (e) {

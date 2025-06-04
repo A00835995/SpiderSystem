@@ -65,6 +65,9 @@ export const API_CONFIG = {
         },
         ordenesProveedor: "/ordenes-proveedor",
         consultarOrdenCompra: "/ordenes-proveedor/consultar",
-        actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso"
+        actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso",
+        chat: "/chat",
+        chatUsers: "/chat/users",
+        socketURL: "http://localhost:4000"
     }
 };
