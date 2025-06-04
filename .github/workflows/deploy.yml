@@ -67,6 +67,13 @@ jobs:
           npm run build
           echo "root: ." > build/Staticfile
 
+      - name: 📁 Check build output
+        working-directory: Front2
+        run: |
+            echo "Verificando contenido de la carpeta build:"
+            ls -la build
+        
+
       - name: 🌍 Deploy Frontend (spidersap-frontend)
         working-directory: Front2
         run: cf push spidersap-frontend
