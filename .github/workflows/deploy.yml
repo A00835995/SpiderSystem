@@ -43,6 +43,9 @@ jobs:
           npm install --omit=dev
           cf create-route $CF_SPACE cfapps.us10-001.hana.ondemand.com --hostname spidersap-backend || echo "Route already exists"
           cf push spidersap-backend
+          - name: 🧪 Show backend logs if crash
+             if: failure()
+            run: cf logs spidersap-backend --recent
           cf set-env spidersap-backend HANA_SERVER_NODE "${{ secrets.HANA_SERVER_NODE }}"
           cf set-env spidersap-backend HANA_USER "${{ secrets.HANA_USER }}"
           cf set-env spidersap-backend HANA_PASSWORD "${{ secrets.HANA_PASSWORD }}"
