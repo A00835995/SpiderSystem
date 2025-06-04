@@ -4,13 +4,24 @@ const OrdenCompraDto = require('../dto/Compras/OrdenCompraDto');
 
 exports.getComprasData = async(req,res) => {
     try {
-        //Ejecutar los stored procedures
-        //Promise sirve para ejecutar varias consultas al mismo tiempo
-        const [articulosResult, comprasResult, pagoResult] = await Promise.all([
-            executeQuery('CALL MostrarArticulosCompras()'),
+        //Ejecutar los stored procedures para proveedores y formas de pago
+        const [comprasResult, pagoResult] = await Promise.all([
             executeQuery('CALL MostrarProveedores()'),
             executeQuery('CALL FormaPagoCompra()')
         ]);
+        
+        // Obtener artículos si se proporciona un ID de proveedor
+        let articulosResult = [];
+        const providerId = req.query.providerId ? parseInt(req.query.providerId) : null;
+        
+        if (providerId) {
+            // Si hay un ID de proveedor, obtener artículos filtrados
+            articulosResult = await executeQuery('CALL MostrarArticulosCompras(?)', [providerId]);
+        } else {
+            // Si no hay ID de proveedor, devolver una lista vacía o realizar otra consulta
+            // Puedes personalizar esto según tus necesidades
+            articulosResult = [];
+        }
 
         const responseData = {
             articulos: ComprasDto.toArticulosResponse(articulosResult),
@@ -26,6 +37,32 @@ exports.getComprasData = async(req,res) => {
         console.error('Error al obtener datos de compras:', error);
         return res.status(500).json({
             message: 'Error al obtener datos de compras',
+            error: error.message
+        });
+    }
+};
+
+// Nuevo endpoint para obtener artículos por proveedor
+exports.getArticulosPorProveedor = async(req, res) => {
+    try {
+        const providerId = parseInt(req.params.providerId);
+        
+        if (!providerId) {
+            return res.status(400).json({
+                message: 'Se requiere un ID de proveedor válido'
+            });
+        }
+        
+        const articulosResult = await executeQuery('CALL MostrarArticulosCompras(?)', [providerId]);
+        
+        return res.status(200).json({
+            message: 'Artículos obtenidos correctamente',
+            data: ComprasDto.toArticulosResponse(articulosResult)
+        });
+    } catch (error) {
+        console.error('Error al obtener artículos por proveedor:', error);
+        return res.status(500).json({
+            message: 'Error al obtener artículos por proveedor',
             error: error.message
         });
     }

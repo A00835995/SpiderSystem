@@ -37,7 +37,8 @@ export const API_CONFIG = {
             getData: "/compras/getdata",
             crearOrden: "/compras/crearOrden",
             ordenesProgreso: "/compras/ordenesProgreso",
-            completarOrden: "/compras/completarOrden"
+            completarOrden: "/compras/completarOrden",
+            articulos: "/compras/articulos"
         },
         ventas: {
             articulosDisponibles: "/ventas/articulos-disponibles",

@@ -20,6 +20,36 @@ export async function fetchComprasData() {
 }
 
 /**
+ * Función para obtener artículos filtrados por proveedor
+ * @param {number} providerId - ID del proveedor
+ * @returns {Promise<Array<{id: number, nombre: string, descripcion: string, precioCompra: string}>>}
+ */
+export async function fetchArticulosPorProveedor(providerId) {
+    try {
+        if (!providerId) {
+            throw new Error('Se requiere un ID de proveedor');
+        }
+        
+        const url = `${API_CONFIG.endpoints.compras.articulos}/${providerId}`;
+        const response = await axiosInstance.get(url);
+        
+        // Transformar los datos para que coincidan con la estructura esperada
+        if (response.data && response.data.data) {
+            return response.data.data.map(item => ({
+                id: item.id,
+                name: item.nombre,
+                description: item.descripcion,
+                price: parseFloat(item.precioCompra)
+            }));
+        }
+        return [];
+    } catch (error) {
+        console.error('Error fetching articulos por proveedor:', error);
+        throw new Error('Error al obtener los artículos por proveedor');
+    }
+}
+
+/**
  * Función para crear una nueva orden de compra
  * @param {Object} orderData - Datos de la orden
  * @returns {Promise<Object>} - Resultado de la operación

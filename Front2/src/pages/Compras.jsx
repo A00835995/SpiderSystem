@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
 
@@ -15,10 +15,13 @@ import useComprasData from '../hooks/useComprasData';
 import useOrderSteps from '../hooks/useOrderSteps';
 import useOrderCalculations from '../hooks/useOrderCalculations';
 import { useOrderData } from '../hooks/useOrderData';
-import { createOrder } from '../services/comprasService';
+import { createOrder, fetchArticulosPorProveedor } from '../services/comprasService';
 
 // Importar imágenes
-
+import ImagenZapatoDeportivo from '../Fotos/ImagenZapatoDeportivo.jpg';
+import ImagenZapatoDeVestir from '../Fotos/ImagenZapatoDeVestir.jpg';
+import ImagenBotas from '../Fotos/ImagenBotas.png';
+import ImagenSandalias from '../Fotos/ImagenSandalias.jpg';
 
 const Compras = () => {
   const [showDialog, setShowDialog] = useState(false);
@@ -28,8 +31,11 @@ const Compras = () => {
     message: '',
     ordenId: null 
   });
+  const [productos, setProductos] = useState([]);
+  const [loadingProductos, setLoadingProductos] = useState(false);
+  
   //Este const  lo que hace es obtener los datos de las compras con la función useComprasData
-  const { loading, error, providers, products, paymentMethods } = useComprasData();
+  const { loading, error, providers, paymentMethods } = useComprasData();
   const {
     currentStep,
     selectedProvider,
@@ -48,7 +54,7 @@ const Compras = () => {
     handleConfirm
   } = useOrderSteps(5);
 
-  const { subtotal, tax, total, getProductById } = useOrderCalculations(selectedProducts, products);
+  const { subtotal, tax, total, getProductById } = useOrderCalculations(selectedProducts, productos);
 
   const {
     order,
@@ -59,6 +65,63 @@ const Compras = () => {
     setOrderDeliveryDate,
     clearOrder,
   } = useOrderData();
+
+  // Cargar productos cuando cambia el proveedor seleccionado
+  useEffect(() => {
+    const cargarProductosPorProveedor = async () => {
+      if (selectedProvider) {
+        setLoadingProductos(true);
+        try {
+          console.log("Cargando productos para el proveedor ID:", selectedProvider);
+          const productosProveedor = await fetchArticulosPorProveedor(selectedProvider);
+          console.log("Productos obtenidos:", productosProveedor);
+          
+          // Asignar imágenes a los productos
+          const productosConImagen = productosProveedor.map((producto, index) => {
+            let imagen;
+            switch(index) {
+              case 0:
+                imagen = ImagenZapatoDeportivo;
+                break;
+              case 1:
+                imagen = ImagenZapatoDeVestir;
+                break;
+              case 2:
+                imagen = ImagenBotas;
+                break;
+              case 3:
+                imagen = ImagenSandalias;
+                break;
+              default:
+                imagen = ImagenZapatoDeportivo;
+            }
+            return { ...producto, image: imagen };
+          });
+          
+          setProductos(productosConImagen);
+          setLoadingProductos(false);
+        } catch (error) {
+          console.error("Error al cargar productos:", error);
+          setProductos([]);
+          setLoadingProductos(false);
+        }
+      } else {
+        setProductos([]);
+      }
+    };
+
+    cargarProductosPorProveedor();
+  }, [selectedProvider]);
+
+  // Limpiar productos seleccionados cuando cambia el proveedor
+  useEffect(() => {
+    if (selectedProvider && selectedProducts.length > 0) {
+      // Limpiar productos seleccionados del paso anterior
+      selectedProducts.forEach(product => {
+        handleProductChange(product.productId, 0);
+      });
+    }
+  }, [selectedProvider]);
 
   const deliveryPoints = [
     {
@@ -71,8 +134,9 @@ const Compras = () => {
   // Handle provider selection with order 
   //Este método se encarga de seleccionar el proveedor
   const handleProviderSelect = (providerId) => {
-    setSelectedProvider(providerId); //guarda el id del proveedor en el estadoel id del proveedor en el estado
-    setOrderProvider(providerId);//guarda el id del proveedor en el Json
+    console.log("Proveedor seleccionado ID:", providerId);
+    setSelectedProvider(providerId); //guarda el id del proveedor en el estado
+    setOrderProvider(providerId); //guarda el id del proveedor en el Json
   };
 
   // Handle product quantity changes with order data
@@ -182,11 +246,12 @@ const Compras = () => {
       title: "Productos",
       content: (
         <ProductsStep
-          products={products}
+          products={productos}
           selectedProducts={selectedProducts}
           onProductQuantityChange={handleProductChange}
           onNext={handleNext}
           onBack={handleBack}
+          loading={loadingProductos}
         />
       )
     },
@@ -221,7 +286,7 @@ const Compras = () => {
           providers={providers}
           selectedProvider={selectedProvider}
           selectedProducts={selectedProducts}
-          products={products}
+          products={productos}
           deliveryPoints={deliveryPoints}
           deliveryPoint={deliveryPoint}
           paymentMethods={paymentMethods}
