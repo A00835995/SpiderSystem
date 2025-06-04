@@ -68,3 +68,9 @@ export const API_CONFIG = {
         actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso"
     }
 };
+
+// Debug: Ver qué URL se está usando
+console.log('🔧 API_CONFIG Debug:');
+console.log('- VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('- baseUrl final:', API_CONFIG.baseUrl);
+console.log('- URL de login será:', `${API_CONFIG.baseUrl}/login`);

@@ -24,6 +24,7 @@ import { io } from 'socket.io-client';
 
 // Importar iconos de manera general en lugar de individualmente
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
+import { API_CONFIG } from '../config/api';
 
 // Función para obtener la inicial del nombre
 const getInitial = (name) => {
@@ -116,9 +117,10 @@ const CustomAvatar = ({ user, size = "S", style = {} }) => {
   );
 };
 
-const SOCKET_URL = 'http://localhost:4000'; // Cambia si tu backend está en otra URL
-const API_URL = 'http://localhost:4000/api/chat';
-const USERS_URL = 'http://localhost:4000/api/gestion/usuarios';
+// Usar configuración centralizada
+const SOCKET_URL = API_CONFIG.baseUrl.replace('/api', ''); // Remover /api para socket
+const API_URL = `${API_CONFIG.baseUrl}/chat`;
+const USERS_URL = `${API_CONFIG.baseUrl}/gestion/usuarios`;
 
 const ChatPage = () => {
   const navigate = useNavigate();

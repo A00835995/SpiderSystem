@@ -26,10 +26,12 @@ import CustomAvatar from './CustomAvatar';
 import StatusIndicator from './StatusIndicator';
 import MessageContent from './MessageContent';
 import { getInitial } from './utils';
+import { API_CONFIG } from '../../config/api';
 
-const SOCKET_URL = 'http://localhost:4000';
-const API_URL = 'http://localhost:4000/api/chat';
-const USERS_URL = 'http://localhost:4000/api/gestion/usuarios';
+// Usar configuración centralizada
+const SOCKET_URL = API_CONFIG.baseUrl.replace('/api', ''); // Remover /api para socket
+const API_URL = `${API_CONFIG.baseUrl}/chat`;
+const USERS_URL = `${API_CONFIG.baseUrl}/gestion/usuarios`;
 
 const ChatPage = () => {
   const navigate = useNavigate();
