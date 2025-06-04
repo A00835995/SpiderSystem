@@ -41,7 +41,12 @@ jobs:
         working-directory: Back
         run: |
           npm install --omit=dev
+          cf set-env SPIDERSAP-BACKEND HANA_SERVER_NODE "${{ secrets.HANA_SERVER_NODE }}"
+          cf set-env SPIDERSAP-BACKEND HANA_USER "${{ secrets.HANA_USER }}"
+          cf set-env SPIDERSAP-BACKEND HANA_PASSWORD "${{ secrets.HANA_PASSWORD }}"
+          cf set-env SPIDERSAP-BACKEND HANA_SCHEMA "${{ secrets.HANA_SCHEMA }}"
           cf set-env SPIDERSAP-BACKEND JWT_SECRET "${{ secrets.JWT_SECRET }}"
+          cf set-env SPIDERSAP-BACKEND CORS_ALLOWED_ORIGINS "${{ secrets.CORS_ALLOWED_ORIGINS }}"
           cf push SPIDERSAP-BACKEND
 
       - name: 🌐 Get Backend Route
