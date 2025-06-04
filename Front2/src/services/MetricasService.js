@@ -1,4 +1,5 @@
 import { API_CONFIG } from '../config/api';
+import axiosInstance from '../config/axiosConfig';
 
 /**
  * Servicio para gestionar las operaciones de métricas
@@ -6,82 +7,90 @@ import { API_CONFIG } from '../config/api';
 
 // Obtener resumen financiero mensual
 export async function fetchResumenFinancieroMes(mes, anio) {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/resumen-financiero/mes/${mes}/${anio}`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener resumen financiero mensual: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get(`/metricas/resumen-financiero/mes/${mes}/${anio}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener resumen financiero mensual:', error);
+    throw new Error(`Error al obtener resumen financiero mensual: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 // Obtener resumen financiero anual
 export async function fetchResumenFinancieroAnio(anio) {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/resumen-financiero/anio/${anio}`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener resumen financiero anual: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get(`/metricas/resumen-financiero/anio/${anio}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener resumen financiero anual:', error);
+    throw new Error(`Error al obtener resumen financiero anual: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 // Obtener ventas por categoría mensual
 export async function fetchVentasPorCategoriaMes(mes, anio) {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/ventas-categoria/mes/${mes}/${anio}`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener ventas por categoría mensual: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get(`/metricas/ventas-categoria/mes/${mes}/${anio}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener ventas por categoría mensual:', error);
+    throw new Error(`Error al obtener ventas por categoría mensual: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 // Obtener ventas por categoría anual
 export async function fetchVentasPorCategoriaAnio(anio) {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/ventas-categoria/anio/${anio}`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener ventas por categoría anual: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get(`/metricas/ventas-categoria/anio/${anio}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener ventas por categoría anual:', error);
+    throw new Error(`Error al obtener ventas por categoría anual: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 // Obtener indicadores de cliente mensual
 export async function fetchIndicadoresClienteMes(mes, anio) {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/indicadores-cliente/mes/${mes}/${anio}`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener indicadores de cliente mensual: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get(`/metricas/indicadores-cliente/mes/${mes}/${anio}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener indicadores de cliente mensual:', error);
+    throw new Error(`Error al obtener indicadores de cliente mensual: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 // Obtener indicadores de cliente anual
 export async function fetchIndicadoresClienteAnio(anio) {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/indicadores-cliente/anio/${anio}`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener indicadores de cliente anual: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get(`/metricas/indicadores-cliente/anio/${anio}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener indicadores de cliente anual:', error);
+    throw new Error(`Error al obtener indicadores de cliente anual: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 // Obtener indicadores completos mensual (NUEVO)
 export async function fetchIndicadoresCompletosMes(mes, anio) {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/indicadores-completos/mes/${mes}/${anio}`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener indicadores completos mensual: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get(`/metricas/indicadores-completos/mes/${mes}/${anio}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener indicadores completos mensual:', error);
+    throw new Error(`Error al obtener indicadores completos mensual: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 // Obtener indicadores completos anual (NUEVO)
 export async function fetchIndicadoresCompletosAnio(anio) {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/indicadores-completos/anio/${anio}`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener indicadores completos anual: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get(`/metricas/indicadores-completos/anio/${anio}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener indicadores completos anual:', error);
+    throw new Error(`Error al obtener indicadores completos anual: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 // Función helper para obtener métricas completas según el período
@@ -111,26 +120,29 @@ export async function fetchMetricasCompletas(periodo, mes = null, anio = null) {
       anio
     };
   } catch (error) {
+    console.error('Error al obtener métricas completas:', error);
     throw new Error(`Error al obtener métricas completas: ${error.message}`);
   }
 }
 
 // Obtener resumen de inventario completo
 export async function fetchResumenInventarioCompleto() {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/resumen-inventario-completo`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener resumen de inventario completo: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get('/metricas/resumen-inventario-completo');
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener resumen de inventario completo:', error);
+    throw new Error(`Error al obtener resumen de inventario completo: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 // Obtener stock por categoría
 export async function fetchStockPorCategoria() {
-  const response = await fetch(`${API_CONFIG.baseUrl}/metricas/stock-por-categoria`);
-  if (!response.ok) {
-    throw new Error(`Error al obtener stock por categoría: ${response.statusText}`);
+  try {
+    const response = await axiosInstance.get('/metricas/stock-por-categoria');
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener stock por categoría:', error);
+    throw new Error(`Error al obtener stock por categoría: ${error.message}`);
   }
-  const json = await response.json();
-  return json;
 }

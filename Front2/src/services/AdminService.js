@@ -1,113 +1,78 @@
 import { API_CONFIG } from '../config/api';
+import axiosInstance from '../config/axiosConfig';
 
 /**
  * Servicio para gestionar las operaciones de administración de usuarios
  */
 export async function fetchUsuarios() {
-  const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.usuarios}`);
-  if (!response.ok) {
+  try {
+    const response = await axiosInstance.get(API_CONFIG.endpoints.usuarios);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
     throw new Error('Error al obtener usuarios');
   }
-  const json = await response.json();
-  return json;
 }
 
 export async function fetchUsuario(id) {
-  const url = `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.usuario.replace(':id', id)}`;
-  const response = await fetch(url);
-  if (!response.ok) {
+  try {
+    const url = API_CONFIG.endpoints.usuario.replace(':id', id);
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener usuario con ID ${id}:`, error);
     throw new Error(`Error al obtener usuario con ID ${id}`);
   }
-  const json = await response.json();
-  return json;
 }
 
 export async function crearUsuario(userData) {
-  const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.crearUsuario}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(userData)
-  });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Error al crear usuario: ${errorText}`);
+  try {
+    const response = await axiosInstance.post(API_CONFIG.endpoints.crearUsuario, userData);
+    return response.data;
+  } catch (error) {
+    console.error('Error al crear usuario:', error);
+    throw new Error(`Error al crear usuario: ${error.message}`);
   }
-  
-  const json = await response.json();
-  return json;
 }
 
 export async function actualizarRolUsuario(id, rol) {
-  const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.actualizarRolUsuario}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id, rol })
-  });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Error al actualizar rol: ${errorText}`);
+  try {
+    const response = await axiosInstance.put(API_CONFIG.endpoints.actualizarRolUsuario, { id, rol });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar rol:', error);
+    throw new Error(`Error al actualizar rol: ${error.message}`);
   }
-  
-  const json = await response.json();
-  return json;
 }
 
 export async function actualizarNombreUsuario(id, nombre) {
-  const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.actualizarNombreUsuario}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id, nombre })
-  });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Error al actualizar nombre: ${errorText}`);
+  try {
+    const response = await axiosInstance.put(API_CONFIG.endpoints.actualizarNombreUsuario, { id, nombre });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar nombre:', error);
+    throw new Error(`Error al actualizar nombre: ${error.message}`);
   }
-  
-  const json = await response.json();
-  return json;
 }
 
 export async function actualizarEmailUsuario(id, email) {
-  const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.actualizarEmailUsuario}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id, email })
-  });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Error al actualizar email: ${errorText}`);
+  try {
+    const response = await axiosInstance.put(API_CONFIG.endpoints.actualizarEmailUsuario, { id, email });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar email:', error);
+    throw new Error(`Error al actualizar email: ${error.message}`);
   }
-  
-  const json = await response.json();
-  return json;
 }
 
 export async function eliminarUsuario(id) {
-  const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.eliminarUsuario}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id })
-  });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Error al eliminar usuario: ${errorText}`);
+  try {
+    const response = await axiosInstance.delete(API_CONFIG.endpoints.eliminarUsuario, {
+      data: { id }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error);
+    throw new Error(`Error al eliminar usuario: ${error.message}`);
   }
-  
-  const json = await response.json();
-  return json;
 }
