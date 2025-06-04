@@ -1,9 +1,8 @@
----
 applications:
-  - name: SPIDERSAP-BACKEND
+  - name: spidersap-backend
     buildpacks:
       - nodejs_buildpack
-    memory: 128M
+    command: node index.js
+    memory: 256M
     path: .
-    routes:
-      - route: SPIDERSAP-BACKEND.cfapps.us10-001.hana.ondemand.com
+    

@@ -37,28 +37,28 @@ jobs:
           cf auth "$CF_USERNAME" "$CF_PASSWORD"
           cf target -o "$CF_ORG" -s "$CF_SPACE"
 
-      - name: 🚀 Deploy Backend (SPIDERSAP-BACKEND)
+      - name: 🚀 Deploy Backend (spidersap-backend)
         working-directory: Back
         run: |
           npm install --omit=dev
-          cf create-route $CF_SPACE cfapps.us10-001.hana.ondemand.com --hostname SPIDERSAP-BACKEND || echo "Route already exists"
-          cf push SPIDERSAP-BACKEND
-          cf set-env SPIDERSAP-BACKEND HANA_SERVER_NODE "${{ secrets.HANA_SERVER_NODE }}"
-          cf set-env SPIDERSAP-BACKEND HANA_USER "${{ secrets.HANA_USER }}"
-          cf set-env SPIDERSAP-BACKEND HANA_PASSWORD "${{ secrets.HANA_PASSWORD }}"
-          cf set-env SPIDERSAP-BACKEND HANA_SCHEMA "${{ secrets.HANA_SCHEMA }}"
-          cf set-env SPIDERSAP-BACKEND JWT_SECRET "${{ secrets.JWT_SECRET }}"
-          cf set-env SPIDERSAP-BACKEND CORS_ALLOWED_ORIGINS "${{ secrets.CORS_ALLOWED_ORIGINS }}"
-          cf restage SPIDERSAP-BACKEND
+          cf create-route $CF_SPACE cfapps.us10-001.hana.ondemand.com --hostname spidersap-backend || echo "Route already exists"
+          cf push spidersap-backend
+          cf set-env spidersap-backend HANA_SERVER_NODE "${{ secrets.HANA_SERVER_NODE }}"
+          cf set-env spidersap-backend HANA_USER "${{ secrets.HANA_USER }}"
+          cf set-env spidersap-backend HANA_PASSWORD "${{ secrets.HANA_PASSWORD }}"
+          cf set-env spidersap-backend HANA_SCHEMA "${{ secrets.HANA_SCHEMA }}"
+          cf set-env spidersap-backend JWT_SECRET "${{ secrets.JWT_SECRET }}"
+          cf set-env spidersap-backend CORS_ALLOWED_ORIGINS "${{ secrets.CORS_ALLOWED_ORIGINS }}"
+          cf restage spidersap-backend
 
       - name: 🌐 Get Backend Route
         id: backend-url
         run: |
-          BACKEND_ROUTE=$(cf app SPIDERSAP-BACKEND | grep routes: | awk '{print $2}')
+          BACKEND_ROUTE=$(cf app spidersap-backend | grep routes: | awk '{print $2}')
           echo "BACKEND_URL=https://$BACKEND_ROUTE/api" >> $GITHUB_ENV
           echo "✅ Backend URL: https://$BACKEND_ROUTE/api"
 
-      - name: 🏗️ Build Frontend (SPIDERSAP-FRONTEND)
+      - name: 🏗️ Build Frontend (spidersap-frontend)
         working-directory: Front2
         run: |
           echo "VITE_API_URL=${{ env.BACKEND_URL }}" > .env.production
@@ -66,6 +66,6 @@ jobs:
           npm run build
           echo "root: ." > build/Staticfile
 
-      - name: 🌍 Deploy Frontend (SPIDERSAP-FRONTEND)
+      - name: 🌍 Deploy Frontend (spidersap-frontend)
         working-directory: Front2
-        run: cf push SPIDERSAP-FRONTEND
+        run: cf push spidersap-frontend
