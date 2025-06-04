@@ -1,0 +1,9 @@
+---
+applications:
+  - name: SPIDERSAP-FRONTEND
+    buildpacks:
+      - https://github.com/cloudfoundry/staticfile-buildpack.git
+    memory: 64M
+    path: build
+    routes:
+        - route: SPIDERSAP-FRONTEND.cfapps.us10-001.hana.ondemand.com

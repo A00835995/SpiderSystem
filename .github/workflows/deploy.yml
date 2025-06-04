@@ -1,0 +1,63 @@
+name: 🚀 Deploy SpiderSystem to SAP BTP Cloud Foundry
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📦 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: ☁️ Install Cloud Foundry CLI v8
+        run: |
+          sudo apt update
+          sudo apt install -y wget
+          wget -q https://packages.cloudfoundry.org/stable?release=linux64 -O cf-cli.tgz
+          tar -xzf cf-cli.tgz
+          sudo mv cf /usr/local/bin
+          cf version
+
+      - name: 🔐 Authenticate to SAP BTP CF
+        env:
+          CF_API: ${{ secrets.CF_API }}
+          CF_USERNAME: ${{ secrets.CF_USERNAME }}
+          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+          CF_ORG: ${{ secrets.CF_ORG }}
+          CF_SPACE: ${{ secrets.CF_SPACE }}
+        run: |
+          cf api "$CF_API"
+          cf auth "$CF_USERNAME" "$CF_PASSWORD"
+          cf target -o "$CF_ORG" -s "$CF_SPACE"
+
+      - name: 🚀 Deploy Backend (SPIDERSAP-BACKEND)
+        working-directory: Back
+        run: |
+          npm install --omit=dev
+          cf set-env SPIDERSAP-BACKEND JWT_SECRET "${{ secrets.JWT_SECRET }}"
+          cf push SPIDERSAP-BACKEND
+
+      - name: 🌐 Get Backend Route
+        id: backend-url
+        run: |
+          BACKEND_ROUTE=$(cf app SPIDERSAP-BACKEND | grep routes: | awk '{print $2}')
+          echo "BACKEND_URL=https://$BACKEND_ROUTE/api" >> $GITHUB_ENV
+          echo "✅ Backend URL: https://$BACKEND_ROUTE/api"
+
+      - name: 🏗️ Build Frontend (SPIDERSAP-FRONTEND)
+        working-directory: Front2
+        run: |
+          echo "VITE_API_URL=${{ env.BACKEND_URL }}" > .env.production
+          npm install
+          npm run build
+          echo "root: ." > build/Staticfile
+
+      - name: 🌍 Deploy Frontend (SPIDERSAP-FRONTEND)
+        working-directory: Front2
+        run: cf push SPIDERSAP-FRONTEND

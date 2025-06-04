@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUI5Theme } from "../components/UI5ThemeProvider";
 import { useAuth } from "../hooks/useAuth";
+import { API_CONFIG } from "../config/api";
 import {
   Card,
   Form,
@@ -58,7 +59,7 @@ export default function Login() {
     }
   
     try {
-      const res = await fetch("/api/login", {
+      const res = await fetch(`${API_CONFIG.baseUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

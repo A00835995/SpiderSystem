@@ -8,9 +8,8 @@ export default function InicioSalesCat() {
   const [categories, setCategories] = useState([]);
   const customColors = ["#1976d2", "#388e3c", "#e64a19", "#fbc02d"];
 
-
   useEffect(() => {
-    fetchVentasXCategoria().then(setCategories);
+    fetchVentasXCategoria().then(setCategories).catch(console.error);
   }, []);
 
   return (
@@ -23,21 +22,21 @@ export default function InicioSalesCat() {
       {categories.map((categoria, index) => (
         <div key={index} style={styles.categoryItem}>
           <FlexBox style={styles.categoryHeader}>
-            <Text style={styles.categoryName}>{categoria.categoria}</Text>
+            <Text style={styles.categoryName}>{categoria.categoria || 'Sin categoría'}</Text>
             <Text style={styles.categoryValue}>
-              ${categoria.total.toLocaleString()}
+              ${(categoria.total || 0).toLocaleString()}
             </Text>
           </FlexBox>
           <div style={styles.progressBar}>
             <div
               style={{
                 ...styles.progressFill,
-                width: `${categoria.porcentaje}%`,
+                width: `${categoria.porcentaje || 0}%`,
                 backgroundColor: customColors[index % customColors.length]
               }}
             />
           </div>
-          <Text style={styles.progressLabel}>{categoria.porcentaje}% del total</Text>
+          <Text style={styles.progressLabel}>{categoria.porcentaje || 0}% del total</Text>
         </div>
       ))}
     </Card>

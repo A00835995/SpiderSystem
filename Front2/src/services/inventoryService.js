@@ -44,7 +44,7 @@ export async function fetchTotalInventoryCount() {
         
         return {
             disponibles: statusData.Disponible || 0,
-            bajoStock: statusData["Bajo stock"] || 0,
+            bajoStock: statusData["Bajo Stock"] || 0,
             agotados: statusData.Agotado || 0,
             total: totalData.total || 0
         };

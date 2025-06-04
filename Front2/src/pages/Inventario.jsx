@@ -390,13 +390,6 @@ export default function Inventario() {
             >
               Exportar
             </Button>
-            <Button 
-              icon="add"
-              design="Emphasized"
-              tooltip="Agregar nuevo producto"
-            >
-              Agregar Producto
-            </Button>
           </FlexBox>
         </FlexBox>
       </DynamicPageHeader>
