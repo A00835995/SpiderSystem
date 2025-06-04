@@ -33,6 +33,11 @@ const SOCKET_URL = API_CONFIG.baseUrl.replace('/api', ''); // Remover /api para 
 const API_URL = `${API_CONFIG.baseUrl}/chat`;
 const USERS_URL = `${API_CONFIG.baseUrl}/gestion/usuarios`;
 
+// Debug Socket.io
+console.log('Socket.io Debug:');
+console.log('- SOCKET_URL:', SOCKET_URL);
+console.log('- API_URL:', API_URL);
+
 const ChatPage = () => {
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
