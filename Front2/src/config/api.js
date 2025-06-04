@@ -68,8 +68,11 @@ export const API_CONFIG = {
         consultarOrdenCompra: "/ordenes-proveedor/consultar",
         actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso",
         chat: "/chat",
-        chatUsers: "/chat/users",
-        socketURL: "http://localhost:4000"
+        chatUsers: "/chat/users"
+    },
+    // Socket URL dinámico basado en baseUrl
+    get socketURL() {
+        return this.baseUrl.replace('/api', '');
     }
 };
 
