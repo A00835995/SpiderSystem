@@ -5,6 +5,7 @@ import {
   Title,
   Button
 } from '@ui5/webcomponents-react';
+import UserAvatar from '../common/UserAvatar';
 
 const UserCard = ({ 
   usuario, 
@@ -37,31 +38,11 @@ const UserCard = ({
           alignItems: 'center',
           gap: '1rem',
         }}>
-          <div 
-            style={{
-              width: '60px',
-              height: '60px',
-              minWidth: '60px',
-              minHeight: '60px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              backgroundColor: getRolColor(usuario.rol),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-              flexShrink: 0,
-            }}
-          >
-            <Text style={{
-              color: 'white',
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              lineHeight: 1
-            }}>
-              {getInitials(usuario.nombre)}
-            </Text>
-          </div>
+          <UserAvatar 
+            nombre={usuario.nombre}
+            rol={usuario.rol}
+            size="medium"
+          />
           <div style={{
             display: 'flex',
             flexDirection: 'column',
