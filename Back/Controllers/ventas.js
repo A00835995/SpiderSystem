@@ -68,8 +68,8 @@ exports.registrarVenta = async (req, res) => {
     
     try {
       // Ejecutar el stored procedure para registrar la venta
-      console.log("Ejecutando CALL DBADMIN.PR_REGISTRAR_VENTA_V2...");
-      const procedureName = "DBADMIN.PR_REGISTRAR_VENTA_V2";
+      console.log("Ejecutando CALL DBADMIN.PR_REGISTRAR_VENTA...");
+      const procedureName = "DBADMIN.PR_REGISTRAR_VENTA";
       console.log(`Usando procedimiento: ${procedureName}`);
       
       const result = await executeQuery(`CALL ${procedureName}(?)`, [ventaJSONString]);
