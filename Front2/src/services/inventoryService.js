@@ -34,6 +34,9 @@ export async function fetchTotalInventoryCount() {
             axiosInstance.get('/gettotalproductos')
         ]);
         
+        const totalData = totalResponse.data.data;
+        const statusData = statusResponse.data.data;
+        
         return {
             disponibles: statusData.Disponible || 0,
             bajoStock: statusData["Bajo Stock"] || 0,
