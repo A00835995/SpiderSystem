@@ -62,7 +62,7 @@ const ProductsStep = ({
       ) : products.length > 0 ? (
         <div style={{ 
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
           gap: '1.5rem',
           padding: '1rem'
         }}>
@@ -78,8 +78,8 @@ const ProductsStep = ({
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '1rem',
-                  height: '420px',
-                  //boxShadow: 'var(--sapContent_Shadow0)',
+                  height: 'auto',
+                  minHeight: '420px',
                   transition: 'all 0.2s ease-in-out',
                   '&:hover': {
                     boxShadow: 'var(--sapContent_Shadow2)'
@@ -91,7 +91,6 @@ const ProductsStep = ({
                   height: '200px',
                   overflow: 'hidden',
                   borderRadius: '8px',
-                  //backgroundColor: 'var(--sapContent_ImagePlaceholderBackground)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -115,19 +114,22 @@ const ProductsStep = ({
                   flex: 1
                 }}>
                   <Title level="H2" style={{ 
-                    fontSize: '1.25rem',
-                    minHeight: '1.5em'
+                    fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+                    minHeight: '2.5em',
+                    wordBreak: 'break-word'
                   }}>
                     {product.name}
                   </Title>
                   <Text style={{ 
                     color: 'var(--sapContent_LabelColor)',
-                    minHeight: '3em'
+                    minHeight: '3em',
+                    fontSize: 'clamp(0.875rem, 1.5vw, 1rem)',
+                    wordBreak: 'break-word'
                   }}>
                     {product.description}
                   </Text>
                   <Text style={{ 
-                    fontSize: '1.5rem',
+                    fontSize: 'clamp(1.25rem, 2.5vw, 1.5rem)',
                     fontWeight: '600',
                     color: 'var(--sapTextColor)',
                     marginTop: 'auto'
@@ -142,7 +144,8 @@ const ProductsStep = ({
                   justifyContent: quantity > 0 ? 'space-between' : 'center',
                   gap: '0.5rem',
                   marginTop: 'auto',
-                  height: '40px'
+                  height: '40px',
+                  width: '100%'
                 }}>
                   {quantity > 0 ? (
                     <>
