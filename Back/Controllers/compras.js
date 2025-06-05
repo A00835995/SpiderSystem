@@ -45,22 +45,38 @@ exports.getComprasData = async(req,res) => {
 // Nuevo endpoint para obtener artículos por proveedor
 exports.getArticulosPorProveedor = async(req, res) => {
     try {
+        console.log('🔍 [DEBUG] Iniciando getArticulosPorProveedor');
+        console.log('🔍 [DEBUG] req.params:', req.params);
+        
         const providerId = parseInt(req.params.providerId);
+        console.log('🔍 [DEBUG] providerId parsed:', providerId);
         
         if (!providerId) {
+            console.log('❌ [DEBUG] providerId no válido');
             return res.status(400).json({
                 message: 'Se requiere un ID de proveedor válido'
             });
         }
         
+        console.log('🔍 [DEBUG] Ejecutando stored procedure MostrarArticulosCompras con providerId:', providerId);
         const articulosResult = await executeQuery('CALL MostrarArticulosCompras(?)', [providerId]);
+        console.log('🔍 [DEBUG] Resultado del stored procedure:', articulosResult);
+        console.log('🔍 [DEBUG] Tipo de articulosResult:', typeof articulosResult);
+        console.log('🔍 [DEBUG] Es array:', Array.isArray(articulosResult));
+        console.log('🔍 [DEBUG] Longitud:', articulosResult?.length);
+        
+        const transformedData = ComprasDto.toArticulosResponse(articulosResult);
+        console.log('🔍 [DEBUG] Datos transformados:', transformedData);
         
         return res.status(200).json({
             message: 'Artículos obtenidos correctamente',
-            data: ComprasDto.toArticulosResponse(articulosResult)
+            data: transformedData
         });
     } catch (error) {
-        console.error('Error al obtener artículos por proveedor:', error);
+        console.error('❌ [ERROR] Error al obtener artículos por proveedor:', error);
+        console.error('❌ [ERROR] Stack trace:', error.stack);
+        console.error('❌ [ERROR] Error name:', error.name);
+        console.error('❌ [ERROR] Error message:', error.message);
         return res.status(500).json({
             message: 'Error al obtener artículos por proveedor',
             error: error.message
