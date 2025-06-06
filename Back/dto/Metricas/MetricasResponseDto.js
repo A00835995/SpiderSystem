@@ -96,22 +96,22 @@ class MetricasResponseDto {
             data: {
                 ventasTotales: {
                     valor: this.safeParseFloat(data.VENTAS_TOTALES),
-                    cambio: 0, // Se calculará en el frontend si es necesario
-                    modeloMasVendido: 'No disponible' // No viene en el nuevo SP
+                    cambio: this.safeParseFloat(data.VARIACION_VENTAS),
+                    modeloMasVendido: this.safeString(data.MODELO_MAS_VENDIDO)
                 },
                 ganancias: {
                     valor: this.safeParseFloat(data.GANANCIAS_TOTALES),
-                    cambio: 0, // Se calculará en el frontend si es necesario
-                    margenPromedio: 0 // Se calculará como porcentaje de ganancias/ventas
+                    cambio: this.safeParseFloat(data.VARIACION_GANANCIAS),
+                    margenPromedio: this.safeParseFloat(data.MARGEN_PROMEDIO)
                 },
                 clientesNuevos: {
                     valor: this.safeParseInt(data.CLIENTES_NUEVOS),
-                    cambio: 0, // Se calculará en el frontend si es necesario
+                    cambio: this.safeParseFloat(data.VARIACION_CLIENTES),
                     diaMasVentas: this.safeString(data.DIA_MAS_VENTAS)
                 },
                 ventaPromedio: {
                     valor: this.safeParseFloat(data.VENTA_PROMEDIO),
-                    cambio: 0, // Se calculará en el frontend si es necesario
+                    cambio: this.safeParseFloat(data.VARIACION_VENTA_PROM),
                     productosPorVenta: this.safeParseFloat(data.PROM_PRODUCTOS_POR_VENTA)
                 }
             },
