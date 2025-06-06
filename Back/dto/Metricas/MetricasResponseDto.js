@@ -3,11 +3,41 @@ class MetricasResponseDto {
 
     // Función helper para manejar valores NULL de manera consistente (solo para indicadores completos)
     static safeParseFloat(value, defaultValue = 0) {
-        if (value === null || value === undefined || value === '' || isNaN(value)) {
+        console.log('🔍 DEBUG safeParseFloat:', { value, type: typeof value, isNaN: isNaN(value) });
+        
+        if (value === null || value === undefined || value === '') {
+            console.log('📍 Returning defaultValue for null/undefined:', defaultValue);
             return defaultValue;
         }
+        
+        if (isNaN(value)) {
+            console.log('📍 Returning defaultValue for NaN:', defaultValue);
+            return defaultValue;
+        }
+        
         const parsed = parseFloat(value);
+        console.log('📍 Parsed value:', parsed, 'isNaN:', isNaN(parsed));
+        
         return isNaN(parsed) ? defaultValue : parsed;
+    }
+
+    // Función helper específica para valores de cambio que pueden ser null cuando no hay datos de comparación
+    static safeParseFloatForChange(value) {
+        console.log('🔍 DEBUG safeParseFloatForChange:', { value, type: typeof value });
+        
+        if (value === null || value === undefined) {
+            console.log('📍 No data for comparison, returning 0');
+            return 0; // Cambiar a 0 en lugar de null para consistencia con la UI
+        }
+        
+        if (value === '' || isNaN(value)) {
+            console.log('📍 Empty or NaN value, returning 0');
+            return 0;
+        }
+        
+        const parsed = parseFloat(value);
+        console.log('📍 Parsed change value:', parsed);
+        return isNaN(parsed) ? 0 : parsed;
     }
 
     // Función helper para manejar valores enteros NULL (solo para indicadores completos)
@@ -27,28 +57,6 @@ class MetricasResponseDto {
         return String(value).trim();
     }
 
-    // DTO para la respuesta del resumen financiero (mensual/anual)
-    static resumenFinancieroResponse(data, periodo) {
-        return {
-            success: true,
-            message: `Resumen financiero ${periodo} obtenido exitosamente`,
-            data: {
-                ventasTotales: {
-                    valor: parseFloat(data.VENTAS_TOTALES) || 0,
-                    cambio: parseFloat(data.VARIACION_VENTAS) || 0,
-                    modeloMasVendido: data.MODELO_MAS_VENDIDO || 'No disponible'
-                },
-                ganancias: {
-                    valor: parseFloat(data.GANANCIAS_TOTALES) || 0,
-                    cambio: parseFloat(data.VARIACION_GANANCIAS) || 0,
-                    margenPromedio: parseFloat(data.MARGEN_PROMEDIO) || 0
-                }
-            },
-            periodo: periodo,
-            timestamp: new Date().toISOString()
-        };
-    }
-
     // DTO para la respuesta de ventas por categoría
     static ventasPorCategoriaResponse(data, periodo) {
         return {
@@ -66,28 +74,6 @@ class MetricasResponseDto {
         };
     }
 
-    // DTO para la respuesta de indicadores de cliente
-    static indicadoresClienteResponse(data, periodo) {
-        return {
-            success: true,
-            message: `Indicadores de cliente ${periodo} obtenidos exitosamente`,
-            data: {
-                clientesNuevos: {
-                    valor: parseInt(data.CLIENTES_NUEVOS) || 0,
-                    cambio: parseFloat(data.VARIACION_CLIENTES) || 0,
-                    tasaConversion: parseFloat(data.TASA_CONVERSION) || 0
-                },
-                ventaPromedio: {
-                    valor: parseFloat(data.VENTA_PROMEDIO) || 0,
-                    cambio: parseFloat(data.VARIACION_VENTA_PROM) || 0,
-                    productosPorVenta: parseFloat(data.PRODUCTOS_POR_VENTA) || 0
-                }
-            },
-            periodo: periodo,
-            timestamp: new Date().toISOString()
-        };
-    }
-
     // DTO para la respuesta de indicadores completos (nuevo SP) - MANEJA VALORES NULL
     static indicadoresCompletosResponse(data, periodo) {
         return {
@@ -96,23 +82,23 @@ class MetricasResponseDto {
             data: {
                 ventasTotales: {
                     valor: this.safeParseFloat(data.VENTAS_TOTALES),
-                    cambio: this.safeParseFloat(data.VARIACION_VENTAS),
+                    cambio: this.safeParseFloatForChange(data.VAR_VENTAS_PORC),
                     modeloMasVendido: this.safeString(data.MODELO_MAS_VENDIDO)
                 },
                 ganancias: {
-                    valor: this.safeParseFloat(data.GANANCIAS_TOTALES),
-                    cambio: this.safeParseFloat(data.VARIACION_GANANCIAS),
+                    valor: this.safeParseFloat(data.GANANCIAS),
+                    cambio: this.safeParseFloatForChange(data.VAR_GANANCIAS_PORC),
                     margenPromedio: this.safeParseFloat(data.MARGEN_PROMEDIO)
                 },
                 clientesNuevos: {
                     valor: this.safeParseInt(data.CLIENTES_NUEVOS),
-                    cambio: this.safeParseFloat(data.VARIACION_CLIENTES),
-                    diaMasVentas: this.safeString(data.DIA_MAS_VENTAS)
+                    cambio: this.safeParseFloatForChange(data.VAR_CLIENTES_PORC),
+                    diaMasVentas: 'No disponible' // Este campo no está en el nuevo SP
                 },
                 ventaPromedio: {
                     valor: this.safeParseFloat(data.VENTA_PROMEDIO),
-                    cambio: this.safeParseFloat(data.VARIACION_VENTA_PROM),
-                    productosPorVenta: this.safeParseFloat(data.PROM_PRODUCTOS_POR_VENTA)
+                    cambio: this.safeParseFloatForChange(data.VAR_VENTA_PROMEDIO),
+                    productosPorVenta: this.safeParseFloat(data.PROD_PROM_VENTA)
                 }
             },
             periodo: periodo,

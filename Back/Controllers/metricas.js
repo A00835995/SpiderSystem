@@ -1,84 +1,6 @@
 const { executeQuery } = require('../Utils/dbUtils');
 const MetricasResponseDto = require('../dto/Metricas/MetricasResponseDto');
 
-exports.getResumenFinancieroMes = async (req, res) => {
-    try {
-        const { mes, anio } = req.params;
-
-        if (!mes || !anio) {
-            const response = MetricasResponseDto.validationErrorResponse(
-                'Se requieren los parámetros mes y año',
-                ['mes', 'anio']
-            );
-            return res.status(400).json(response);
-        }
-
-        // Validar que mes esté entre 1 y 12
-        if (mes < 1 || mes > 12) {
-            const response = MetricasResponseDto.validationErrorResponse(
-                'El mes debe estar entre 1 y 12'
-            );
-            return res.status(400).json(response);
-        }
-
-        const result = await executeQuery('CALL RESUMEN_FINANCIERO_MES(?, ?)', [mes, anio]);
-
-        if (!result || result.length === 0) {
-            const response = MetricasResponseDto.notFoundResponse(
-                "No se encontraron datos financieros para el período especificado",
-                "Resumen Financiero Mensual"
-            );
-            return res.status(404).json(response);
-        }
-
-        const response = MetricasResponseDto.resumenFinancieroResponse(result[0], 'mensual');
-        return res.status(200).json(response);
-
-    } catch (error) {
-        console.error("Error en getResumenFinancieroMes:", error.message);
-        const response = MetricasResponseDto.errorResponse(
-            "Error en el servidor al obtener resumen financiero mensual",
-            error.message
-        );
-        res.status(500).json(response);
-    }
-};
-
-exports.getResumenFinancieroAnio = async (req, res) => {
-    try {
-        const { anio } = req.params;
-
-        if (!anio) {
-            const response = MetricasResponseDto.validationErrorResponse(
-                'Se requiere el parámetro año',
-                ['anio']
-            );
-            return res.status(400).json(response);
-        }
-
-        const result = await executeQuery('CALL RESUMEN_FINANCIERO_ANIO(?)', [anio]);
-
-        if (!result || result.length === 0) {
-            const response = MetricasResponseDto.notFoundResponse(
-                "No se encontraron datos financieros para el año especificado",
-                "Resumen Financiero Anual"
-            );
-            return res.status(404).json(response);
-        }
-
-        const response = MetricasResponseDto.resumenFinancieroResponse(result[0], 'anual');
-        return res.status(200).json(response);
-
-    } catch (error) {
-        console.error("Error en getResumenFinancieroAnio:", error.message);
-        const response = MetricasResponseDto.errorResponse(
-            "Error en el servidor al obtener resumen financiero anual",
-            error.message
-        );
-        res.status(500).json(response);
-    }
-};
-
 exports.getVentasPorCategoriaMes = async (req, res) => {
     try {
         const { mes, anio } = req.params;
@@ -157,84 +79,6 @@ exports.getVentasPorCategoriaAnio = async (req, res) => {
     }
 };
 
-exports.getIndicadoresClienteVentaMes = async (req, res) => {
-    try {
-        const { mes, anio } = req.params;
-
-        if (!mes || !anio) {
-            const response = MetricasResponseDto.validationErrorResponse(
-                'Se requieren los parámetros mes y año',
-                ['mes', 'anio']
-            );
-            return res.status(400).json(response);
-        }
-
-        // Validar que mes esté entre 1 y 12
-        if (mes < 1 || mes > 12) {
-            const response = MetricasResponseDto.validationErrorResponse(
-                'El mes debe estar entre 1 y 12'
-            );
-            return res.status(400).json(response);
-        }
-
-        const result = await executeQuery('CALL INDICADORES_CLIENTE_VENTA_MES(?, ?)', [mes, anio]);
-
-        if (!result || result.length === 0) {
-            const response = MetricasResponseDto.notFoundResponse(
-                "No se encontraron indicadores de cliente para el período especificado",
-                "Indicadores Cliente Mensual"
-            );
-            return res.status(404).json(response);
-        }
-
-        const response = MetricasResponseDto.indicadoresClienteResponse(result[0], 'mensual');
-        return res.status(200).json(response);
-
-    } catch (error) {
-        console.error("Error en getIndicadoresClienteVentaMes:", error.message);
-        const response = MetricasResponseDto.errorResponse(
-            "Error en el servidor al obtener indicadores de cliente mensual",
-            error.message
-        );
-        res.status(500).json(response);
-    }
-};
-
-exports.getIndicadoresClienteVentaAnio = async (req, res) => {
-    try {
-        const { anio } = req.params;
-
-        if (!anio) {
-            const response = MetricasResponseDto.validationErrorResponse(
-                'Se requiere el parámetro año',
-                ['anio']
-            );
-            return res.status(400).json(response);
-        }
-
-        const result = await executeQuery('CALL INDICADORES_CLIENTE_VENTA_ANIO(?)', [anio]);
-
-        if (!result || result.length === 0) {
-            const response = MetricasResponseDto.notFoundResponse(
-                "No se encontraron indicadores de cliente para el año especificado",
-                "Indicadores Cliente Anual"
-            );
-            return res.status(404).json(response);
-        }
-
-        const response = MetricasResponseDto.indicadoresClienteResponse(result[0], 'anual');
-        return res.status(200).json(response);
-
-    } catch (error) {
-        console.error("Error en getIndicadoresClienteVentaAnio:", error.message);
-        const response = MetricasResponseDto.errorResponse(
-            "Error en el servidor al obtener indicadores de cliente anual",
-            error.message
-        );
-        res.status(500).json(response);
-    }
-};
-
 exports.getIndicadoresCompletosMes = async (req, res) => {
     try {
         const { mes, anio } = req.params;
@@ -255,7 +99,7 @@ exports.getIndicadoresCompletosMes = async (req, res) => {
             return res.status(400).json(response);
         }
 
-        const result = await executeQuery('CALL INDICADORES_MES(?, ?)', [mes, anio]);
+        const result = await executeQuery('CALL INDICADORES_COMPLETOS_MES(?, ?)', [mes, anio]);
 
         if (!result || result.length === 0) {
             const response = MetricasResponseDto.notFoundResponse(
@@ -290,7 +134,7 @@ exports.getIndicadoresCompletosAnio = async (req, res) => {
             return res.status(400).json(response);
         }
 
-        const result = await executeQuery('CALL INDICADORES_ANIO(?)', [anio]);
+        const result = await executeQuery('CALL INDICADORES_COMPLETOS_ANIO(?)', [anio]);
 
         if (!result || result.length === 0) {
             const response = MetricasResponseDto.notFoundResponse(

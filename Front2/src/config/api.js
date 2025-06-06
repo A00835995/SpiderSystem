@@ -45,15 +45,9 @@ export const API_CONFIG = {
             registrar: "/ventas/registrar"
         },
         metricas: {
-            resumenFinanciero: {
-                mes: "/metricas/resumen-financiero/mes/:mes/:anio",
-                anio: "/metricas/resumen-financiero/anio/:anio",
-                categoria: "/metricas/ventas-categoria/mes/:mes/:anio",
-                categoriaAnio: "/metricas/ventas-categoria/anio/:anio"
-            },
-            indicadoresCliente: {
-                mes: "/metricas/indicadores-cliente/mes/:mes/:anio",
-                anio: "/metricas/indicadores-cliente/anio/:anio"
+            ventasCategoria: {
+                mes: "/metricas/ventas-categoria/mes/:mes/:anio",
+                anio: "/metricas/ventas-categoria/anio/:anio"
             },
             indicadoresCompletos: {
                 mes: "/metricas/indicadores-completos/mes/:mes/:anio",

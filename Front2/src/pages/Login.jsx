@@ -104,7 +104,7 @@ export default function Login() {
   };
 
   const rightPanelStyle = {
-    backgroundColor: theme ? "#1e2a4a" : "#f0f4f8",
+    backgroundColor: theme ? "#529cf7" : "#f0f4f8",
     color: theme ? "#e2e8f0" : "#475569",
     display: "flex",
     flexDirection: "column",
@@ -285,21 +285,6 @@ export default function Login() {
             >
               Iniciar Sesión
             </Button>
-            
-            <div style={createAccountStyle}>
-              <Text style={{ color: theme ? "#a0aec0" : "#718096", marginRight: "0.5rem" }}>
-                ¿No tienes una cuenta?
-              </Text>
-              <Link 
-                onClick={() => navigate("/home")}
-                style={{ 
-                  color: theme ? "#4299e1" : "#3182ce", 
-                  fontWeight: "500"
-                }}
-              >
-                Crear cuenta
-              </Link>
-            </div>
           </form>
         </div>
       </div>
