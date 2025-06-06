@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1749170018464" clover="3.2.0">
-  <project timestamp="1749170018464" name="All files">
+<coverage generated="1749170507526" clover="3.2.0">
+  <project timestamp="1749170507526" name="All files">
     <metrics statements="37" coveredstatements="37" conditionals="16" coveredconditionals="15" methods="3" coveredmethods="3" elements="56" coveredelements="55" complexity="0" loc="37" ncloc="37" packages="1" files="1" classes="1"/>
-    <file name="login.js" path="/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/Controllers/login.js">
+    <file name="login.js" path="C:\Users\evcpa\Desktop\SpiderSAP\SpiderSystem\Back\Controllers\login.js">
       <metrics statements="37" coveredstatements="37" conditionals="16" coveredconditionals="15" methods="3" coveredmethods="3"/>
       <line num="1" count="1" type="stmt"/>
       <line num="2" count="1" type="stmt"/>
