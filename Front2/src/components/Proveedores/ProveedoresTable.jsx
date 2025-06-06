@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   Text,
@@ -16,14 +16,15 @@ import {
   Badge,
   Bar,
   IllustrationMessageType,
-  TableSelectionMode
+  TableSelectionMode,
+  BusyIndicator
 } from '@ui5/webcomponents-react';
+import '@ui5/webcomponents-fiori/dist/illustrations/SearchEarth.js';
 
 const ProveedoresTable = ({ 
   paginatedProveedores, 
   itemsPerPage, 
   onViewDetails, 
-  isDarkMode,
   proveedores,
   onAddProveedor
 }) => {
@@ -59,8 +60,8 @@ const ProveedoresTable = ({
             {row.original.nombreProveedor || 'N/A'}
           </Text>
           <FlexBox alignItems={FlexBoxAlignItems.Center}>
-            <Icon name="calendar" style={{ fontSize: '0.75rem', marginRight: '0.375rem', color: isDarkMode ? '#a0a0a0' : '#0854a0' }} />
-            <Text style={{ fontSize: '0.75rem', color: isDarkMode ? '#a0a0a0' : '#6a6d70' }}>
+            <Icon name="calendar" style={{ fontSize: '0.75rem', marginRight: '0.375rem', color: '#0854a0' }} />
+            <Text style={{ fontSize: '0.75rem', color: '#6a6d70' }}>
               Último pedido: {row.original.ultimoPedido || 'N/A'}
             </Text>
           </FlexBox>
@@ -80,8 +81,8 @@ const ProveedoresTable = ({
             {value || 'N/A'}
           </Text>
           <FlexBox alignItems={FlexBoxAlignItems.Center}>
-            <Icon name="phone" style={{ fontSize: '0.75rem', marginRight: '0.375rem', color: isDarkMode ? '#a0a0a0' : '#0854a0' }} />
-            <Text style={{ fontSize: '0.75rem', color: isDarkMode ? '#a0a0a0' : '#6a6d70' }}>
+            <Icon name="phone" style={{ fontSize: '0.75rem', marginRight: '0.375rem', color: '#0854a0' }} />
+            <Text style={{ fontSize: '0.75rem', color: '#6a6d70' }}>
               {row.original.telefono || 'N/A'}
             </Text>
           </FlexBox>
@@ -98,8 +99,8 @@ const ProveedoresTable = ({
       Cell: ({ value }) => (
         <FlexBox direction={FlexBoxDirection.Column} style={{ padding: '0.75rem 0' }}>
           <FlexBox alignItems={FlexBoxAlignItems.Start}>
-            <Icon name="email" style={{ fontSize: '0.75rem', marginRight: '0.375rem', marginTop: '0.125rem', color: isDarkMode ? '#a0a0a0' : '#0854a0' }} />
-            <Text style={{ fontSize: '0.75rem', color: isDarkMode ? '#e0e0e0' : '#32363a' }}>
+            <Icon name="email" style={{ fontSize: '0.75rem', marginRight: '0.375rem', marginTop: '0.125rem', color: '#0854a0' }} />
+            <Text style={{ fontSize: '0.75rem', color: '#32363a' }}>
               {value || 'N/A'}
             </Text>
           </FlexBox>
@@ -193,7 +194,7 @@ const ProveedoresTable = ({
             style={{ 
               height: '1.75rem',
               padding: '0 0.625rem',
-              backgroundColor: isDarkMode ? '#4c9aff' : '#0854a0',
+              backgroundColor: '#0854a0',
               color: 'white',
               display: 'flex',
               alignItems: 'center',
@@ -221,18 +222,7 @@ const ProveedoresTable = ({
   );
 
   return (
-    <Card 
-      style={{ 
-        marginTop: '1rem',
-        backgroundColor: 'transparent',
-        boxShadow: 'none',
-        borderRadius: '0.5rem',
-        border: 'none',
-        width: '100%',
-        overflowX: 'auto',
-        overflowY: 'hidden'
-      }}
-    >
+    <Card>
       {renderTableTitle()}
       
       {proveedores.length === 0 ? (
@@ -252,10 +242,10 @@ const ProveedoresTable = ({
         <div style={{ 
           padding: '0.75rem', 
           overflowX: 'auto',
-          backgroundColor: isDarkMode ? '#2d2d2d' : '#ffffff',
+          backgroundColor: 'var(--sapBackgroundColor)',
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.07)',
           borderRadius: '0.5rem',
-          border: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+          border: '1px solid var(--sapContent_ForegroundBorderColor)'
         }}>
           <AnalyticalTable
             data={paginatedProveedores}
@@ -276,34 +266,34 @@ const ProveedoresTable = ({
               '--_ui5_tc_row_outline_width': '0',
               tableLayout: 'fixed',
               '--_ui5_tc_cell_padding': '0.5rem 0.75rem',
-              '--sapUiContentDisabledTextColor': isDarkMode ? '#e0e0e0' : '#32363a',
+              '--sapUiContentDisabledTextColor': 'var(--sapTextColor)',
               '--sapContent_GridSize': '0.25rem',
               '--sapUiTableRowHeight': 'auto',
               '--sapUiTableRowHdrHeight': '3rem',
               '--_ui5_tc_cell_vertical_align': 'top',
-              '--sapList_HeaderBorderColor': isDarkMode ? '#444444' : '#e0e0e0',
-              '--sapList_BorderColor': isDarkMode ? '#444444' : '#e8e8e8',
+              '--sapList_HeaderBorderColor': 'var(--sapContent_ForegroundBorderColor)',
+              '--sapList_BorderColor': 'var(--sapContent_ForegroundBorderColor)',
               '--_ui5_tc_row_hover_outline_color': 'transparent',
               '--_ui5_analytical_table_header_cell_vertical_align': 'bottom',
               '--sapUiListHeaderBorderWidth': '0',
               '--sapUiFieldBorderWidth': '0',
               '--sapUiListTableFixedColumnWidth': 'auto',
-              '--sapUiBaseBG': isDarkMode ? '#2d2d2d' : '#ffffff',
-              '--sapUiListHeaderBackground': isDarkMode ? '#252525' : '#fafafa',
-              '--sapUiListSelectionBackgroundColor': isDarkMode ? '#3d3d3d' : '#f0f7fd',
+              '--sapUiBaseBG': 'var(--sapBackgroundColor)',
+              '--sapUiListHeaderBackground': 'var(--sapList_HeaderBackground)',
+              '--sapUiListSelectionBackgroundColor': 'var(--sapList_SelectionBackgroundColor)',
               '--_ui5_tc_row_outline_color': 'transparent',
               '--_ui5_tc_cell_outline_width': '0',
-              '--_ui5_tc_header_cell_default_border_color': isDarkMode ? '#444444' : '#e5e5e5',
+              '--_ui5_tc_header_cell_default_border_color': 'var(--sapContent_ForegroundBorderColor)',
               '--_ui5_tc_headerBorderWidth': '0 0 1px 0',
               '--_ui5_analytical_table_header_box_shadow': 'none',
-              '--sapGroup_TitleBackground': isDarkMode ? '#252525' : '#f5f5f5',
-              '--_ui5_analytical_table_header_background_color': isDarkMode ? '#252525' : '#f5f5f5',
+              '--sapGroup_TitleBackground': 'var(--sapGroup_TitleBackground)',
+              '--_ui5_analytical_table_header_background_color': 'var(--sapGroup_TitleBackground)',
               '--_ui5_tc_row_height': 'auto',
               '--_ui5_tc_header_row_height': '2.75rem',
               '--_ui5_tc_row_highlight_display': 'none',
               '--sapUiElementLineHeight': '1.4',
               '--sapUiListTableHeaderFontSize': '0.8125rem',
-              '--sapUiTextDisabled': isDarkMode ? '#a0a0a0' : '#666',
+              '--sapUiTextDisabled': 'var(--sapContent_LabelColor)',
               '--_ui5_tc_padding': '0',
               '--_ui5_tc_header_cell_padding': '0.75rem 1rem',
             }}

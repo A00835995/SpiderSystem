@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Card,
   Text,
@@ -129,6 +130,19 @@ const UserCard = ({
       </div>
     </Card>
   );
+};
+
+UserCard.propTypes = {
+  usuario: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    nombre: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    rol: PropTypes.string.isRequired
+  }).isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  getRolColor: PropTypes.func.isRequired,
+  getInitials: PropTypes.func.isRequired
 };
 
 export default UserCard; 

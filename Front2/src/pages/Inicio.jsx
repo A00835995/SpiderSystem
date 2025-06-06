@@ -5,7 +5,7 @@ import InicioKpiCards from "../components/Inicio/InicioKpiCards";
 import InicioRecentOrders from "../components/Inicio/InicioRecentOrders";
 import InicioSalesCat from "../components/Inicio/InicioSalesCat";
 import InicioTopProducts from "../components/Inicio/InicioTopProducts";
-import { FlexBox, FlexBoxDirection, FlexBoxAlignItems, FlexBoxJustifyContent, IllustratedMessage, IllustrationMessageType } from "@ui5/webcomponents-react";
+import { FlexBox, FlexBoxDirection, FlexBoxAlignItems, FlexBoxJustifyContent, BusyIndicator, Text } from "@ui5/webcomponents-react";
 import { styles } from "../Styles/InicioStyle";
 
 // Importar los iconos necesarios
@@ -23,13 +23,15 @@ const Inicio = () => {
         direction={FlexBoxDirection.Column}
         justifyContent={FlexBoxJustifyContent.Center}
         alignItems={FlexBoxAlignItems.Center}
-        style={{ height: "100%" }}
+        style={{ height: "100%", gap: "1rem" }}
       >
-        <IllustratedMessage
-          name={IllustrationMessageType.SapLogo}
-          titleText="Cargando Dashboard"
-          subtitleText="Por favor espere..."
-        />
+        <BusyIndicator size="Large" />
+        <Text style={{ fontSize: "1.25rem", fontWeight: "600" }}>
+          Cargando Dashboard
+        </Text>
+        <Text style={{ color: "var(--sapContent_LabelColor)" }}>
+          Por favor espere...
+        </Text>
       </FlexBox>
     );
   }

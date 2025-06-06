@@ -7,7 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 export function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDarkMode, toggleDarkMode } = useUI5Theme();
+  const { theme } = useUI5Theme();
   const { filtrarRutasSidebar, loading: permisosLoading } = usePermisos();
   const { logout, user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -57,8 +57,8 @@ export function Sidebar() {
           left: 0,
           right: 0,
           height: "60px",
-          backgroundColor: isDarkMode ? "#1a1a1a" : "#fff",
-          borderBottom: "1px solid " + (isDarkMode ? "#333" : "#e0e0e0"),
+          backgroundColor: "var(--sapBackgroundColor)",
+          borderBottom: "1px solid var(--sapContent_ForegroundBorderColor)",
           display: "flex",
           alignItems: "center",
           padding: "0 20px",
@@ -71,7 +71,7 @@ export function Sidebar() {
             style={{
               fontSize: "24px",
               cursor: "pointer",
-              color: isDarkMode ? "#fff" : "#000",
+              color: "var(--sapTextColor)",
               padding: "8px",
               background: "none",
               border: "none"
@@ -86,7 +86,7 @@ export function Sidebar() {
             style={{
               fontSize: "20px",
               fontWeight: "bold",
-              color: isDarkMode ? "#fff" : "#000"
+              color: "var(--sapTextColor)"
             }}
           >
             Spider System
@@ -95,25 +95,12 @@ export function Sidebar() {
         <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
           {user && (
             <span style={{ 
-              color: isDarkMode ? "#fff" : "#000",
+              color: "var(--sapTextColor)",
               fontSize: "14px",
               marginRight: "10px"
             }}>Hola, {user.name}
             </span>
           )}
-          <button
-            onClick={toggleDarkMode}
-            style={{
-              background: "none",
-              border: "none",
-              fontSize: "20px",
-              cursor: "pointer",
-              color: isDarkMode ? "#fff" : "#000"
-            }}
-            aria-label="Toggle theme"
-          >
-            {isDarkMode ? "🌞" : "🌙"}
-          </button>
           <button
             onClick={() => navigate("/cuenta")}
             style={{
@@ -121,7 +108,7 @@ export function Sidebar() {
               border: "none",
               fontSize: "20px",
               cursor: "pointer",
-              color: isDarkMode ? "#fff" : "#000"
+              color: "var(--sapTextColor)"
             }}
             aria-label="Mi cuenta"
           >
@@ -134,7 +121,7 @@ export function Sidebar() {
               border: "none",
               fontSize: "20px",
               cursor: "pointer",
-              color: isDarkMode ? "#fff" : "#000"
+              color: "var(--sapTextColor)"
             }}
             aria-label="Cerrar sesión"
             title="Cerrar sesión"
@@ -165,8 +152,8 @@ export function Sidebar() {
           onTouchEnd={() => setIsOpen(false)}
           style={{
             width: isOpen ? "250px" : "60px",
-            backgroundColor: isDarkMode ? "#1a1a1a" : "#fff",
-            borderRight: "1px solid " + (isDarkMode ? "#333" : "#e0e0e0"),
+            backgroundColor: "var(--sapBackgroundColor)",
+            borderRight: "1px solid var(--sapContent_ForegroundBorderColor)",
             transition: "width 0.3s ease",
             overflowX: "hidden",
             flexShrink: 0
@@ -178,7 +165,7 @@ export function Sidebar() {
               <div style={{ 
                 padding: "20px", 
                 textAlign: "center",
-                color: isDarkMode ? "#fff" : "#000"
+                color: "var(--sapTextColor)"
               }}>
                 Cargando...
               </div>
@@ -199,24 +186,18 @@ export function Sidebar() {
                       gap: "10px",
                       cursor: "pointer",
                       backgroundColor: active
-                        ? isDarkMode
-                          ? "#333"
-                          : "#f0f0f0"
+                        ? "var(--sapList_SelectionBackgroundColor)"
                         : "transparent",
-                      color: isDarkMode ? "#fff" : "#000",
+                      color: "var(--sapTextColor)",
                       transition: "background-color 0.2s",
                       whiteSpace: "nowrap"
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = isDarkMode
-                        ? "#444"
-                        : "#e0e0e0";
+                      e.currentTarget.style.backgroundColor = "var(--sapList_Hover_Background)";
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.backgroundColor = active
-                        ? isDarkMode
-                          ? "#333"
-                          : "#f0f0f0"
+                        ? "var(--sapList_SelectionBackgroundColor)"
                         : "transparent";
                     }}
                   >
@@ -242,7 +223,7 @@ export function Sidebar() {
           style={{
             flex: 1,
             padding: "8px",
-            backgroundColor: isDarkMode ? "#121212" : "#f5f5f5",
+            backgroundColor: "var(--sapBackgroundColor)",
             transition: "margin-left 0.3s ease",
             overflow: "auto"
           }}

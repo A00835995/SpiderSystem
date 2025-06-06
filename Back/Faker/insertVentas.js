@@ -16,7 +16,7 @@ async function generarVentas(numVentas = 20) {
   // Obtener artículos existentes con su ID y precios
   const articulos = await new Promise((resolve, reject) => {
     conn.exec(`SELECT "ARTIID", "ARTPRECIOCOMPRA", "ARTPRECIOVENTA" FROM "DBADMIN"."ARTICULO" WHERE "ELIMINADO" = 0`, (err, rows) => {
-      if (err) return reject(err);
+      if (err) return reject(err instanceof Error ? err : new Error(String(err)));
       resolve(rows);
     });
   });
@@ -38,11 +38,11 @@ async function generarVentas(numVentas = 20) {
 
     const idVenta = await new Promise((resolve, reject) => {
       conn.exec(insertVentaSQL, (err) => {
-        if (err) return reject(err);
+        if (err) return reject(err instanceof Error ? err : new Error(String(err)));
 
         // Obtener el último IdVenta generado
         conn.exec(`SELECT MAX("IdVenta") AS "IdVenta" FROM "DBADMIN"."VENTA"`, (err2, rows) => {
-          if (err2) return reject(err2);
+          if (err2) return reject(err2 instanceof Error ? err2 : new Error(String(err2)));
           resolve(rows[0].IdVenta);
         });
       });
@@ -76,7 +76,7 @@ async function generarVentas(numVentas = 20) {
 
       await new Promise((resolve, reject) => {
         conn.exec(insertVentaEnc, (err) => {
-          if (err) return reject(err);
+          if (err) return reject(err instanceof Error ? err : new Error(String(err)));
           resolve();
         });
       });

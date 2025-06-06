@@ -5,11 +5,40 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
+
+// Configuración segura de CORS
+const allowedOrigins = [
+    'http://localhost:3000',    // React dev server
+    'http://localhost:5173',    // Vite dev server
+    'http://localhost:4173',    // Vite preview
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:4173'
+];
+
+// En producción, agregar el dominio real
+if (process.env.NODE_ENV === 'production') {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Permitir requests sin origin (ej. aplicaciones móviles)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('No permitido por política CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 const io = new Server(server, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
-    }
+    cors: corsOptions
 });
 
 const loginRoutes = require('./Routes/loginRutas');
@@ -27,7 +56,7 @@ const ventasRoutes = require('./Routes/ventasRoutes');
 const { connectToHANA } = require('./Config/confDB');
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Hacer io disponible en los controladores

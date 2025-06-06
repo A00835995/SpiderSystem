@@ -1,6 +1,6 @@
-projectKey=BackSpiderSAP
-serverUrl=http://localhost:9000
-serverVersion=25.4.0.105899
-dashboardUrl=http://localhost:9000/dashboard?id=BackSpiderSAP
-ceTaskId=699e4e63-444e-4f28-924c-a596fef81bf5
-ceTaskUrl=http://localhost:9000/api/ce/task?id=699e4e63-444e-4f28-924c-a596fef81bf5
+projectKey=SpiderSAP_back
+serverUrl=http://20.115.80.90:9002
+serverVersion=25.5.0.107428
+dashboardUrl=http://20.115.80.90:9002/dashboard?id=SpiderSAP_back
+ceTaskId=021dead0-c62e-461f-bccb-28edd0b08678
+ceTaskUrl=http://20.115.80.90:9002/api/ce/task?id=021dead0-c62e-461f-bccb-28edd0b08678

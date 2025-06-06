@@ -16,7 +16,7 @@ async function generarOrdenes(numOrdenes = 20) {
   // Obtener artículos existentes con su ID y precio de compra
   const articulos = await new Promise((resolve, reject) => {
     conn.exec(`SELECT "ARTIID", "ARTPRECIOCOMPRA", "IDPROV" FROM "DBADMIN"."ARTICULO" WHERE "ELIMINADO" = 0`, (err, rows) => {
-      if (err) return reject(err);
+      if (err) return reject(err instanceof Error ? err : new Error(String(err)));
       resolve(rows);
     });
   });
@@ -46,11 +46,11 @@ async function generarOrdenes(numOrdenes = 20) {
 
     const idOrden = await new Promise((resolve, reject) => {
       conn.exec(insertOrdenSQL, (err) => {
-        if (err) return reject(err);
+        if (err) return reject(err instanceof Error ? err : new Error(String(err)));
 
         // Obtener el último IDORDEN generado
         conn.exec(`SELECT MAX("IDORDEN") AS "IDORDEN" FROM "DBADMIN"."ORDEN"`, (err2, rows) => {
-          if (err2) return reject(err2);
+          if (err2) return reject(err2 instanceof Error ? err2 : new Error(String(err2)));
           resolve(rows[0].IDORDEN);
         });
       });
@@ -80,9 +80,9 @@ async function generarOrdenes(numOrdenes = 20) {
 
       await new Promise((resolve, reject) => {
         conn.exec(insertArt, (err1) => {
-          if (err1) return reject(err1);
+          if (err1) return reject(err1 instanceof Error ? err1 : new Error(String(err1)));
           conn.exec(insertRecibo, (err2) => {
-            if (err2) return reject(err2);
+            if (err2) return reject(err2 instanceof Error ? err2 : new Error(String(err2)));
             resolve();
           });
         });
