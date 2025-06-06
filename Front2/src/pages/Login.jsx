@@ -31,13 +31,12 @@ import "@ui5/webcomponents-icons/dist/hide.js";
 import "@ui5/webcomponents-fiori/dist/illustrations/AllIllustrations.js";
 import { AuthImagePattern } from "../components/AuthImagePattern";
 
-// Rutas de los logos según el modo
-const LOGO_LIGHT = "/logo-dark.png"; // Logo negro para modo claro (fondo claro)
-const LOGO_DARK = "/logo-light.png"; // Logo blanco para modo oscuro (fondo oscuro)
+// Logo path
+const LOGO_PATH = "/logo-dark.png";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { isDarkMode } = useUI5Theme();
+  const { theme } = useUI5Theme();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
@@ -45,9 +44,6 @@ export default function Login() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-
-  // Determinar qué logo usar según el modo
-  const logoToUse = isDarkMode ? LOGO_DARK : LOGO_LIGHT;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,8 +93,8 @@ export default function Login() {
 
   const leftPanelStyle = {
     position: "relative",
-    backgroundColor: isDarkMode ? "var(--sapBackgroundColor)" : "var(--sapBackgroundColor)",
-    color: isDarkMode ? "var(--sapContent_ContrastTextColor)" : "var(--sapTextColor)",
+    backgroundColor: theme ? "var(--sapBackgroundColor)" : "var(--sapBackgroundColor)",
+    color: theme ? "var(--sapContent_ContrastTextColor)" : "var(--sapTextColor)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -108,8 +104,8 @@ export default function Login() {
   };
 
   const rightPanelStyle = {
-    backgroundColor: isDarkMode ? "#1e2a4a" : "#f0f4f8",
-    color: isDarkMode ? "#e2e8f0" : "#475569",
+    backgroundColor: theme ? "#1e2a4a" : "#f0f4f8",
+    color: theme ? "#e2e8f0" : "#475569",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -127,7 +123,7 @@ export default function Login() {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: isDarkMode ? "rgba(26, 32, 54, 0.7)" : "rgba(0, 0, 0, 0.05)",
+    backgroundColor: theme ? "rgba(26, 32, 54, 0.7)" : "rgba(0, 0, 0, 0.05)",
     zIndex: 1
   };
 
@@ -140,8 +136,8 @@ export default function Login() {
   const inputStyle = {
     borderRadius: "8px",
     transition: "all 0.2s ease-in-out",
-    backgroundColor: isDarkMode ? "rgba(66, 153, 225, 0.1)" : "rgba(66, 153, 225, 0.05)",
-    border: isDarkMode ? "1px solid #4a5568" : "1px solid #e2e6f0",
+    backgroundColor: theme ? "rgba(66, 153, 225, 0.1)" : "rgba(66, 153, 225, 0.05)",
+    border: theme ? "1px solid #4a5568" : "1px solid #e2e6f0",
     height: "3rem",
     fontSize: "0.95rem",
     width: "100%",
@@ -152,7 +148,7 @@ export default function Login() {
     borderRadius: "8px",
     fontWeight: 600,
     transition: "all 0.3s ease",
-    backgroundColor: isDarkMode ? "#4299e1" : "#3182ce",
+    backgroundColor: theme ? "#4299e1" : "#3182ce",
     color: "white",
     marginTop: "1.5rem",
     height: "3rem",
@@ -222,7 +218,7 @@ export default function Login() {
               Bienvenido de Nuevo
             </Title>
             <Text style={{ 
-              color: isDarkMode ? "var(--sapNeutralTextColor)" : "var(--sapNeutralTextColor)",
+              color: theme ? "var(--sapNeutralTextColor)" : "var(--sapNeutralTextColor)",
               fontSize: "0.95rem"
             }}>
               Inicia sesión en tu cuenta
@@ -291,13 +287,13 @@ export default function Login() {
             </Button>
             
             <div style={createAccountStyle}>
-              <Text style={{ color: isDarkMode ? "#a0aec0" : "#718096", marginRight: "0.5rem" }}>
+              <Text style={{ color: theme ? "#a0aec0" : "#718096", marginRight: "0.5rem" }}>
                 ¿No tienes una cuenta?
               </Text>
               <Link 
                 onClick={() => navigate("/home")}
                 style={{ 
-                  color: isDarkMode ? "#4299e1" : "#3182ce", 
+                  color: theme ? "#4299e1" : "#3182ce", 
                   fontWeight: "500"
                 }}
               >
@@ -329,7 +325,7 @@ export default function Login() {
           {/* Logo grande */}
           <div style={logoContainerStyle}>
             <img 
-              src={logoToUse} 
+              src={LOGO_PATH} 
               alt="Logo del Sistema" 
               style={logoStyle}
               onError={(e) => {
@@ -358,8 +354,8 @@ export default function Login() {
             <Title level="H1" style={{ 
               fontSize: "2.5rem", 
               marginBottom: "1rem", 
-              color: isDarkMode ? "white" : "#1e2a4a",
-              textShadow: isDarkMode ? "none" : "0 1px 2px rgba(0, 0, 0, 0.05)"
+              color: theme ? "white" : "#1e2a4a",
+              textShadow: theme ? "none" : "0 1px 2px rgba(0, 0, 0, 0.05)"
             }}>
               ¡Bienvenido de nuevo!
             </Title>
@@ -367,9 +363,9 @@ export default function Login() {
               fontSize: "1.25rem", 
               maxWidth: "80%", 
               margin: "0 auto", 
-              color: isDarkMode ? "#cbd5e0" : "#334155",
+              color: theme ? "#cbd5e0" : "#334155",
               lineHeight: "1.6",
-              textShadow: isDarkMode ? "none" : "0 1px 2px rgba(0, 0, 0, 0.03)"
+              textShadow: theme ? "none" : "0 1px 2px rgba(0, 0, 0, 0.03)"
             }}>
               Inicia sesión para continuar tus conversaciones y ponerte al día con tus mensajes.
             </Text>

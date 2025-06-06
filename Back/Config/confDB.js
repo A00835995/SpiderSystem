@@ -23,7 +23,18 @@ function connectToHANA() {
       resolve(connection);
     } catch (error) {
       console.error("❌ Error al conectar a SAP HANA:", error);
-      reject(error);
+      
+      // Asegurar que siempre sea un objeto Error
+      const errorObj = error instanceof Error 
+        ? error 
+        : new Error(`Error de conexión a SAP HANA: ${String(error)}`);
+      
+      // Agregar información adicional si no está presente
+      if (!errorObj.code && error?.code) {
+        errorObj.code = error.code;
+      }
+      
+      reject(errorObj);
     }
   });
 }
@@ -42,7 +53,18 @@ function connectToHANA5() {
         resolve(connection);
       } catch (error) {
         console.error("❌ Error al conectar a SAP HANA 5:", error);
-        reject(error);
+        
+        // Asegurar que siempre sea un objeto Error
+        const errorObj = error instanceof Error 
+          ? error 
+          : new Error(`Error de conexión a SAP HANA 5: ${String(error)}`);
+        
+        // Agregar información adicional si no está presente
+        if (!errorObj.code && error?.code) {
+          errorObj.code = error.code;
+        }
+        
+        reject(errorObj);
       }
     });
   }

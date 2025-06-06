@@ -1,5 +1,6 @@
 import React from 'react';
 import { IllustratedMessage, IllustrationMessageType } from '@ui5/webcomponents-react';
+import '@ui5/webcomponents-fiori/dist/illustrations/SearchEarth.js';
 import ProductCard from './ProductCard';
 
 const ProductGrid = ({ productos, onAddToCart }) => {

@@ -54,7 +54,7 @@ INSERT INTO "DBADMIN"."ARTICULO" (
         conn.exec(query, (err) => {
           if (err) {
             console.error(`❌ Error insertando ${artCodigo}:`, err.message);
-            reject(err);
+            reject(err instanceof Error ? err : new Error(String(err)));
           } else {
             console.log(`✅ Insertado ${artCodigo}`);
             resolve();

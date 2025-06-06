@@ -101,7 +101,7 @@ async function generarOrdenesML(targetOrdenes = 800) {
   // Obtener artículos existentes con proveedores
   const articulos = await new Promise((resolve, reject) => {
     conn.exec(`SELECT "ARTIID", "ARTPRECIOCOMPRA", "IDPROV" FROM "DBADMIN"."ARTICULO" WHERE "ELIMINADO" = 0`, (err, rows) => {
-      if (err) return reject(err);
+      if (err) return reject(err instanceof Error ? err : new Error(String(err)));
       resolve(rows);
     });
   });
@@ -129,34 +129,15 @@ async function generarOrdenesML(targetOrdenes = 800) {
   shuffled.slice(Math.floor(total * 0.2), Math.floor(total * 0.7)).forEach(art => demandaMap.set(art.ARTIID, 'media'));
   shuffled.slice(Math.floor(total * 0.7)).forEach(art => demandaMap.set(art.ARTIID, 'baja'));
 
-  // Generar fechas de órdenes sistemáticas
-  const fechasOrdenes = getOrderScheduleDates(5, 1.5);
-  let ordenesGeneradas = 0;
-  let ordenesPorMes = {};
-  let ordenesPorProveedor = {};
+    const idOrden = await new Promise((resolve, reject) => {
+      conn.exec(insertOrdenSQL, (err) => {
+        if (err) return reject(err instanceof Error ? err : new Error(String(err)));
 
-  console.log(`📅 Fechas de órdenes disponibles: ${fechasOrdenes.length}`);
-
-  for (let weekIndex = 0; weekIndex < fechasOrdenes.length && ordenesGeneradas < targetOrdenes; weekIndex++) {
-    const fecha = fechasOrdenes[weekIndex];
-    const mesKey = fecha.substring(0, 7); // YYYY-MM
-    
-    if (!ordenesPorMes[mesKey]) ordenesPorMes[mesKey] = 0;
-
-    // Procesar cada proveedor
-    for (const idProv of proveedores) {
-      if (ordenesGeneradas >= targetOrdenes) break;
-      
-      const articulosProveedor = articulosPorProveedor[idProv];
-      
-      // Determinar si este proveedor necesita orden esta semana
-      const probabilidadOrden = 0.6; // 60% probabilidad por semana
-      if (Math.random() > probabilidadOrden) continue;
-
-      // Seleccionar artículos que necesitan reabastecimiento
-      const articulosParaOrden = articulosProveedor.filter(art => {
-        const demandaType = demandaMap.get(art.ARTIID) || 'media';
-        return needsRestock(art, weekIndex, demandaType);
+        // Obtener el último IDORDEN generado
+        conn.exec(`SELECT MAX("IDORDEN") AS "IDORDEN" FROM "DBADMIN"."ORDEN"`, (err2, rows) => {
+          if (err2) return reject(err2 instanceof Error ? err2 : new Error(String(err2)));
+          resolve(rows[0].IDORDEN);
+        });
       });
 
       if (articulosParaOrden.length === 0) continue;
@@ -186,7 +167,15 @@ async function generarOrdenesML(targetOrdenes = 800) {
         console.log(`📈 Progreso: ${ordenesGeneradas}/${targetOrdenes} órdenes generadas`);
       }
 
-      fileContent.content += `\n-- Fin de la orden ${idOrden} (Proveedor: ${idProv}, Artículos: ${articulosSeleccionados.length})\n\n`;
+      await new Promise((resolve, reject) => {
+        conn.exec(insertArt, (err1) => {
+          if (err1) return reject(err1 instanceof Error ? err1 : new Error(String(err1)));
+          conn.exec(insertRecibo, (err2) => {
+            if (err2) return reject(err2 instanceof Error ? err2 : new Error(String(err2)));
+            resolve();
+          });
+        });
+      });
     }
   }
 
