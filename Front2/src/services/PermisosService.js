@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:4000/api/permisos';
+import { API_CONFIG } from '../config/api';
+
+const API_BASE_URL = `${API_CONFIG.baseUrl}/permisos`;
 
 // Obtener todos los roles
 export const fetchRoles = async () => {

@@ -224,26 +224,7 @@ export default function Inventario() {
     },
   ];
   
-  //APLICO EL BACKEND
-  //Solo se ejecuta cuando se carga la pagina porque tiene "[]"
-  useEffect(() => {
-    const loadInventory = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchInventoryData();
-        //Update los datos del inventario
-        setFilteredData(data);
-        setLastUpdateTime(new Date());
-      } catch (error) {
-        console.error("Error al obtener artículos:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-  
-    loadInventory();
-  }, []);
-  
+
   //APLICO EL BACKEND
   useEffect(() => {
     const loadTotalCount = async () => {
@@ -253,7 +234,7 @@ export default function Inventario() {
         console.error("Error al obtener el total de productos:", error);
       }
     };
-  
+
     loadTotalCount();
   }, []);
   
@@ -389,13 +370,6 @@ export default function Inventario() {
               style={{ marginRight: '0.5rem' }}
             >
               Exportar
-            </Button>
-            <Button 
-              icon="add"
-              design="Emphasized"
-              tooltip="Agregar nuevo producto"
-            >
-              Agregar Producto
             </Button>
           </FlexBox>
         </FlexBox>

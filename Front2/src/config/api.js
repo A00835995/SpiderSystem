@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-    baseUrl: "http://localhost:4000/api",
+    baseUrl: import.meta.env.VITE_API_URL || "http://localhost:4000/api",
     endpoints: {
         articles: "/getarticulos",
         totalCount: "/getTotalArticulos",
@@ -37,7 +37,8 @@ export const API_CONFIG = {
             getData: "/compras/getdata",
             crearOrden: "/compras/crearOrden",
             ordenesProgreso: "/compras/ordenesProgreso",
-            completarOrden: "/compras/completarOrden"
+            completarOrden: "/compras/completarOrden",
+            articulos: "/compras/articulos"
         },
         ventas: {
             articulosDisponibles: "/ventas/articulos-disponibles",
@@ -65,6 +66,20 @@ export const API_CONFIG = {
         },
         ordenesProveedor: "/ordenes-proveedor",
         consultarOrdenCompra: "/ordenes-proveedor/consultar",
-        actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso"
+        actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso",
+        chat: "/chat",
+        chatUsers: "/chat/users"
+    },
+    // Socket URL dinámico basado en baseUrl
+    get socketURL() {
+        return this.baseUrl.replace('/api', '');
     }
 };
+
+// Debug: Ver qué URL se está usando
+console.log('🔧 API_CONFIG Debug:');
+console.log('- NODE_ENV:', import.meta.env.MODE);
+console.log('- VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('- baseUrl final:', API_CONFIG.baseUrl);
+console.log('- URL de login será:', `${API_CONFIG.baseUrl}/login`);
+console.log('- Entorno:', import.meta.env.MODE === 'production' ? 'PRODUCCIÓN' : 'DESARROLLO');

@@ -4,13 +4,24 @@ const OrdenCompraDto = require('../dto/Compras/OrdenCompraDto');
 
 exports.getComprasData = async(req,res) => {
     try {
-        //Ejecutar los stored procedures
-        //Promise sirve para ejecutar varias consultas al mismo tiempo
-        const [articulosResult, comprasResult, pagoResult] = await Promise.all([
-            executeQuery('CALL MostrarArticulosCompras()'),
+        //Ejecutar los stored procedures para proveedores y formas de pago
+        const [comprasResult, pagoResult] = await Promise.all([
             executeQuery('CALL MostrarProveedores()'),
             executeQuery('CALL FormaPagoCompra()')
         ]);
+        
+        // Obtener artículos si se proporciona un ID de proveedor
+        let articulosResult = [];
+        const providerId = req.query.providerId ? parseInt(req.query.providerId) : null;
+        
+        if (providerId) {
+            // Si hay un ID de proveedor, obtener artículos filtrados
+            articulosResult = await executeQuery('CALL MostrarArticulosCompras(?)', [providerId]);
+        } else {
+            // Si no hay ID de proveedor, devolver una lista vacía o realizar otra consulta
+            // Puedes personalizar esto según tus necesidades
+            articulosResult = [];
+        }
 
         const responseData = {
             articulos: ComprasDto.toArticulosResponse(articulosResult),
@@ -26,6 +37,48 @@ exports.getComprasData = async(req,res) => {
         console.error('Error al obtener datos de compras:', error);
         return res.status(500).json({
             message: 'Error al obtener datos de compras',
+            error: error.message
+        });
+    }
+};
+
+// Nuevo endpoint para obtener artículos por proveedor
+exports.getArticulosPorProveedor = async(req, res) => {
+    try {
+        console.log('🔍 [DEBUG] Iniciando getArticulosPorProveedor');
+        console.log('🔍 [DEBUG] req.params:', req.params);
+        
+        const providerId = parseInt(req.params.providerId);
+        console.log('🔍 [DEBUG] providerId parsed:', providerId);
+        
+        if (!providerId) {
+            console.log('❌ [DEBUG] providerId no válido');
+            return res.status(400).json({
+                message: 'Se requiere un ID de proveedor válido'
+            });
+        }
+        
+        console.log('🔍 [DEBUG] Ejecutando stored procedure MostrarArticulosCompras con providerId:', providerId);
+        const articulosResult = await executeQuery('CALL MostrarArticulosCompras(?)', [providerId]);
+        console.log('🔍 [DEBUG] Resultado del stored procedure:', articulosResult);
+        console.log('🔍 [DEBUG] Tipo de articulosResult:', typeof articulosResult);
+        console.log('🔍 [DEBUG] Es array:', Array.isArray(articulosResult));
+        console.log('🔍 [DEBUG] Longitud:', articulosResult?.length);
+        
+        const transformedData = ComprasDto.toArticulosResponse(articulosResult);
+        console.log('🔍 [DEBUG] Datos transformados:', transformedData);
+        
+        return res.status(200).json({
+            message: 'Artículos obtenidos correctamente',
+            data: transformedData
+        });
+    } catch (error) {
+        console.error('❌ [ERROR] Error al obtener artículos por proveedor:', error);
+        console.error('❌ [ERROR] Stack trace:', error.stack);
+        console.error('❌ [ERROR] Error name:', error.name);
+        console.error('❌ [ERROR] Error message:', error.message);
+        return res.status(500).json({
+            message: 'Error al obtener artículos por proveedor',
             error: error.message
         });
     }
@@ -114,70 +167,119 @@ exports.getOrdenesEnProgreso = async (req, res) => {
  */
 exports.actualizarOrdenACompletada = async (req, res) => {
     try {
+        console.log('===== INICIO DE ACTUALIZACIÓN A COMPLETADA =====');
         const { IdOrden } = req.body;
         
         // Validar que se reciba el ID de la orden
         if (!IdOrden) {
+            console.log('Error: No se proporcionó el ID de la orden');
             return res.status(400).json({
                 message: 'Se requiere el ID de la orden'
             });
         }
 
-        console.log('Actualizando orden a Completada:', { IdOrden });
+        console.log('Actualizando orden a Completada:', { IdOrden, requestBody: req.body });
         
-        // Ejecutar el stored procedure para SAP HANA
-        const result = await executeQuery('CALL ActualizarEstadoOrdenCompletada(?)', [IdOrden]);
-        
-        console.log('Resultado de la actualización a completada:', JSON.stringify(result, null, 2));
-
-        // Extraer mensaje de éxito (la estructura de respuesta puede variar según la configuración de SAP HANA)
-        let mensaje = 'Actualización exitosa';
-        if (result && Array.isArray(result) && result.length > 0) {
-            // Intentar encontrar el mensaje en diferentes posibles estructuras de respuesta
-            mensaje = result[0]?.MENSAJE || 
-                    (result[0] && typeof result[0] === 'object' && Object.values(result[0])[0]) || 
-                    mensaje;
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: 'Estado de la orden actualizado correctamente a Completada',
-            data: {
-                ordenId: IdOrden,
-                mensaje: mensaje
-            }
-        });
-    } catch (error) {
-        console.error('Error al actualizar el estado de la orden a completada:', error);
-        
-        // Manejar errores específicos de SAP HANA
-        let errorMessage = error.message;
-        let statusCode = 500;
-        
-        // Códigos de error personalizados definidos en el stored procedure
-        if (error.code) {
-            switch (error.code) {
-                case 10001:
-                    errorMessage = 'La orden no existe o ha sido eliminada';
-                    statusCode = 404;
-                    break;
-                case 10002:
-                    errorMessage = 'La orden ya está completada';
-                    statusCode = 409; // Conflict
-                    break;
-                default:
-                    // Otros errores específicos de SAP HANA
-                    if (error.sqlState) {
-                        errorMessage = `Error en la base de datos (${error.sqlState}): ${error.message}`;
+        try {
+            // Ejecutar el stored procedure para SAP HANA
+            console.log(`Ejecutando CALL ActualizarEstadoOrdenCompletada(${IdOrden})...`);
+            const result = await executeQuery('CALL DBADMIN.ActualizarEstadoOrdenCompletada(?)', [IdOrden]);
+            
+            console.log('Resultado bruto de la actualización:', result);
+            console.log('Resultado de la actualización (JSON):', JSON.stringify(result, null, 2));
+            console.log('Tipo de resultado:', typeof result);
+            
+            if (Array.isArray(result)) {
+                console.log('Longitud del array de resultados:', result.length);
+                for (let i = 0; i < result.length; i++) {
+                    console.log(`Elemento ${i}:`, result[i]);
+                    console.log(`Tipo de elemento ${i}:`, typeof result[i]);
+                    if (result[i]) {
+                        console.log(`Propiedades de elemento ${i}:`, Object.keys(result[i]));
                     }
+                }
             }
+
+            // Extraer mensaje de éxito (la estructura de respuesta puede variar según la configuración de SAP HANA)
+            let mensaje = 'Actualización exitosa';
+            if (result && Array.isArray(result) && result.length > 0) {
+                // Intentar encontrar el mensaje en diferentes posibles estructuras de respuesta
+                mensaje = result[0]?.MENSAJE || 
+                        (result[0] && typeof result[0] === 'object' && Object.values(result[0])[0]) || 
+                        mensaje;
+                console.log('Mensaje extraído:', mensaje);
+            }
+
+            console.log('===== FIN DE ACTUALIZACIÓN A COMPLETADA (ÉXITO) =====');
+            return res.status(200).json({
+                success: true,
+                message: 'Estado de la orden actualizado correctamente a Completada',
+                data: {
+                    ordenId: IdOrden,
+                    mensaje: mensaje
+                }
+            });
+        } catch (dbError) {
+            console.error('Error de base de datos al actualizar la orden:', dbError);
+            console.error('Detalles del error de BD:', {
+                message: dbError.message,
+                code: dbError.code,
+                sqlState: dbError.sqlState,
+                stack: dbError.stack
+            });
+            
+            // Manejar errores específicos de SAP HANA
+            let errorMessage = dbError.message;
+            let statusCode = 500;
+            
+            // Verificar si el error contiene detalles del stored procedure
+            if (dbError.message.includes('ActualizarEstadoOrdenCompletada')) {
+                console.log('Error en el stored procedure detectado');
+                const matches = dbError.message.match(/line (\d+) col (\d+) \(at pos (\d+)\)/);
+                if (matches) {
+                    console.log(`Error en línea ${matches[1]}, columna ${matches[2]}, posición ${matches[3]}`);
+                }
+            }
+            
+            // Códigos de error personalizados definidos en el stored procedure
+            if (dbError.code) {
+                console.log(`Código de error detectado: ${dbError.code}`);
+                switch (dbError.code) {
+                    case 10001:
+                        errorMessage = 'La orden no existe o ha sido eliminada';
+                        statusCode = 404;
+                        break;
+                    case 10002:
+                        errorMessage = 'La orden ya está completada';
+                        statusCode = 409; // Conflict
+                        break;
+                    default:
+                        // Otros errores específicos de SAP HANA
+                        if (dbError.sqlState) {
+                            errorMessage = `Error en la base de datos (${dbError.sqlState}): ${dbError.message}`;
+                        }
+                }
+            }
+            
+            console.log('===== FIN DE ACTUALIZACIÓN A COMPLETADA (ERROR DB) =====');
+            return res.status(statusCode).json({
+                success: false,
+                message: 'Error al actualizar el estado de la orden',
+                error: errorMessage,
+                details: dbError.message,
+                code: dbError.code || 'UNKNOWN_ERROR',
+                sqlState: dbError.sqlState
+            });
         }
+    } catch (error) {
+        console.error('Error general al actualizar el estado de la orden:', error);
+        console.error('Stack trace:', error.stack);
+        console.log('===== FIN DE ACTUALIZACIÓN A COMPLETADA (ERROR GENERAL) =====');
         
-        return res.status(statusCode).json({
+        return res.status(500).json({
             success: false,
-            message: 'Error al actualizar el estado de la orden',
-            error: errorMessage,
-            code: error.code || 'UNKNOWN_ERROR'
+            message: 'Error general al actualizar el estado de la orden',
+            error: error.message
         });
     }
 };

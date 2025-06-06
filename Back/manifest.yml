@@ -1,0 +1,7 @@
+applications:
+  - name: spidersap-backend
+    buildpacks:
+      - nodejs_buildpack
+    memory: 256M
+    path: .
+    
