@@ -96,21 +96,49 @@ export async function fetchIndicadoresCompletosAnio(anio) {
 // Función helper para obtener métricas completas según el período
 export async function fetchMetricasCompletas(periodo, mes = null, anio = null) {
   try {
-    let indicadoresCompletos, ventasPorCategoria;
+    let resumenFinanciero, ventasPorCategoria;
 
     if (periodo === 'mensual' && mes && anio) {
-      [indicadoresCompletos, ventasPorCategoria] = await Promise.all([
-        fetchIndicadoresCompletosMes(mes, anio),
+      [resumenFinanciero, ventasPorCategoria] = await Promise.all([
+        fetchResumenFinancieroMes(mes, anio),
         fetchVentasPorCategoriaMes(mes, anio)
       ]);
     } else if (periodo === 'anual' && anio) {
-      [indicadoresCompletos, ventasPorCategoria] = await Promise.all([
-        fetchIndicadoresCompletosAnio(anio),
+      [resumenFinanciero, ventasPorCategoria] = await Promise.all([
+        fetchResumenFinancieroAnio(anio),
         fetchVentasPorCategoriaAnio(anio)
       ]);
     } else {
       throw new Error('Parámetros inválidos para obtener métricas completas');
     }
+
+    // Crear datos simulados para indicadores de cliente mientras se implementan los SP
+    const indicadoresCliente = {
+      data: {
+        clientesNuevos: {
+          valor: Math.floor(Math.random() * 100) + 50, // Simulado: 50-150 clientes
+          cambio: (Math.random() - 0.5) * 40, // Simulado: variación ±20%
+          tasaConversion: Math.random() * 10 + 5 // Simulado: 5-15%
+        },
+        ventaPromedio: {
+          valor: Math.random() * 500 + 200, // Simulado: $200-700
+          cambio: (Math.random() - 0.5) * 30, // Simulado: variación ±15%
+          productosPorVenta: Math.random() * 3 + 1 // Simulado: 1-4 productos
+        }
+      }
+    };
+
+    // Combinar los datos de resumen financiero e indicadores de cliente
+    const indicadoresCompletos = {
+      data: {
+        // Datos financieros del SP RESUMEN_FINANCIERO_MES/ANIO
+        ventasTotales: resumenFinanciero.data.ventasTotales,
+        ganancias: resumenFinanciero.data.ganancias,
+        // Datos de cliente simulados temporalmente
+        clientesNuevos: indicadoresCliente.data.clientesNuevos,
+        ventaPromedio: indicadoresCliente.data.ventaPromedio
+      }
+    };
 
     return {
       indicadoresCompletos,
