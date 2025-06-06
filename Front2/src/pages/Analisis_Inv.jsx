@@ -4,7 +4,6 @@ import {
   FlexBoxDirection,
   FlexBoxAlignItems,
   FlexBoxJustifyContent,
-  Text,
   IllustratedMessage,
   IllustrationMessageType
 } from '@ui5/webcomponents-react';

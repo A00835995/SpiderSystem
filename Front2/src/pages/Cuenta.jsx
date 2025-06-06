@@ -9,8 +9,6 @@ import {
   FlexBoxAlignItems,
   Icon,
   Avatar,
-  ObjectStatus,
-  ValueState,
   Label
 } from '@ui5/webcomponents-react';
 import { useNavigate } from 'react-router-dom';

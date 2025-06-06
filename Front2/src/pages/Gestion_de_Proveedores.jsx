@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Title,
   Text,
   BusyIndicator,
   FlexBox,

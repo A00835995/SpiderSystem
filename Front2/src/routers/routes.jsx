@@ -58,7 +58,8 @@ function Layout() {
   const [sidebarWidth, setSidebarWidth] = useState(64);
   const [isMobile, setIsMobile] = useState(false);
 
-  const isLoginPage = location.pathname === "/";
+  // Considerar tanto / como /login como páginas de login
+  const isLoginPage = location.pathname === "/" || location.pathname === "/login";
 
   useEffect(() => {
     const checkIfMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -97,6 +98,11 @@ function Layout() {
   return (
     <Routes>
       <Route path="/" element={
+        <React.Suspense fallback={<Loading />}>
+          <LazyLogin />
+        </React.Suspense>
+      } />
+      <Route path="/login" element={
         <React.Suspense fallback={<Loading />}>
           <LazyLogin />
         </React.Suspense>

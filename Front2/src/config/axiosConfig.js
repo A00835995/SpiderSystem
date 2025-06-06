@@ -34,12 +34,36 @@ axiosInstance.interceptors.request.use(
   }
 );
 
+// Función para redireccionar al login cuando hay un problema de autenticación
+const redirectToLogin = () => {
+  // Limpiar datos de autenticación
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  
+  // Guardar la URL actual para redireccionar después del login
+  if (window.location.pathname !== '/') {
+    localStorage.setItem('redirectAfterLogin', window.location.pathname);
+  }
+  
+  // Redireccionar a login (usar la ruta que ya existe en tu aplicación)
+  window.location.href = '/';
+};
+
 // Interceptor para manejar respuestas y errores
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
+    // Verificar si es un error de autenticación (401) o prohibido (403)
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      console.error(`❌ Error de autenticación: ${error.response.status}`);
+      
+      // Redirigir al login
+      redirectToLogin();
+      return Promise.reject(new Error('Sesión expirada o token inválido. Redirigiendo a login...'));
+    }
+    
     // Si es un error de petición a la ruta de usuarios
     if (error.config && error.config.url && error.config.url.includes('/gestion/usuarios')) {
       console.error('❌ Error en petición a usuarios:', error.message);
