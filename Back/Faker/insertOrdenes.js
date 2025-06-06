@@ -101,7 +101,7 @@ async function generarOrdenesML(targetOrdenes = 800) {
   // Obtener artículos existentes con proveedores
   const articulos = await new Promise((resolve, reject) => {
     conn.exec(`SELECT "ARTIID", "ARTPRECIOCOMPRA", "IDPROV" FROM "DBADMIN"."ARTICULO" WHERE "ELIMINADO" = 0`, (err, rows) => {
-      if (err) return reject(err);
+      if (err) return reject(err instanceof Error ? err : new Error(String(err)));
       resolve(rows);
     });
   });

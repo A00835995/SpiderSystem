@@ -4,10 +4,9 @@ import {
   FlexBoxDirection,
   FlexBoxAlignItems,
   FlexBoxJustifyContent,
-  Text,
-  IllustratedMessage,
-  IllustrationMessageType
-} from '@ui5/webcomponents-react';
+  BusyIndicator,
+  Text
+}from '@ui5/webcomponents-react';
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
 import { styles } from "../Styles/InicioStyle";
 import InventoryHeader from "../components/AnalisisInv/InventoryHeader";
@@ -166,13 +165,15 @@ const Analisis_Inv = () => {
         direction={FlexBoxDirection.Column}
         justifyContent={FlexBoxJustifyContent.Center}
         alignItems={FlexBoxAlignItems.Center}
-        style={{ height: "100%" }}
+        style={{ height: "100%", gap: "1rem" }}
       >
-        <IllustratedMessage
-          name={IllustrationMessageType.SapLogo}
-          titleText="Cargando Análisis de Inventario"
-          subtitleText="Por favor espere..."
-        />
+        <BusyIndicator size="Large" />
+        <Text style={{ fontSize: "1.25rem", fontWeight: "600" }}>
+          Cargando Análisis de Inventario
+        </Text>
+        <Text style={{ color: "var(--sapContent_LabelColor)" }}>
+          Por favor espere...
+        </Text>
       </FlexBox>
     );
   }

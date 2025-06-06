@@ -72,7 +72,6 @@ export const styles = {
     '--sapUiListSelectionBackgroundColor': 'var(--sapList_SelectionBackgroundColor, #f0f7fd)',
     '--_ui5_tc_row_outline_color': 'transparent',
     '--_ui5_tc_cell_outline_width': '0',
-    '--_ui5_tc_row_outline_width': '0',
     '--_ui5_tc_header_cell_default_border_color': 'var(--sapGroup_ContentBorderColor, #e5e5e5)',
     '--_ui5_tc_headerBorderWidth': '0 0 1px 0',
     '--_ui5_analytical_table_header_box_shadow': 'none',
