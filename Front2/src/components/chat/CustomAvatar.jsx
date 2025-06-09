@@ -8,7 +8,7 @@ const CustomAvatar = ({ user, size = "S", style = {} }) => {
     <Avatar 
       style={style}
       size={size}
-      backgroundColor={user.status === "online" ? "Accent6" : user.status === "away" ? "Accent4" : "Accent8"}
+      backgroundColor="Accent8"
     >
       {initial}
     </Avatar>

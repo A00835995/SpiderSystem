@@ -24,7 +24,6 @@ import axiosInstance from '../../config/axiosConfig';
 import { API_CONFIG } from '../../config/api';
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
 import CustomAvatar from './CustomAvatar';
-import StatusIndicator from './StatusIndicator';
 import MessageContent from './MessageContent';
 import { getInitial } from './utils';
 
@@ -358,7 +357,6 @@ const ChatPage = () => {
                   <div style={styles.userName}>{proveedor.nombre}</div>
                   <div style={styles.lastMessage}>{proveedor.lastMessage}</div>
                 </div>
-                <StatusIndicator status={proveedor.status} />
               </div>
             ))
           ) : (
@@ -385,7 +383,6 @@ const ChatPage = () => {
               <Title level="H5" style={{ margin: 0 }}>{selectedUser.nombre}</Title>
               <Text style={styles.lastMessage}>{selectedUser.email}</Text>
             </div>
-            <StatusIndicator status={selectedUser.status} />
           </div>
 
           {/* Contenedor de mensajes */}

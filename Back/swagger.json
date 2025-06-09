@@ -1,0 +1,1783 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "SpiderSystem API",
+    "description": "API para el sistema SpiderSystem",
+    "version": "1.0.0"
+  },
+  "basePath": "/api",
+  "schemes": ["http", "https"],
+  "securityDefinitions": {
+  "bearerAuth": {
+    "type": "apiKey",
+    "name": "Authorization",
+    "in": "header",
+    "description": "Ingrese su token en el formato: Bearer <token>"
+  }
+},
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": ["Autenticación"],
+        "summary": "Iniciar sesión",
+        "description": "Autenticar usuario y obtener token JWT",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "usuario@ejemplo.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "contraseña123"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login exitoso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "token": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "401": {
+            "description": "Credenciales incorrectas"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/alertas/getAlertas": {
+      "get": {
+        "tags": ["Alertas"],
+        "summary": "Obtener todas las alertas",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de alertas"
+          },
+          "404": {
+            "description": "No se encontraron alertas"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/getarticulos": {
+      "get": {
+        "tags": ["Artículos"],
+        "summary": "Obtener todos los artículos",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de artículos"
+          },
+          "404": {
+            "description": "No se encontraron artículos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/getTotalArticulos": {
+      "get": {
+        "tags": ["Artículos"],
+        "summary": "Obtener total de artículos",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total de artículos"
+          },
+          "404": {
+            "description": "No se encontró información"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gettotalproductos": {
+      "get": {
+        "tags": ["Artículos"],
+        "summary": "Obtener total de productos por estado",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total de productos por estado"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/chat/{userId}/{providerId}": {
+      "get": {
+        "tags": ["Chat"],
+        "summary": "Obtener mensajes entre usuario y proveedor",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID del usuario"
+          },
+          {
+            "name": "providerId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID del proveedor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de mensajes"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/chat": {
+      "post": {
+        "tags": ["Chat"],
+        "summary": "Enviar un mensaje",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "senderId": {
+                  "type": "integer"
+                },
+                "receiverId": {
+                  "type": "integer"
+                },
+                "messageText": {
+                  "type": "string"
+                },
+                "imageUrl": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Mensaje enviado correctamente"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/compras/getData": {
+      "get": {
+        "tags": ["Compras"],
+        "summary": "Obtener datos de compras",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "providerId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "ID del proveedor (opcional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Datos de compras"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/compras/articulos/{providerId}": {
+      "get": {
+        "tags": ["Compras"],
+        "summary": "Obtener artículos por proveedor",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "providerId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID del proveedor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artículos del proveedor"
+          },
+          "400": {
+            "description": "ID de proveedor inválido"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/compras/crearOrden": {
+      "post": {
+        "tags": ["Compras"],
+        "summary": "Crear orden de compra",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "idProv": {
+                  "type": "integer",
+                  "description": "ID del proveedor",
+                  "example": 1
+                },
+                "idPago": {
+                  "type": "integer",
+                  "description": "ID del método de pago",
+                  "example": 1
+                },
+                "fechaPedido": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "Fecha de la orden (YYYY-MM-DD)",
+                  "example": "2025-06-07"
+                },
+                "fechaEntrega": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "Fecha de entrega esperada (YYYY-MM-DD)",
+                  "example": "2025-06-12"
+                },
+                "items": {
+                  "type": "array",
+                  "description": "Productos a ordenar",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ItemId": {
+                        "type": "integer",
+                        "description": "ID del artículo",
+                        "example": 25
+                      },
+                      "ItemQuantity": {
+                        "type": "integer",
+                        "description": "Cantidad a ordenar",
+                        "example": 1
+                      },
+                      "ItemPrice": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Precio por unidad",
+                        "example": 235.99
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "ItemId": 25,
+                      "ItemQuantity": 1,
+                      "ItemPrice": 235.99
+                    }
+                  ]
+                }
+              },
+              "example": {
+                "idProv": 1,
+                "idPago": 1,
+                "fechaPedido": "2025-06-07",
+                "fechaEntrega": "2025-06-12",
+                "items": [
+                  {
+                    "ItemId": 25,
+                    "ItemQuantity": 1,
+                    "ItemPrice": 235.99
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Orden creada correctamente",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ordenId": {
+                  "type": "integer",
+                  "example": 123
+                },
+                "mensaje": {
+                  "type": "string",
+                  "example": "Orden creada exitosamente"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/compras/ordenesProgreso": {
+      "get": {
+        "tags": ["Compras"],
+        "summary": "Obtener órdenes completadas",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Órdenes en progreso"
+          },
+          "404": {
+            "description": "No se encontraron órdenes"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/compras/completarOrden": {
+      "post": {
+        "tags": ["Compras"],
+        "summary": "Completar orden de compra",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IdOrden": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orden completada correctamente"
+          },
+          "400": {
+            "description": "ID de orden requerido"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion-proveedores/proveedores-resumen": {
+      "get": {
+        "tags": ["Gestión de Proveedores"],
+        "summary": "Obtener resumen de proveedores",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resumen de proveedores"
+          },
+          "404": {
+            "description": "No se encontraron proveedores"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion-proveedores/detalle-proveedor/{id}": {
+      "get": {
+        "tags": ["Gestión de Proveedores"],
+        "summary": "Obtener detalle de proveedor",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID del proveedor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalle del proveedor"
+          },
+          "400": {
+            "description": "ID de proveedor requerido"
+          },
+          "404": {
+            "description": "Proveedor no encontrado"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion-proveedores/tipos-proveedores": {
+      "get": {
+        "tags": ["Gestión de Proveedores"],
+        "summary": "Obtener tipos de proveedores disponibles",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipos de proveedores"
+          },
+          "404": {
+            "description": "No se encontraron tipos de proveedores"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion-proveedores/tipos-pagos-proveedores": {
+      "get": {
+        "tags": ["Gestión de Proveedores"],
+        "summary": "Obtener tipos de pagos disponibles",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tipos de pagos"
+          },
+          "404": {
+            "description": "No se encontraron tipos de pagos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion-proveedores/crear-proveedor": {
+      "post": {
+        "tags": ["Gestión de Proveedores"],
+        "summary": "Crear nuevo proveedor",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nombre": {
+                  "type": "string"
+                },
+                "contacto": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "telefono": {
+                  "type": "string"
+                },
+                "direccion": {
+                  "type": "string"
+                },
+                "tipo": {
+                  "type": "string"
+                },
+                "tipoPago": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Proveedor creado correctamente"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "409": {
+            "description": "Conflicto (duplicado)"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion-proveedores/actualizar-nombre/{id}": {
+      "put": {
+        "tags": ["Gestión de Proveedores"],
+        "summary": "Actualizar nombre del proveedor",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID del proveedor"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nombre": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nombre actualizado correctamente"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion-proveedores/actualizar-nombre-contacto/{id}": {
+      "put": {
+        "tags": ["Gestión de Proveedores"],
+        "summary": "Actualizar nombre del contacto del proveedor",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID del proveedor"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nombreContacto": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nombre de contacto actualizado correctamente"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion/usuarios": {
+      "get": {
+        "tags": ["Gestión de Usuarios"],
+        "summary": "Obtener todos los usuarios",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de usuarios"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion/usuario/{id}": {
+      "get": {
+        "tags": ["Gestión de Usuarios"],
+        "summary": "Obtener un usuario específico",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID del usuario"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del usuario"
+          },
+          "400": {
+            "description": "ID de usuario requerido"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion/crear-usuario": {
+      "post": {
+        "tags": ["Gestión de Usuarios"],
+        "summary": "Crear un nuevo usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rol": {
+                  "type": "string"
+                },
+                "nombre": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario creado correctamente"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion/actualizar-rol-usuario": {
+      "put": {
+        "tags": ["Gestión de Usuarios"],
+        "summary": "Actualizar rol de usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "rol": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rol actualizado correctamente"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion/actualizar-nombre-usuario": {
+      "put": {
+        "tags": ["Gestión de Usuarios"],
+        "summary": "Actualizar nombre de usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "nombre": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nombre actualizado correctamente"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion/actualizar-email-usuario": {
+      "put": {
+        "tags": ["Gestión de Usuarios"],
+        "summary": "Actualizar email de usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email actualizado correctamente"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/gestion/eliminar-usuario": {
+      "delete": {
+        "tags": ["Gestión de Usuarios"],
+        "summary": "Eliminar usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario eliminado correctamente"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/inicio/ordenespendientes": {
+      "get": {
+        "tags": ["Inicio"],
+        "summary": "Obtener órdenes pendientes",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Órdenes pendientes"
+          },
+          "404": {
+            "description": "No se encontraron órdenes pendientes"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/inicio/ventasmes": {
+      "get": {
+        "tags": ["Inicio"],
+        "summary": "Obtener ventas del mes",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ventas del mes"
+          },
+          "404": {
+            "description": "No se encontraron ventas mensuales"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/inicio/productosinventario": {
+      "get": {
+        "tags": ["Inicio"],
+        "summary": "Obtener productos en inventario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Productos en inventario"
+          },
+          "404": {
+            "description": "No se encontraron productos en inventario"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/inicio/ventasmesanterior": {
+      "get": {
+        "tags": ["Inicio"],
+        "summary": "Obtener ventas del mes anterior",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ventas del mes anterior"
+          },
+          "404": {
+            "description": "No se encontraron ventas del mes anterior"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/inicio/ordenesrecientes": {
+      "get": {
+        "tags": ["Inicio"],
+        "summary": "Obtener órdenes recientes",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Órdenes recientes"
+          },
+          "404": {
+            "description": "No se encontraron órdenes recientes"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/inicio/ventasxcategoria": {
+      "get": {
+        "tags": ["Inicio"],
+        "summary": "Obtener ventas por categoría",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ventas por categoría"
+          },
+          "404": {
+            "description": "No se encontraron ventas por categoría"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/inicio/productosmasvendidosmesactual": {
+      "get": {
+        "tags": ["Inicio"],
+        "summary": "Obtener productos más vendidos del mes actual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Productos más vendidos del mes actual"
+          },
+          "404": {
+            "description": "No se encontraron productos más vendidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/permisos/roles": {
+      "get": {
+        "tags": ["Permisos"],
+        "summary": "Obtener todos los roles",
+        "responses": {
+          "200": {
+            "description": "Lista de roles"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/permisos/paginas": {
+      "get": {
+        "tags": ["Permisos"],
+        "summary": "Obtener todas las páginas",
+        "responses": {
+          "200": {
+            "description": "Lista de páginas"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/permisos/rol-pagina": {
+      "get": {
+        "tags": ["Permisos"],
+        "summary": "Obtener relación rol-página",
+        "responses": {
+          "200": {
+            "description": "Relaciones rol-página"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/permisos/paginas-permitidas/{idRol}": {
+      "get": {
+        "tags": ["Permisos"],
+        "summary": "Obtener páginas permitidas para un rol",
+        "parameters": [
+          {
+            "name": "idRol",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID del rol"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Páginas permitidas para el rol"
+          },
+          "400": {
+            "description": "ID de rol inválido"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/permisos/verificar-permiso/{idRol}/{ruta}": {
+      "get": {
+        "tags": ["Permisos"],
+        "summary": "Verificar permiso para acceder a una página",
+        "parameters": [
+          {
+            "name": "idRol",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID del rol"
+          },
+          {
+            "name": "ruta",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Ruta de la página"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resultado de verificación de permiso"
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/resumen-financiero/mes/{mes}/{anio}": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener resumen financiero mensual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "mes",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Mes (1-12)"
+          },
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resumen financiero mensual"
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/resumen-financiero/anio/{anio}": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener resumen financiero anual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resumen financiero anual"
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/ventas-categoria/mes/{mes}/{anio}": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener ventas por categoría mensual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "mes",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Mes (1-12)"
+          },
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ventas por categoría mensual"
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/ventas-categoria/anio/{anio}": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener ventas por categoría anual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ventas por categoría anual"
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/indicadores-cliente/mes/{mes}/{anio}": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener indicadores de cliente mensual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "mes",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Mes (1-12)"
+          },
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Indicadores de cliente mensual"
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/indicadores-cliente/anio/{anio}": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener indicadores de cliente anual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Indicadores de cliente anual"
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/indicadores-completos/mes/{mes}/{anio}": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener indicadores completos mensual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "mes",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Mes (1-12)"
+          },
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Indicadores completos mensual"
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/indicadores-completos/anio/{anio}": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener indicadores completos anual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Indicadores completos anual"
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/resumen-inventario-completo": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener resumen de inventario completo",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resumen de inventario completo"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/metricas/stock-por-categoria": {
+      "get": {
+        "tags": ["Métricas"],
+        "summary": "Obtener stock por categoría",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stock por categoría"
+          },
+          "404": {
+            "description": "No se encontraron datos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/ordenes-proveedor": {
+      "get": {
+        "tags": ["Órdenes Proveedor"],
+        "summary": "Obtener órdenes de proveedor",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Órdenes de proveedor"
+          },
+          "404": {
+            "description": "No se encontraron órdenes"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/ordenes-proveedor/consultar": {
+      "post": {
+        "tags": ["Órdenes Proveedor"],
+        "summary": "Consultar una orden de compra específica",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IdOrden": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalle de la orden de compra"
+          },
+          "400": {
+            "description": "ID de orden requerido"
+          },
+          "404": {
+            "description": "Orden no encontrada"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/ordenes-proveedor/actualizar-a-proceso": {
+      "post": {
+        "tags": ["Órdenes Proveedor"],
+        "summary": "Actualizar orden a estado 'En Proceso'",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IdOrden": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orden actualizada a 'En Proceso'"
+          },
+          "400": {
+            "description": "ID de orden requerido"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/ordenes-proveedor/actualizar-a-completada": {
+      "post": {
+        "tags": ["Órdenes Proveedor"],
+        "summary": "Actualizar orden a estado 'Completada'",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IdOrden": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orden actualizada a 'Completada'"
+          },
+          "400": {
+            "description": "ID de orden requerido"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/ventas/articulos-disponibles": {
+      "get": {
+        "tags": ["Ventas"],
+        "summary": "Obtener artículos disponibles para venta",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artículos disponibles para venta"
+          },
+          "404": {
+            "description": "No se encontraron artículos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/ventas/registrar": {
+      "post": {
+        "tags": ["Ventas"],
+        "summary": "Registrar una nueva venta",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "venta": {
+                  "type": "object"
+                },
+                "detalles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Venta registrada correctamente"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    }
+  }
+} 

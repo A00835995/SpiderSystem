@@ -26,9 +26,15 @@ const ordenesProveedorRoutes = require('./Routes/ordenesProveedor');
 const ventasRoutes = require('./Routes/ventasRoutes');
 const { connectToHANA } = require('./Config/confDB');
 
+// Configuración de Swagger
+const setupSwagger = require('./swaggerConfig');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Configurar Swagger
+setupSwagger(app);
 
 // Hacer io disponible en los controladores
 app.set('io', io);
@@ -52,6 +58,7 @@ const PORT = process.env.PORT || 4000;
 server.listen(PORT, async () => {
     await connectToHANA();
     console.log(`Backend corriendo en http://localhost:${PORT}`);
+    console.log(`Documentación API disponible en http://localhost:${PORT}/api-docs`);
 });
 
 // Socket.io para chat en tiempo real
