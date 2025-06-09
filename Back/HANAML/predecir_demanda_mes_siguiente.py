@@ -159,7 +159,7 @@ try:
             pass
         conn.close()
         exit(1)
-
+    
 except Exception as e:
     log_with_timestamp(f"❌ Error en proceso de carga: {e}")
     # Intentar limpiar tabla temporal en caso de error

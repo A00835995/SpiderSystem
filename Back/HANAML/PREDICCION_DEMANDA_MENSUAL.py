@@ -104,7 +104,7 @@ hana_df = create_dataframe_from_pandas(
     connection_context=conn,
     pandas_df=resultado_df.reset_index(drop=True)[["ARTIID", "PERIODO", "UNIDADES_VENDIDAS_REAL", "PREDICCION"]],
     table_name="PREDICCION_DEMANDA_MENSUAL",
-    force=True
+    force=True 
 )
 print("✅ Tabla 'PREDICCION_DEMANDA_MENSUAL' creada exitosamente")
 

@@ -21,6 +21,8 @@ if (process.env.NODE_ENV === 'production') {
     allowedOrigins.push(process.env.FRONTEND_URL);
 }
 
+console.log('🌐 allowedOrigins:', allowedOrigins);
+
 const corsOptions = {
     origin: function (origin, callback) {
         // Permitir requests sin origin (ej. aplicaciones móviles)
