@@ -852,7 +852,7 @@ const Gestion_de_Proveedores = () => {
               </Tabs>
               
               {activeCategory === 0 && (
-                <div style={{ marginTop: '1.5rem' }}>
+                <div style={{ marginTop: '1.5rem', padding: '1rem' }}>
                   <div style={{ marginBottom: '1rem', color: 'var(--sapContent_LabelColor)', fontSize: '0.875rem' }}>
                     Vista general del inventario por categoría de producto
                   </div>

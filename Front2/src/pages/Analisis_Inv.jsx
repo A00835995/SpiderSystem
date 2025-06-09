@@ -82,12 +82,6 @@ const Analisis_Inv = () => {
   // Columnas para la tabla, ahora con categoría y valor inventario
   const columns = [
     {
-      Header: "ID",
-      accessor: "artiId",
-      width: 80,
-      Cell: ({ value }) => <Text style={{ fontWeight: "bold" }}>{value}</Text>
-    },
-    {
       Header: "Nombre del Producto",
       accessor: "artNombre",
       width: 220,

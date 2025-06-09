@@ -127,7 +127,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory }) => {
         borderRadius: '0.5rem',
         border: 'none',
         overflow: 'hidden',
-        padding: '1.5rem',
+        padding: '1rem',
         width: '100%',
         marginBottom: '3rem'
       }}
@@ -160,7 +160,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory }) => {
       </div>
 
       {activeCategory === 0 && (
-        <div style={{ marginTop: '1.5rem', overflowX: 'auto' }}>
+        <div style={{ marginTop: '1.5rem', overflowX: 'auto', paddingLeft: '1rem', paddingRight: '1rem', marginTop: '-0.7rem' }}>
           <Title level="H5" style={{ 
             marginBottom: '1rem', 
             color: 'var(--sapTextColor)', 
@@ -171,7 +171,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory }) => {
           </Title>
           
           {resumenCategorias?.data?.length > 0 ? (
-            <FlexBox wrap style={{ gap: '1.5rem', alignItems: 'stretch', minWidth: '900px', justifyContent: 'space-between' }}>
+            <FlexBox wrap style={{ gap: '1.5rem', alignItems: 'stretch', minWidth: '900px', justifyContent: 'space-between', padding: '1rem'}}>
               {resumenCategorias.data.map((categoria, index) => (
                 <div 
                   key={`categoria-${index}`}
@@ -334,7 +334,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory }) => {
       )}
       
       {activeCategory === 1 && (
-        <div style={{ marginTop: '1.5rem', overflowX: 'auto' }}>
+        <div style={{ marginTop: '1.5rem', overflowX: 'auto', paddingLeft: '1rem', paddingRight: '1rem', marginTop: '-0.7rem'}}>
           <Title level="H5" style={{ 
             marginBottom: '1rem', 
             color: 'var(--sapTextColor)', 
@@ -345,7 +345,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory }) => {
           </Title>
           
           {distribucionInventario?.data?.length > 0 ? (
-            <FlexBox wrap style={{ gap: '1.5rem', alignItems: 'stretch', minWidth: '900px', justifyContent: 'space-between' }}>
+            <FlexBox wrap style={{ gap: '1.5rem', alignItems: 'stretch', minWidth: '900px', justifyContent: 'space-between', padding: '1rem' }}>
               {distribucionInventario.data.map((distribucion, index) => (
                 <div 
                   key={`distribucion-${index}`}

@@ -16,7 +16,7 @@ const MetricasFilters = ({ periodo, setPeriodo, vista, setVista }) => {
         {/* Filtro de período - solo mostrar en vista general */}
         {vista === 'general' && (
           <>
-            <Label>Período:</Label>
+            <Label style={{ marginLeft: '1rem' }}>Período:</Label>
             <Select value={periodo} onChange={(e) => setPeriodo(e.detail.selectedOption.value)}>
               <Option value="mesActual">Mes Actual</Option>
               <Option value="mesAnterior">Mes Anterior</Option>
@@ -26,7 +26,7 @@ const MetricasFilters = ({ periodo, setPeriodo, vista, setVista }) => {
           </>
         )}
         
-        <Label>Vista:</Label>
+        <Label style={{ marginLeft: '1rem' }}>Vista:</Label>
         <Select value={vista} onChange={(e) => setVista(e.detail.selectedOption.value)}>
           <Option value="general">General</Option>
           <Option value="inventario">Inventario</Option>

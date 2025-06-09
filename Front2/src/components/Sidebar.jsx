@@ -151,7 +151,7 @@ export function Sidebar() {
           onTouchStart={() => setIsOpen(true)}
           onTouchEnd={() => setIsOpen(false)}
           style={{
-            width: isOpen ? "250px" : "60px",
+            width: isOpen ? "260px" : "60px",
             backgroundColor: "var(--sapBackgroundColor)",
             borderRight: "1px solid var(--sapContent_ForegroundBorderColor)",
             transition: "width 0.3s ease",
