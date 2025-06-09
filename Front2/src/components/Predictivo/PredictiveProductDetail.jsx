@@ -9,92 +9,150 @@ import {
   ValueState,
   MessageStrip,
   FlexBox,
-  FlexBoxDirection,
   FlexBoxAlignItems,
   Icon,
   Text
 } from "@ui5/webcomponents-react";
-import { LineChart, BarChart } from "@ui5/webcomponents-react-charts";
 
 export default function PredictiveProductDetail({ 
-  product, 
-  chartType,
-  getProductChartData,
-  getTendenciaIcon,
-  alertasPerdidas 
+  product
 }) {
+  // Determinar si necesita reorden basado en el déficit
+  const necesitaReorden = (product.deficitEstimado || 0) > 0;
+  
+  // Generar recomendación basada en el riesgo
+  const getRecomendacion = (riesgo) => {
+    switch (riesgo?.toUpperCase()) {
+      case 'CRITICO':
+        return 'Acción inmediata requerida. Realizar pedido urgente para evitar desabastecimiento total.';
+      case 'ALTO':
+        return 'Planificar reorden en los próximos días. Monitorear de cerca las ventas.';
+      case 'MEDIO':
+        return 'Considerar reorden en las próximas semanas. Mantener seguimiento regular.';
+      case 'BAJO':
+        return 'Stock suficiente por ahora. Continuar con monitoreo rutinario.';
+      default:
+        return 'Revisar datos del producto para determinar acción apropiada.';
+    }
+  };
+
+  // Función para obtener el estado de valor basado en el riesgo
+  const getRiskValueState = (riesgo) => {
+    switch (riesgo?.toUpperCase()) {
+      case 'CRITICO':
+        return ValueState.Error;
+      case 'ALTO':
+        return ValueState.Error;
+      case 'MEDIO':
+        return ValueState.Warning;
+      case 'BAJO':
+        return ValueState.Success;
+      default:
+        return ValueState.Neutral;
+    }
+  };
+
+  // Función para obtener el icono basado en el riesgo
+  const getRiskIcon = (riesgo) => {
+    switch (riesgo?.toUpperCase()) {
+      case 'CRITICO':
+        return "alert";
+      case 'ALTO':
+        return "warning";
+      case 'MEDIO':
+        return "notification-2";
+      case 'BAJO':
+        return "accept";
+      default:
+        return "question-mark";
+    }
+  };
+
   return (
-    <>
+    <>      
       <Card style={{ marginBottom: "1rem" }}>
-        <CardHeader titleText={`Análisis Detallado: ${product.articulo}`} />
         <div style={{ padding: "1rem" }}>
           <Grid defaultSpan="XL6 L6 M12 S12">
-            <div>
-              <Title level="H4" style={{ marginBottom: "1rem" }}>Tendencia Histórica y Proyección</Title>
-              <div style={{ height: "400px" }}>
-                {chartType === "line" ? (
-                  <LineChart 
-                    dataset={getProductChartData(product)}
-                    dimensions={[{ accessor: "mes", label: "Mes" }]}
-                    measures={[
-                      { accessor: "ventas", label: "Ventas" },
-                      { accessor: "prediccion", label: "Predicción", type: "line" }
-                    ]}
-                    chartConfig={{
-                      zoomingTool: true,
-                      legendPosition: "bottom",
-                      legendHorizontalAlign: "center"
-                    }}
-                  />
-                ) : (
-                  <BarChart 
-                    dataset={getProductChartData(product)}
-                    dimensions={[{ accessor: "mes" }]}
-                    measures={[
-                      { accessor: "ventas", label: "Ventas Reales" },
-                      { accessor: "prediccion", label: "Predicción" }
-                    ]}
-                    chartConfig={{
-                      zoomingTool: true,
-                      legendPosition: "bottom",
-                      legendHorizontalAlign: "center"
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-            
             <div>
               <Title level="H4" style={{ marginBottom: "1rem" }}>Métricas del Producto</Title>
               <List>
                 <StandardListItem 
-                  info={`${product.ventas} unidades`} 
                   infoState={ValueState.Information}
-                  icon="cart"
+                  icon="inventory"
                 >
-                  Ventas Actuales (Mayo)
+                  Existencia Actual: {product.existenciaActual || 0} unidades
                 </StandardListItem>
                 <StandardListItem 
-                  info={`${product.prediccion} unidades`} 
-                  infoState={ValueState.Success}
-                  icon="increase"
-                >
-                  Predicción (Junio)
-                </StandardListItem>
-                <StandardListItem 
-                  info={`${Math.round((product.prediccion - product.ventas) / product.ventas * 100)}%`} 
                   infoState={ValueState.Success}
                   icon="trend-up"
                 >
-                  Crecimiento Proyectado
+                  Predicción de Demanda en el siguiente mes: {product.prediccion || 0} unidades
                 </StandardListItem>
                 <StandardListItem 
-                  info={`${product.perdidas} unidades`} 
-                  infoState={product.perdidas > 10 ? ValueState.Error : ValueState.Warning}
-                  icon="alert"
+                  infoState={(product.deficitEstimado || 0) > 0 ? ValueState.Error : ValueState.Success}
+                  icon={(product.deficitEstimado || 0) > 0 ? "alert" : "accept"}
                 >
-                  Pérdidas Potenciales
+                  Déficit Estimado en el siguiente mes: {product.deficitEstimado || 0} unidades
                 </StandardListItem>
+                <StandardListItem 
+                  infoState={getRiskValueState(product.riesgo)}
+                  icon={getRiskIcon(product.riesgo)}
+                >
+                  Nivel de Riesgo: {product.riesgo || 'N/A'}
+                </StandardListItem>
+                {product.ventaPromedioMensual && (
+                  <StandardListItem 
+                    infoState={ValueState.Neutral}
+                    icon="chart-axis"
+                  >
+                    Venta Promedio Mensual: {parseFloat(product.ventaPromedioMensual).toFixed(2)} unidades/mes
+                  </StandardListItem>
+                )}
+                {product.diasCobertura !== undefined && (
+                  <StandardListItem 
+                    infoState={parseFloat(product.diasCobertura || 0) < 30 ? ValueState.Warning : ValueState.Success}
+                    icon="time-overtime"
+                  >
+                    Días de Cobertura: {Math.round(parseFloat(product.diasCobertura || 0))} días
+                  </StandardListItem>
+                )}
+                {product.diasPromEntreOrdenes && (
+                  <StandardListItem 
+                    infoState={ValueState.Neutral}
+                    icon="time-account"
+                  >
+                    Días Promedio Entre Órdenes: {parseFloat(product.diasPromEntreOrdenes).toFixed(1)} días
+                  </StandardListItem>
+                )}
+              </List>
+            </div>
+            
+            <div>
+              <Title level="H4" style={{ marginBottom: "1rem" }}>Estado del Producto</Title>
+              <List>
+                <StandardListItem 
+                  infoState={necesitaReorden ? ValueState.Warning : ValueState.Success}
+                  icon={necesitaReorden ? "cart-3" : "accept"}
+                >
+                  Necesita Reorden: {necesitaReorden ? "Sí" : "No"}
+                </StandardListItem>
+                {product.totalOrdenes && (
+                  <StandardListItem 
+                    infoState={ValueState.Neutral}
+                    icon="sales-order"
+                  >
+                    Total de Órdenes: {product.totalOrdenes}
+                  </StandardListItem>
+                )}
+                {product.prioridadReorden && (
+                  <StandardListItem 
+                    infoState={product.prioridadReorden <= 2 ? ValueState.Error : 
+                              product.prioridadReorden <= 5 ? ValueState.Warning : ValueState.Success}
+                    icon="priority-1"
+                  >
+                    Prioridad de Reorden: {product.prioridadReorden}
+                  </StandardListItem>
+                )}
               </List>
             </div>
           </Grid>
@@ -106,29 +164,18 @@ export default function PredictiveProductDetail({
           titleText="Recomendaciones" 
           avatar={<Icon name="learning-assistant" />}
         />
-        <div style={{ padding: "1rem" }}>
-          <MessageStrip
-            design="Information"
-            hideCloseButton
-            icon="business-objects-experience"
-            style={{ marginBottom: "1rem" }}
-          >
-            Recomendaciones basadas en análisis de tendencias y patrones de comportamiento
-          </MessageStrip>
-          
-          {alertasPerdidas.filter(alerta => alerta.articulo === product.articulo).map((alerta, index) => (
-            <div key={index} style={{ marginBottom: "1rem" }}>
-              <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ marginBottom: "0.5rem" }}>
-                <Icon name={getTendenciaIcon(alerta.tendencia)} style={{ marginRight: "0.5rem" }} />
-                <Text style={{ fontWeight: "bold" }}>
-                  Tendencia: {alerta.tendencia}
-                </Text>
-              </FlexBox>
-              <Text style={{ marginBottom: "0.5rem" }}>
-                {alerta.recomendacion}
+        <div style={{ padding: "1rem" }}>          
+          <div style={{ marginBottom: "1rem" }}>
+            <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ marginBottom: "0.5rem" }}>
+              <Icon name={getRiskIcon(product.riesgo)} style={{ marginRight: "0.5rem" }} />
+              <Text style={{ fontWeight: "bold" }}>
+                Recomendación para riesgo {product.riesgo}:
               </Text>
-            </div>
-          ))}
+            </FlexBox>
+            <Text style={{ marginBottom: "0.5rem" }}>
+              {product.recomendacion || getRecomendacion(product.riesgo)}
+            </Text>
+          </div>
         </div>
       </Card>
     </>

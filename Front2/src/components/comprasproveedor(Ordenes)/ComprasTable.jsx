@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   AnalyticalTable, 
   Badge, 
   Button, 
   FlexBox, 
   IllustratedMessage, 
-  IllustrationMessageType 
+  IllustrationMessageType
 } from '@ui5/webcomponents-react';
+import '@ui5/webcomponents-fiori/dist/illustrations/SearchEarth.js';
 
 const ComprasTable = ({ 
   data, 

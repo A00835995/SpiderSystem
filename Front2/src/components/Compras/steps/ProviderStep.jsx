@@ -13,7 +13,7 @@ const ProviderStep = ({
     <div style={{ 
       display: 'flex', 
       flexDirection: 'column',
-      height: 'calc(100vh - 160px)', // Aumentamos la altura reduciendo el espacio que restamos
+      height: 'calc(100vh - 300px)', // Aumentamos la altura reduciendo el espacio que restamos
       padding: '1.5rem',
       maxWidth: '800px',
       margin: '0 auto',
@@ -49,7 +49,7 @@ const ProviderStep = ({
         flexDirection: 'column',
         gap: '0.75rem',
         padding: '0.5rem',
-        marginBottom: '1.5rem',
+        marginBottom: '0.5rem',
         // Estilo para la barra de scroll
         '&::-webkit-scrollbar': {
           width: '8px',

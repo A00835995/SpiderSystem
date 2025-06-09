@@ -5,11 +5,42 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
+
+// Configuración segura de CORS
+const allowedOrigins = [
+    'http://localhost:3000',    // React dev server
+    'http://localhost:5173',    // Vite dev server
+    'http://localhost:4173',    // Vite preview
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:4173'
+];
+
+// En producción, agregar el dominio real
+if (process.env.NODE_ENV === 'production') {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
+console.log('🌐 allowedOrigins:', allowedOrigins);
+
+const corsOptions = {
+    origin: function (origin, callback) {
+      console.log('🌍 CORS origin detected:', origin);
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error('❌ Bloqueado por CORS:', origin);
+        callback(new Error('No permitido por política CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  };
+  
+
 const io = new Server(server, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
-    }
+    cors: corsOptions
 });
 
 const loginRoutes = require('./Routes/loginRutas');
@@ -24,13 +55,15 @@ const metricasRoutes = require('./Routes/metricasRoutes');
 const chatRoutes = require('./Routes/chatRoutes');
 const ordenesProveedorRoutes = require('./Routes/ordenesProveedor');
 const ventasRoutes = require('./Routes/ventasRoutes');
+const predictivoRoutes = require('./Routes/predictivoRoutes');
+const analisisInvRoutes = require('./Routes/analisisInvRoutes');
 const { connectToHANA } = require('./Config/confDB');
 
 // Configuración de Swagger
 const setupSwagger = require('./swaggerConfig');
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Configurar Swagger
@@ -52,6 +85,8 @@ app.use('/api/metricas', metricasRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/ordenes-proveedor', ordenesProveedorRoutes);
 app.use('/api/ventas', ventasRoutes);
+app.use('/api/predictivo', predictivoRoutes);
+app.use('/api/analisis-inventario', analisisInvRoutes);
 
 //El servidor link
 const PORT = process.env.PORT || 4000;

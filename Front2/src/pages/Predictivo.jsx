@@ -10,237 +10,172 @@ import {
   SegmentedButtonItem,
   ValueState,
   Button,
-  BusyIndicator
+  BusyIndicator,
+  Select,
+  Option
 } from "@ui5/webcomponents-react";
 import { useUI5Theme } from "../components/UI5ThemeProvider";
 import PredictiveHeader from "../components/Predictivo/PredictiveHeader";
-import PredictiveMetrics from "../components/Predictivo/PredictiveMetrics";
 import PredictiveChart from "../components/Predictivo/PredictiveChart";
 import PredictiveProductList from "../components/Predictivo/PredictiveProductList";
 import PredictiveProductDetail from "../components/Predictivo/PredictiveProductDetail";
+import { usePredictivo } from "../hooks/usePredictivo";
 
 // Importar íconos necesarios
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
-
-// Datos históricos y predicciones
-const dataset = [
-  {
-    articulo: 'Nike Air Max 270', 
-    ventas: 145, 
-    prediccion: 160,
-    historico: [120, 135, 145, 150, 145],
-    perdidas: 15,
-    meses: ["Ene", "Feb", "Mar", "Abr", "May"]
-  },
-  { 
-    articulo: 'Adidas Ultraboost', 
-    ventas: 132, 
-    prediccion: 140,
-    historico: [110, 125, 132, 138, 132],
-    perdidas: 8,
-    meses: ["Ene", "Feb", "Mar", "Abr", "May"]
-  },
-  { 
-    articulo: 'Nike Air Force 1', 
-    ventas: 168, 
-    prediccion: 175,
-    historico: [150, 160, 168, 172, 168],
-    perdidas: 7,
-    meses: ["Ene", "Feb", "Mar", "Abr", "May"]
-  },
-  { 
-    articulo: 'Puma RS-X', 
-    ventas: 89, 
-    prediccion: 95,
-    historico: [80, 85, 89, 92, 89],
-    perdidas: 6,
-    meses: ["Ene", "Feb", "Mar", "Abr", "May"]
-  },
-  { 
-    articulo: 'New Balance 574', 
-    ventas: 110, 
-    prediccion: 120,
-    historico: [95, 105, 110, 115, 110],
-    perdidas: 10,
-    meses: ["Ene", "Feb", "Mar", "Abr", "May"]
-  },
-  { 
-    articulo: 'Vans Old Skool', 
-    ventas: 95, 
-    prediccion: 100,
-    historico: [85, 90, 95, 98, 95],
-    perdidas: 5,
-    meses: ["Ene", "Feb", "Mar", "Abr", "May"]
-  }
-];
-
-// Transformar datos para la visualización
-const transformDataForCharts = () => {
-  const lineChartData = [];
-  const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"];
-  
-  // Para cada mes
-  for (let i = 0; i < meses.length; i++) {
-    const ventasMes = i < 5 ? dataset.reduce((sum, product) => sum + product.historico[i], 0) : null;
-    const prediccionMes = i === 5 ? dataset.reduce((sum, product) => sum + product.prediccion, 0) : 
-                         i === 4 ? ventasMes * 1.05 : // Predicción para Mayo
-                         i === 3 ? ventasMes * 1.1 : // Predicción para Abril
-                         null;
-    
-    lineChartData.push({
-      mes: meses[i],
-      ventas: ventasMes,
-      prediccion: prediccionMes
-    });
-  }
-  
-  return lineChartData;
-};
-
-// Datos para gráficos de barras de productos individuales
-const getProductChartData = (product) => {
-  const result = [];
-  
-  for (let i = 0; i < product.meses.length; i++) {
-    result.push({
-      mes: product.meses[i],
-      ventas: product.historico[i]
-    });
-  }
-  
-  // Añadir predicción
-  result.push({
-    mes: "Jun",
-    prediccion: product.prediccion
-  });
-  
-  return result;
-};
-
-// Datos de métricas
-const metricas = {
-  precision: '95%',
-  tendencia: '+15%',
-  margenError: '±3%',
-  confianza: '92%'
-};
-
-// Alertas de pérdidas potenciales
-const alertasPerdidas = [
-  {
-    articulo: 'Nike Air Max 270',
-    perdida: 15,
-    tendencia: 'Decreciente',
-    recomendacion: 'Realizar pedido urgente de 30 unidades para cubrir la demanda actual. Las ventas muestran que este modelo tiene alta rotación y el stock está por debajo del mínimo requerido.'
-  },
-  {
-    articulo: 'Adidas Ultraboost',
-    perdida: 8,
-    tendencia: 'Estable',
-    recomendacion: 'Programar pedido de 20 unidades para la próxima semana. El nivel de inventario actual permite mantener las ventas por 2 semanas más.'
-  },
-  {
-    articulo: 'Nike Air Force 1',
-    perdida: 7,
-    tendencia: 'Creciente',
-    recomendacion: 'Solicitar 25 unidades adicionales. La tendencia de ventas está aumentando y se proyecta un incremento del 15% en la demanda del próximo mes.'
-  }
-];
 
 export default function Predictivo() {
   const { isDarkMode } = useUI5Theme();
   const [chartType, setChartType] = useState("line");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [chartData, setChartData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [predicciones, setPredicciones] = useState([]);
-  const [tendencias, setTendencias] = useState([]);
-  const [metricas, setMetricas] = useState({
-    precision: 92,
-    tendencia: 15,
-    margenError: 8,
-    nivelConfianza: 95
-  });
-  const [productos, setProductos] = useState(dataset);
-  const [alertas, setAlertas] = useState(alertasPerdidas);
   
-  // Inicializar datos de gráficos
-  useEffect(() => {
-    setChartData(transformDataForCharts());
-    setLoading(true);
+  // Usar el hook personalizado para datos predictivos reales
+  const {
+    tendenciaData,
+    riesgoStockData,
+    chartData: realChartData,
+    statistics,
+    loading,
+    loadingRiesgoStock,
+    error,
+    errorRiesgoStock,
+    selectedYear,
+    selectedPeriod,
+    availableYears,
+    changeYear,
+    refresh,
+    refreshRiesgoStock,
+    loadRiesgoStock,
+    hasData,
+    hasRealSalesData,
+    hasPredictionData,
+    hasRiskData
+  } = usePredictivo(2025);
 
-    // Simulación de carga de datos
-    setTimeout(() => {
-      setPredicciones([
-        {
-          id: 1,
-          producto: 'Producto A',
-          demandaActual: 100,
-          demandaPredicha: 120,
-          tendencia: 'Aumento',
-          confianza: 85
-        },
-        {
-          id: 2,
-          producto: 'Producto B',
-          demandaActual: 150,
-          demandaPredicha: 130,
-          tendencia: 'Disminución',
-          confianza: 78
-        }
-      ]);
+  // Debug del estado actual (después de declarar el hook)
+  console.log('🔍 DEBUG - Estado actual del componente Predictivo:');
+  console.log('  - selectedProduct:', selectedProduct);
+  console.log('  - isLoading:', isLoading);
+  console.log('  - loading:', loading);
+  console.log('  - loadingRiesgoStock:', loadingRiesgoStock);
+  
+  // Usar datos reales del API de riesgo de stock en lugar de datos mock
+  const productos = React.useMemo(() => {
+    console.log('🔍 DEBUG - riesgoStockData completo:', riesgoStockData);
+    
+    if (!riesgoStockData || !riesgoStockData.data || !riesgoStockData.data.productos) {
+      console.log('❌ DEBUG - No hay datos de riesgo de stock');
+      return [];
+    }
+    
+    console.log('📊 DEBUG - Productos del API:', riesgoStockData.data.productos);
+    console.log('📊 DEBUG - Cantidad de productos:', riesgoStockData.data.productos.length);
+    
+    // Transformar datos del API al formato esperado por los componentes
+    const productosTransformados = riesgoStockData.data.productos.map(producto => {
+      console.log('🔄 DEBUG - Transformando producto:', producto);
+      
+      return {
+        // Mantener compatibilidad con el formato anterior
+        articulo: producto.artNombre,
+        ventas: producto.existenciaActual,
+        prediccion: producto.prediccion,
+        perdidas: producto.deficitEstimado,
+        
+        // Agregar todos los datos nuevos del API
+        ...producto
+      };
+    });
+    
+    console.log('✅ DEBUG - Productos transformados:', productosTransformados);
+    return productosTransformados;
+  }, [riesgoStockData]);
 
-      setTendencias([
-        { mes: 'Enero', valor: 100 },
-        { mes: 'Febrero', valor: 120 },
-        { mes: 'Marzo', valor: 110 },
-        { mes: 'Abril', valor: 130 },
-        { mes: 'Mayo', valor: 125 }
-      ]);
+  // Cargar datos de riesgo de stock al inicializar
+  React.useEffect(() => {
+    console.log('🚀 DEBUG - useEffect para cargar riesgo de stock');
+    console.log('📅 DEBUG - selectedPeriod:', selectedPeriod);
+    console.log('🔧 DEBUG - loadRiesgoStock function:', typeof loadRiesgoStock);
+    
+    if (selectedPeriod) {
+      console.log('✅ DEBUG - Cargando riesgo de stock para período:', selectedPeriod);
+      loadRiesgoStock(selectedPeriod);
+    } else {
+      console.log('❌ DEBUG - No hay selectedPeriod definido');
+    }
+  }, [selectedPeriod, loadRiesgoStock]);
+  
+  // Debug de estados
+  React.useEffect(() => {
+    console.log('📊 DEBUG - Estados actuales:');
+    console.log('  - loading:', loading);
+    console.log('  - loadingRiesgoStock:', loadingRiesgoStock);
+    console.log('  - error:', error);
+    console.log('  - errorRiesgoStock:', errorRiesgoStock);
+    console.log('  - hasData:', hasData);
+    console.log('  - hasRiskData:', hasRiskData);
+    console.log('  - productos.length:', productos.length);
+  }, [loading, loadingRiesgoStock, error, errorRiesgoStock, hasData, hasRiskData, productos]);
+  
+  // Transformar datos reales del API al formato esperado por el gráfico
+  const chartData = React.useMemo(() => {
+    if (!tendenciaData || !tendenciaData.data || !tendenciaData.data.meses) {
+      return [];
+    }
 
-      setLoading(false);
-    }, 1000);
+    // 🔍 LOG: Mostrar datos exactos del backend
+    console.log('📊 Datos exactos del backend:', tendenciaData.data.meses);
 
-    // Simulación de carga de datos adicional
-    setTimeout(() => {
-      setProductos(dataset);
-      setAlertas(alertasPerdidas);
-    }, 1500);
-  }, []);
+    return tendenciaData.data.meses.map(mes => {
+      // 🔍 LOG: Mostrar cada mes individual
+      console.log(`Mes ${mes.nombreMes}:`, {
+        ventasReales: mes.ventasReales,
+        prediccion: mes.prediccion,
+        tieneVentasReales: mes.tieneVentasReales,
+        tienePrediccion: mes.tienePrediccion
+      });
+
+      return {
+        mes: mes.nombreMes,
+        // Solo mostrar ventas si tieneVentasReales es true, sino undefined para no dibujar punto
+        ventas: mes.tieneVentasReales ? mes.ventasReales : undefined,
+        // Solo mostrar predicción si tienePrediccion es true, sino undefined para no dibujar punto
+        prediccion: mes.tienePrediccion ? mes.prediccion : undefined
+      };
+    });
+  }, [tendenciaData]);
   
   // Función para cambiar el tipo de gráfico
   const handleChartTypeChange = (event) => {
     setChartType(event.detail.selectedItem.getAttribute("data-key"));
   };
   
+  // Función para cambiar el año
+  const handleYearChange = (event) => {
+    const newYear = parseInt(event.detail.selectedOption.getAttribute("data-year"));
+    changeYear(newYear);
+  };
+  
+
+  
   // Función para seleccionar un producto para análisis detallado
   const handleProductSelect = (product) => {
+    console.log('🔍 DEBUG - handleProductSelect llamado con producto:', product);
     setIsLoading(true);
     
     // Simular carga de datos
     setTimeout(() => {
+      console.log('🔍 DEBUG - Estableciendo selectedProduct:', product);
       setSelectedProduct(product);
       setIsLoading(false);
+      console.log('🔍 DEBUG - selectedProduct establecido, isLoading:', false);
     }, 1000);
   };
   
   // Función para volver a la vista general
   const handleBackToOverview = () => {
     setSelectedProduct(null);
-  };
-  
-  // Obtener el estado de valor basado en la tendencia
-  const getTendenciaValueState = (tendencia) => {
-    switch (tendencia) {
-      case 'Creciente':
-        return ValueState.Success;
-      case 'Decreciente':
-        return ValueState.Error;
-      case 'Estable':
-      default:
-        return ValueState.Neutral;
-    }
   };
   
   // Obtener icono basado en la tendencia
@@ -254,10 +189,6 @@ export default function Predictivo() {
       default:
         return "pending";
     }
-  };
-  
-  const getTendenciaColor = (tendencia) => {
-    return tendencia === 'Aumento' ? ValueState.Success : ValueState.Error;
   };
   
   return (
@@ -286,10 +217,20 @@ export default function Predictivo() {
           justifyContent={FlexBoxJustifyContent.SpaceBetween}
           alignItems={FlexBoxAlignItems.Center}
           wrap={FlexBoxWrap.Wrap}
+          style={{ width: "100%" }}
         >
-          <SegmentedButton
-            onSelectionChange={handleChartTypeChange}
-          >
+          <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ gap: "1rem" }}>
+            {selectedProduct ? (
+              <Text style={{ 
+                fontSize: "1.125rem", 
+                fontWeight: "600",
+                color: "var(--sapTextColor)"
+              }}>
+                Análisis Detallado: {selectedProduct.artNombre || selectedProduct.articulo}
+              </Text>
+            ) : (
+              <>
+                <SegmentedButton onSelectionChange={handleChartTypeChange}>
             <SegmentedButtonItem data-key="line" icon="line-chart" selected={chartType === "line"}>
               Tendencia
             </SegmentedButtonItem>
@@ -297,23 +238,84 @@ export default function Predictivo() {
               Comparativa
             </SegmentedButtonItem>
           </SegmentedButton>
+                
+                <Select 
+                  onChange={handleYearChange}
+                  style={{ minWidth: "120px" }}
+                >
+                  {availableYears.map(year => (
+                    <Option 
+                      key={year} 
+                      data-year={year}
+                      selected={year === selectedYear}
+                    >
+                      {year}
+                    </Option>
+                  ))}
+                </Select>
+              </>
+            )}
+          </FlexBox>
+          
+          <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ gap: "0.5rem" }}>
+            {!selectedProduct && (
+              <>
+                <Button 
+                  onClick={() => {
+                    refresh();
+                    refreshRiesgoStock();
+                  }} 
+                  icon="refresh" 
+                  disabled={loading || loadingRiesgoStock}
+                >
+                  Actualizar Datos
+                </Button>
+              </>
+            )}
           
           {selectedProduct && (
             <Button onClick={handleBackToOverview} icon="nav-back">
               Volver al Resumen
             </Button>
           )}
+          </FlexBox>
         </FlexBox>
       </div>
 
       <div style={{ padding: "1rem" }}>
-        {/* Métricas de rendimiento del modelo */}
-        {!selectedProduct && (
-          <PredictiveMetrics metricas={metricas} />
+        {/* Mostrar errores si existen */}
+        {error && (
+          <div style={{
+            padding: "1rem",
+            backgroundColor: "var(--sapErrorBackground)",
+            color: "var(--sapErrorColor)",
+            borderRadius: "0.5rem",
+            marginBottom: "1rem"
+          }}>
+            <Text>❌ Error en Tendencias: {error}</Text>
+            <Button onClick={refresh} style={{ marginTop: "0.5rem" }}>
+              Reintentar Tendencias
+            </Button>
+          </div>
+        )}
+
+        {errorRiesgoStock && (
+          <div style={{
+            padding: "1rem",
+            backgroundColor: "var(--sapErrorBackground)",
+            color: "var(--sapErrorColor)",
+            borderRadius: "0.5rem",
+            marginBottom: "1rem"
+          }}>
+            <Text>❌ Error en Riesgo de Stock: {errorRiesgoStock}</Text>
+            <Button onClick={refreshRiesgoStock} style={{ marginTop: "0.5rem" }}>
+              Reintentar Riesgo de Stock
+            </Button>
+          </div>
         )}
         
         {/* Principal chart or product detail */}
-        {isLoading ? (
+        {loading || isLoading || loadingRiesgoStock ? (
           <FlexBox 
             direction={FlexBoxDirection.Column}
             justifyContent={FlexBoxJustifyContent.Center}
@@ -321,28 +323,50 @@ export default function Predictivo() {
             style={{ height: "400px" }}
           >
             <BusyIndicator size="Large" />
-            <Text style={{ marginTop: "1rem" }}>Analizando datos...</Text>
+            <Text style={{ marginTop: "1rem" }}>
+              {loading ? "Cargando datos de tendencia..." : 
+               loadingRiesgoStock ? "Cargando análisis de riesgo de stock..." :
+               "Analizando datos..."}
+            </Text>
           </FlexBox>
         ) : selectedProduct ? (
+          <>
+            {console.log('🔍 DEBUG - Mostrando PredictiveProductDetail con producto:', selectedProduct)}
           <PredictiveProductDetail 
             product={selectedProduct}
-            chartType={chartType}
-            getProductChartData={getProductChartData}
-            getTendenciaIcon={getTendenciaIcon}
-            alertasPerdidas={alertas}
           />
-        ) : (
+          </>
+        ) : hasData || hasRiskData ? (
           <>
+            {hasData && (
             <PredictiveChart 
               chartType={chartType}
               chartData={chartData}
+                selectedYear={selectedYear}
+                hasRealSalesData={hasRealSalesData}
+                hasPredictionData={hasPredictionData}
             />
+            )}
             
+            {hasRiskData && (
             <PredictiveProductList 
               products={productos}
               onProductSelect={handleProductSelect}
             />
+            )}
           </>
+        ) : (
+          <FlexBox 
+            direction={FlexBoxDirection.Column}
+            justifyContent={FlexBoxJustifyContent.Center}
+            alignItems={FlexBoxAlignItems.Center}
+            style={{ height: "400px" }}
+          >
+            <Text>📊 No hay datos disponibles</Text>
+            <Text style={{ marginTop: "0.5rem", color: "var(--sapNeutralTextColor)" }}>
+              Selecciona un año diferente para ver las tendencias de ventas
+            </Text>
+          </FlexBox>
         )}
       </div>
     </div>

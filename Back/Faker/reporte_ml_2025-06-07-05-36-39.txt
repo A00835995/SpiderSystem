@@ -1,0 +1,61 @@
+📅 VENTAS POR MES:
+2025-06: 21 ventas, 73 unidades (promedio: 3.48)
+2024-06: 300 ventas, 1617 unidades (promedio: 5.39)
+
+🔥 TOP 20 PRODUCTOS POR DEMANDA:
+1. ID:4 - 🔴 ALTA
+   └ Vendido: 148 unidades en 22 ventas (Promedio: 6.73)
+2. ID:58 - 🔴 ALTA
+   └ Vendido: 133 unidades en 22 ventas (Promedio: 6.05)
+3. ID:42 - 🔴 ALTA
+   └ Vendido: 114 unidades en 17 ventas (Promedio: 6.71)
+4. ID:56 - 🟡 MEDIA
+   └ Vendido: 94 unidades en 16 ventas (Promedio: 5.88)
+5. ID:59 - 🟡 MEDIA
+   └ Vendido: 79 unidades en 11 ventas (Promedio: 7.18)
+6. ID:63 - 🟡 MEDIA
+   └ Vendido: 66 unidades en 11 ventas (Promedio: 6.00)
+7. ID:34 - 🟡 MEDIA
+   └ Vendido: 62 unidades en 10 ventas (Promedio: 6.20)
+8. ID:51 - 🟡 MEDIA
+   └ Vendido: 61 unidades en 10 ventas (Promedio: 6.10)
+9. ID:61 - 🟡 MEDIA
+   └ Vendido: 60 unidades en 11 ventas (Promedio: 5.45)
+10. ID:22 - 🟡 MEDIA
+   └ Vendido: 57 unidades en 12 ventas (Promedio: 4.75)
+11. ID:21 - 🟡 MEDIA
+   └ Vendido: 55 unidades en 8 ventas (Promedio: 6.88)
+12. ID:8 - 🟡 MEDIA
+   └ Vendido: 54 unidades en 8 ventas (Promedio: 6.75)
+13. ID:33 - 🟡 MEDIA
+   └ Vendido: 53 unidades en 9 ventas (Promedio: 5.89)
+14. ID:5 - 🟢 BAJA
+   └ Vendido: 47 unidades en 12 ventas (Promedio: 3.92)
+15. ID:9 - 🟢 BAJA
+   └ Vendido: 45 unidades en 8 ventas (Promedio: 5.63)
+16. ID:28 - 🟢 BAJA
+   └ Vendido: 44 unidades en 6 ventas (Promedio: 7.33)
+17. ID:46 - 🟢 BAJA
+   └ Vendido: 39 unidades en 9 ventas (Promedio: 4.33)
+18. ID:47 - 🟢 BAJA
+   └ Vendido: 39 unidades en 7 ventas (Promedio: 5.57)
+19. ID:62 - 🟢 BAJA
+   └ Vendido: 36 unidades en 6 ventas (Promedio: 6.00)
+20. ID:10 - 🟢 BAJA
+   └ Vendido: 33 unidades en 6 ventas (Promedio: 5.50)
+
+🏢 ÓRDENES POR PROVEEDOR:
+Proveedor 2: 21 órdenes, 6362 unidades, 46 productos diferentes
+Proveedor 1: 18 órdenes, 2643 unidades, 34 productos diferentes
+Proveedor 4: 17 órdenes, 6520 unidades, 44 productos diferentes
+Proveedor 3: 16 órdenes, 6620 unidades, 41 productos diferentes
+
+📅 PATRONES POR DÍA DE LA SEMANA:
+Lunes: 15 ventas (promedio: 2.33 unidades)
+Miércoles: 119 ventas (promedio: 4.34 unidades)
+Jueves: 185 ventas (promedio: 6.13 unidades)
+Viernes: 2 ventas (promedio: 2.00 unidades)
+
+⚠️ PRODUCTOS CON RIESGO DE AGOTAMIENTO (último mes):
+ID:43
+   └ Vendido: 55 unidades, Última orden hace 70 días

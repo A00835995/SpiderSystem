@@ -8,17 +8,20 @@ import {
   FlexBoxJustifyContent,
   FlexBoxAlignItems,
   Icon,
+  ObjectStatus,
+  ValueState,
   Avatar,
   Label
 } from '@ui5/webcomponents-react';
 import { useNavigate } from 'react-router-dom';
+import UserAvatar from '../components/common/UserAvatar';
 
 const Cuenta = () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const userName = storedUser.name;
     const userEmail = storedUser.email;
     const userRol = storedUser.role;
-    const userRolN = userRol === 1 ? "Administrador" : "Usuario";
+    const userRolN = userRol === 1 ? "ADMIN" : "USUARIO";
 
   const navigate = useNavigate();
   const [showDialog, setShowDialog] = useState(false);
@@ -27,9 +30,6 @@ const Cuenta = () => {
     nombre: userName,
     email: userEmail,
     rol: userRolN,
-    telefono: '555-0101',
-    departamento: 'TI',
-    ultimoAcceso: '2024-03-15 14:30:00'
   });
 
   const handleLogout = () => { 
@@ -62,9 +62,12 @@ const Cuenta = () => {
         <div style={{ padding: '1.5rem' }}>
           <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween} alignItems={FlexBoxAlignItems.Center}>
             <FlexBox alignItems={FlexBoxAlignItems.Center}>
-              <Avatar size="XL" style={{ marginRight: '1.5rem', backgroundColor: '#0854a0' }}>
-                <Icon name="employee" />
-              </Avatar>
+              <UserAvatar 
+                nombre={userData.nombre}
+                rol={userData.rol}
+                size="xlarge"
+                style={{ marginRight: '1.5rem' }}
+              />
               <div>
                 <Title level="H2">{userData.nombre}</Title>
                 <Text style={{ fontSize: '1rem', color: '#666' }}>{userData.email}</Text>
@@ -77,14 +80,6 @@ const Cuenta = () => {
               <div style={{ display: 'flex', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.75rem' }}>
                 <Label style={{ width: '150px', fontWeight: 'bold' }}>Rol:</Label>
                 <Text>{userData.rol}</Text>
-              </div>
-              <div style={{ display: 'flex', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.75rem' }}>
-                <Label style={{ width: '150px', fontWeight: 'bold' }}>Teléfono:</Label>
-                <Text>{userData.telefono}</Text>
-              </div>
-              <div style={{ display: 'flex', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.75rem' }}>
-                <Label style={{ width: '150px', fontWeight: 'bold' }}>Departamento:</Label>
-                <Text>{userData.departamento}</Text>
               </div>
             </FlexBox>
           </div>

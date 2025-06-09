@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useInventory } from "../hooks/useInventory";
 
+import InventoryHeader from "../components/Inventario/InventoryHeader";
 import InventoryStats from "../components/Inventario/InventoryStats";
 import InventoryFilters from "../components/Inventario/InventoryFilters";
 import InventoryTable from "../components/Inventario/InventoryTable";
@@ -13,11 +14,7 @@ import {
   fetchTotalInventoryCount
 } from "../services/inventoryService";
 
-
 import {
-  DynamicPageTitle,
-  DynamicPageHeader,
-  Title,
   Text,
   FlexBox,
   FlexBoxAlignItems,
@@ -224,26 +221,7 @@ export default function Inventario() {
     },
   ];
   
-  //APLICO EL BACKEND
-  //Solo se ejecuta cuando se carga la pagina porque tiene "[]"
-  useEffect(() => {
-    const loadInventory = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchInventoryData();
-        //Update los datos del inventario
-        setFilteredData(data);
-        setLastUpdateTime(new Date());
-      } catch (error) {
-        console.error("Error al obtener artículos:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-  
-    loadInventory();
-  }, []);
-  
+
   //APLICO EL BACKEND
   useEffect(() => {
     const loadTotalCount = async () => {
@@ -253,7 +231,7 @@ export default function Inventario() {
         console.error("Error al obtener el total de productos:", error);
       }
     };
-  
+
     loadTotalCount();
   }, []);
   
@@ -327,7 +305,6 @@ export default function Inventario() {
     };
   
     setNotifications(prev => [nuevaNotificacion, ...prev]);
-  
     setTimeout(() => {
       setNotifications(prev => prev.filter(notif => notif.id !== id));
     }, 5000); // Se borra después de 5 segundos
@@ -335,39 +312,49 @@ export default function Inventario() {
   
   
   return (
-    
-    <>
-      <DynamicPageTitle
-        header={<Title>Inventario</Title>}
-        subHeader={<Text>Gestión y control de inventario de productos</Text>}
-        className={styles.pageHeader}
-      />
+    <div style={{ 
+      width: "100%",
+      minHeight: "100%",
+      padding: "1rem",
+      display: "flex",
+      flexDirection: "column",
+      gap: "1rem",
+      paddingTop: "2rem"
+    }}>
+      <InventoryHeader />
 
-{notifications.map(notif => (
-  <MessageStrip
-    key={notif.id}
-    design={
-      notif.estado === "Agotado"
-        ? "Negative"
-        : notif.estado === "Bajo stock"
-        ? "Warning"
-        : "Positive"
-    }
-    hideCloseButton={false}
-    style={{ marginBottom: "0.5rem" }}
-  >
-    {notif.mensaje}
-  </MessageStrip>
-))}
-
+      {notifications.map(notif => (
+        <MessageStrip
+          key={notif.id}
+          design={
+            notif.estado === "Agotado"
+              ? "Negative"
+              : notif.estado === "Bajo stock"
+              ? "Warning"
+              : "Positive"
+          }
+          hideCloseButton={false}
+          style={{ marginBottom: "0.5rem" }}
+        >
+          {notif.mensaje}
+        </MessageStrip>
+      ))}
       
-      <DynamicPageHeader className={styles.pageHeader}>
+      <div style={{
+        padding: "0.5rem 1rem",
+        backgroundColor: "var(--sapList_Background)",
+        borderRadius: "0.5rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        boxShadow: "var(--sapContent_Shadow0)",
+        margin: "0.5rem 0"
+      }}>
         <FlexBox 
           justifyContent={FlexBoxJustifyContent.SpaceBetween}
           alignItems={FlexBoxAlignItems.Center}
           wrap={FlexBoxWrap.Wrap}
-          style={{ marginTop: "0.5rem", marginBottom: "1.5rem" }}
-
+          style={{ width: "100%" }}
         >
           <Text>
             Última actualización: {lastUpdateTime.toLocaleString()}
@@ -390,29 +377,17 @@ export default function Inventario() {
             >
               Exportar
             </Button>
-            <Button 
-              icon="add"
-              design="Emphasized"
-              tooltip="Agregar nuevo producto"
-            >
-              Agregar Producto
-            </Button>
           </FlexBox>
         </FlexBox>
-      </DynamicPageHeader>
+      </div>
 
-      
-
-      
-      <div className={styles.pageContainer}>
+      <div style={{ padding: "1rem" }}>
         {/* Estadísticas de inventario */}
         <InventoryStats
           inventoryStats={inventoryStats}
           styles={styles}
         />
 
-
-        
         {/* Filtros */}
         <InventoryFilters
           searchQuery={searchQuery}
@@ -426,6 +401,7 @@ export default function Inventario() {
           handleClearFilters={handleClearFilters}
           styles={styles}
         />
+        
         {/* Tabla de inventario */}
         <InventoryTable
           data={filteredData}
@@ -433,20 +409,18 @@ export default function Inventario() {
           isLoading={isLoading}
           totalCount={inventoryData.length}
         />
-
-        
-        {/* Toast para notificaciones */}
-        {showToast && (
-          <Toast duration={3000} className={styles.toastContent}>
-            <FlexBox alignItems={FlexBoxAlignItems.Center}>
-              <Icon name="synchronize" style={{ marginRight: '0.5rem' }} />
-              <Text>{toastMessage}</Text>
-            </FlexBox>
-          </Toast>
-        )}
-        
-
       </div>
-    </>
+
+      {/* Toast para notificaciones */}
+      <Toast
+        show={showToast}
+        onAfterClose={() => setShowToast(false)}
+      >
+        <FlexBox alignItems={FlexBoxAlignItems.Center}>
+          <Icon name="synchronize" style={{ marginRight: '0.5rem' }} />
+          <Text>{toastMessage}</Text>
+        </FlexBox>
+      </Toast>
+    </div>
   );
 }

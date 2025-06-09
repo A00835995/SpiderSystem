@@ -1,0 +1,86 @@
+📅 VENTAS POR MES:
+2025-06: 84 ventas, 167 unidades (promedio: 1.99)
+2025-05: 279 ventas, 424 unidades (promedio: 1.52)
+2025-04: 270 ventas, 403 unidades (promedio: 1.49)
+2025-03: 279 ventas, 441 unidades (promedio: 1.58)
+2025-02: 269 ventas, 404 unidades (promedio: 1.50)
+2025-01: 310 ventas, 496 unidades (promedio: 1.60)
+2024-12: 310 ventas, 499 unidades (promedio: 1.61)
+2024-11: 300 ventas, 480 unidades (promedio: 1.60)
+2024-10: 310 ventas, 491 unidades (promedio: 1.58)
+2024-09: 300 ventas, 485 unidades (promedio: 1.62)
+2024-08: 310 ventas, 474 unidades (promedio: 1.53)
+2024-07: 619 ventas, 2942 unidades (promedio: 4.75)
+2024-06: 2681 ventas, 12289 unidades (promedio: 4.58)
+
+🔥 TOP 20 PRODUCTOS POR DEMANDA:
+1. ID:58 - 🔴 ALTA
+   └ Vendido: 1346 unidades en 313 ventas (Promedio: 4.30)
+2. ID:4 - 🔴 ALTA
+   └ Vendido: 1181 unidades en 231 ventas (Promedio: 5.11)
+3. ID:32 - 🔴 ALTA
+   └ Vendido: 1163 unidades en 286 ventas (Promedio: 4.07)
+4. ID:48 - 🔴 ALTA
+   └ Vendido: 1115 unidades en 265 ventas (Promedio: 4.21)
+5. ID:1 - 🔴 ALTA
+   └ Vendido: 1104 unidades en 228 ventas (Promedio: 4.84)
+6. ID:30 - 🔴 ALTA
+   └ Vendido: 1103 unidades en 204 ventas (Promedio: 5.41)
+7. ID:60 - 🔴 ALTA
+   └ Vendido: 1095 unidades en 229 ventas (Promedio: 4.78)
+8. ID:56 - 🔴 ALTA
+   └ Vendido: 1087 unidades en 218 ventas (Promedio: 4.99)
+9. ID:47 - 🔴 ALTA
+   └ Vendido: 1060 unidades en 205 ventas (Promedio: 5.17)
+10. ID:63 - 🔴 ALTA
+   └ Vendido: 972 unidades en 208 ventas (Promedio: 4.67)
+11. ID:62 - 🔴 ALTA
+   └ Vendido: 453 unidades en 183 ventas (Promedio: 2.48)
+12. ID:34 - 🔴 ALTA
+   └ Vendido: 419 unidades en 164 ventas (Promedio: 2.55)
+13. ID:50 - 🔴 ALTA
+   └ Vendido: 385 unidades en 162 ventas (Promedio: 2.38)
+14. ID:2 - 🔴 ALTA
+   └ Vendido: 347 unidades en 160 ventas (Promedio: 2.17)
+15. ID:8 - 🔴 ALTA
+   └ Vendido: 305 unidades en 115 ventas (Promedio: 2.65)
+16. ID:59 - 🔴 ALTA
+   └ Vendido: 290 unidades en 113 ventas (Promedio: 2.57)
+17. ID:22 - 🔴 ALTA
+   └ Vendido: 286 unidades en 116 ventas (Promedio: 2.47)
+18. ID:45 - 🔴 ALTA
+   └ Vendido: 280 unidades en 113 ventas (Promedio: 2.48)
+19. ID:6 - 🔴 ALTA
+   └ Vendido: 261 unidades en 132 ventas (Promedio: 1.98)
+20. ID:28 - 🔴 ALTA
+   └ Vendido: 255 unidades en 114 ventas (Promedio: 2.24)
+
+🏢 ÓRDENES POR PROVEEDOR:
+Proveedor 4:
+   └ 34 órdenes con 362 artículos (10.650000 artículos/orden)
+   └ 14564 unidades totales, 44 productos diferentes
+   └ Promedio: 40.23 unidades por artículo
+Proveedor 2:
+   └ 31 órdenes con 349 artículos (11.260000 artículos/orden)
+   └ 14377 unidades totales, 46 productos diferentes
+   └ Promedio: 41.19 unidades por artículo
+Proveedor 1:
+   └ 30 órdenes con 170 artículos (5.670000 artículos/orden)
+   └ 6650 unidades totales, 34 productos diferentes
+   └ Promedio: 39.12 unidades por artículo
+Proveedor 3:
+   └ 25 órdenes con 282 artículos (11.280000 artículos/orden)
+   └ 15754 unidades totales, 41 productos diferentes
+   └ Promedio: 55.87 unidades por artículo
+
+📅 PATRONES POR DÍA DE LA SEMANA:
+Lunes: 829 ventas (promedio: 2.97 unidades)
+Martes: 817 ventas (promedio: 3.07 unidades)
+Miércoles: 915 ventas (promedio: 3.09 unidades)
+Jueves: 1147 ventas (promedio: 3.66 unidades)
+Viernes: 992 ventas (promedio: 3.22 unidades)
+Sábado: 859 ventas (promedio: 2.96 unidades)
+Domingo: 762 ventas (promedio: 2.98 unidades)
+
+⚠️ PRODUCTOS CON RIESGO DE AGOTAMIENTO (último mes):
+✅ No se detectaron productos con riesgo inmediato

@@ -4,6 +4,21 @@ require('dotenv').config();
 const SECRET_KEY = process.env.JWT_SECRET || "seguridad";
 
 /**
+ * Obtiene el mensaje de error apropiado basado en el tipo de error
+ * @param {Error} error - El error capturado
+ * @returns {string} El mensaje de error apropiado
+ */
+const getErrorMessage = (error) => {
+  if (error.name === 'TokenExpiredError') {
+    return 'Token expirado, por favor inicie sesión nuevamente';
+  }
+  if (error.name === 'JsonWebTokenError') {
+    return 'Token inválido';
+  }
+  return 'Error al autenticar usuario';
+};
+
+/**
  * Middleware para verificar el token JWT
  * Simplemente verifica que el token sea válido y añade los datos del usuario al request
  * @param {Object} req - Request object
@@ -12,47 +27,27 @@ const SECRET_KEY = process.env.JWT_SECRET || "seguridad";
  */
 const verifyToken = (req, res, next) => {
   try {
-    // Obtener el header de autorización
-    const authHeader = req.headers.authorization;
+    const token = req.headers.authorization?.split(' ')[1];
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!token) {
       return res.status(401).json({
         success: false,
         message: 'Se requiere token de autenticación'
       });
     }
     
-    // Extraer el token del header
-    const token = authHeader.split(' ')[1];
-    
-    // Verificar el token
     const decoded = jwt.verify(token, SECRET_KEY);
-    
-    // Añadir los datos del usuario al objeto request
     req.user = decoded;
-    
-    // Continuar con la siguiente función en la cadena
     next();
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({
-        success: false,
-        message: 'Token expirado, por favor inicie sesión nuevamente'
-      });
-    }
-    
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({
-        success: false,
-        message: 'Token inválido'
-      });
-    }
-    
-    return res.status(500).json({
+    const errorResponse = {
       success: false,
-      message: 'Error al autenticar usuario',
+      message: getErrorMessage(error),
       error: error.message
-    });
+    };
+
+    const statusCode = error.name === 'TokenExpiredError' || error.name === 'JsonWebTokenError' ? 401 : 500;
+    return res.status(statusCode).json(errorResponse);
   }
 };
 

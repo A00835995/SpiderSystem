@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Title,
   Text,
@@ -76,6 +77,10 @@ const AdminHeader = ({ onAddUser }) => {
       </div>
     </div>
   );
+};
+
+AdminHeader.propTypes = {
+  onAddUser: PropTypes.func.isRequired
 };
 
 export default AdminHeader; 

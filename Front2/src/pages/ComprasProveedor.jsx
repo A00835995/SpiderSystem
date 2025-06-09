@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, Title, MessageStrip, IllustratedMessage, IllustrationMessageType } from '@ui5/webcomponents-react';
+import '@ui5/webcomponents-fiori/dist/illustrations/UploadToCloud.js';
 import { useNavigate } from 'react-router-dom';
 
 // Importar componentes refactorizados

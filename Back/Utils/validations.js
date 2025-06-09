@@ -5,18 +5,33 @@
  */
 const validateEmail = (email) => {
     // Verificar que no sea null, undefined o string vacío
-    if (!email || email.trim() === '') {
+    if (!email || typeof email !== 'string' || email.trim() === '') {
         return false;
     }
     
-    // Verificar que contenga @
-    if (!email.includes('@')) {
+    // Validación más estricta del formato de email
+    // ^[a-zA-Z0-9._%+-]+ - Parte local (antes del @)
+    // @ - Símbolo @ requerido
+    // [a-zA-Z0-9.-]+ - Dominio
+    // \.[a-zA-Z]{2,}$ - Extensión de dominio (2 o más caracteres)
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    // Verificar que no haya puntos consecutivos
+    if (email.includes('..')) {
         return false;
     }
     
-    // Validación básica del formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    // Verificar que no termine en punto
+    if (email.endsWith('.')) {
+        return false;
+    }
+    
+    // Verificar que tenga un solo @
+    if ((email.match(/@/g) || []).length !== 1) {
+        return false;
+    }
+    
+    return emailRegex.test(email.trim());
 };
 
 /**
@@ -26,7 +41,7 @@ const validateEmail = (email) => {
  */
 const validatePassword = (password) => {
     // Verificar que no sea null, undefined o string vacío
-    if (!password || password.trim() === '') {
+    if (!password || typeof password !== 'string' || password.trim() === '') {
         return false;
     }
     

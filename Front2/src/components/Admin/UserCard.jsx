@@ -1,10 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Card,
   Text,
   Title,
   Button
 } from '@ui5/webcomponents-react';
+import UserAvatar from '../common/UserAvatar';
 
 const UserCard = ({ 
   usuario, 
@@ -37,31 +39,11 @@ const UserCard = ({
           alignItems: 'center',
           gap: '1rem',
         }}>
-          <div 
-            style={{
-              width: '60px',
-              height: '60px',
-              minWidth: '60px',
-              minHeight: '60px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              backgroundColor: getRolColor(usuario.rol),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-              flexShrink: 0,
-            }}
-          >
-            <Text style={{
-              color: 'white',
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              lineHeight: 1
-            }}>
-              {getInitials(usuario.nombre)}
-            </Text>
-          </div>
+          <UserAvatar 
+            nombre={usuario.nombre}
+            rol={usuario.rol}
+            size="medium"
+          />
           <div style={{
             display: 'flex',
             flexDirection: 'column',
@@ -129,6 +111,19 @@ const UserCard = ({
       </div>
     </Card>
   );
+};
+
+UserCard.propTypes = {
+  usuario: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    nombre: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    rol: PropTypes.string.isRequired
+  }).isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  getRolColor: PropTypes.func.isRequired,
+  getInitials: PropTypes.func.isRequired
 };
 
 export default UserCard; 

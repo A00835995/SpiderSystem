@@ -8,14 +8,30 @@ class VentaResponseDto {
      * @returns {Object} Artículo formateado para venta
      */
     static toArticuloParaVenta(dbArticulo) {
+        if (!dbArticulo) {
+            return {
+                id: undefined,
+                nombre: undefined,
+                precioVenta: undefined,
+                iva: undefined,
+                existencia: undefined,
+                precioConIva: NaN
+            };
+        }
+
+        const precioVenta = dbArticulo.ARTPRECIOVENTA;
+        const iva = dbArticulo.ARTIVA;
+        const precioConIva = precioVenta !== undefined && iva !== undefined 
+            ? Number((precioVenta * (1 + (iva / 100))).toFixed(2))
+            : NaN;
+
         return {
             id: dbArticulo.ARTIID,
             nombre: dbArticulo.ARTNOMBRE,
-            precioVenta: dbArticulo.ARTPRECIOVENTA,
-            iva: dbArticulo.ARTIVA,
+            precioVenta: precioVenta,
+            iva: iva,
             existencia: dbArticulo.ARTEXISTENCIA,
-            // Calcular precio con IVA
-            precioConIva: dbArticulo.ARTPRECIOVENTA * (1 + (dbArticulo.ARTIVA / 100))
+            precioConIva: precioConIva
         };
     }
 
@@ -30,8 +46,6 @@ class VentaResponseDto {
         }
         return dbArticulos.map(articulo => this.toArticuloParaVenta(articulo));
     }
-
-    
 }
 
 module.exports = VentaResponseDto; 

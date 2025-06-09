@@ -1,250 +1,182 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { useAnalisisInv } from '../hooks/useAnalisisInv';
+import InventoryTable from "../components/Inventario/InventoryTable";
+import InventoryHeader from "../components/AnalisisInv/AnalisisInvHeader";
+import { downloadCSV } from "../utils/csvUtils";
+
 import {
+  Text,
   FlexBox,
-  FlexBoxDirection,
   FlexBoxAlignItems,
   FlexBoxJustifyContent,
-  IllustratedMessage,
-  IllustrationMessageType
-} from '@ui5/webcomponents-react';
-import "@ui5/webcomponents-icons/dist/AllIcons.js";
-import { styles } from "../Styles/InicioStyle";
-import InventoryHeader from "../components/AnalisisInv/InventoryHeader";
-import InventoryFilters from "../components/AnalisisInv/InventoryFilters";
-import InventoryKPIs from "../components/AnalisisInv/InventoryKPIs";
-import InventoryDistribution from "../components/AnalisisInv/InventoryDistribution";
-import InventoryStatus from "../components/AnalisisInv/InventoryStatus";
-import InventoryMetrics from "../components/AnalisisInv/InventoryMetrics";
+  FlexBoxWrap,
+  FlexBoxDirection,
+  Icon,
+  Button,
+  MessageStrip,
+  Toast,
+  BusyIndicator,
+  Input
+} from "@ui5/webcomponents-react";
+import { styles } from "../Styles/InventarioStyles";
 
-// Datos de ejemplo para diferentes períodos
-const inventoryDataByPeriod = {
-  mesActual: {
-    totalProducts: 2450,
-    lowStockProducts: 184,
-    outOfStockProducts: 76,
-    inventoryValue: 248750,
-    rotationIndex: 4.2,
-    avgDaysInStock: 28,
-    stockAccuracy: 97.2,
-    forecastAccuracy: 88.5,
-    orderFulfillment: 93.8,
-    carryCost: 12350,
-    receiptProcessingTime: 1.8,
-    trend: {
-      value: 5.2,
-      direction: 'up'
-    }
-  },
-  mesPasado: {
-    totalProducts: 2380,
-    lowStockProducts: 165,
-    outOfStockProducts: 82,
-    inventoryValue: 235400,
-    rotationIndex: 3.9,
-    avgDaysInStock: 31,
-    stockAccuracy: 96.8,
-    forecastAccuracy: 87.2,
-    orderFulfillment: 92.5,
-    carryCost: 11980,
-    receiptProcessingTime: 2.0,
-    trend: {
-      value: 3.8,
-      direction: 'up'
-    }
+// Importar íconos necesarios
+import "@ui5/webcomponents-icons/dist/inventory.js";
+import "@ui5/webcomponents-icons/dist/search.js";
+import "@ui5/webcomponents-icons/dist/download.js";
+import "@ui5/webcomponents-icons/dist/refresh.js";
+import "@ui5/webcomponents-icons/dist/synchronize.js";
+
+function getNextMonthLabel() {
+  const now = new Date();
+  let year = now.getFullYear();
+  let month = now.getMonth() + 2; // +2 porque getMonth() es 0-based y queremos el siguiente mes
+
+  if (month > 12) {
+    month = 1;
+    year += 1;
   }
-};
 
-// Datos para el gráfico de distribución por categoría
-const categoryDistribution = [
-  { name: "Calzado Deportivo", count: 845, percentage: 34.5, color: "#4caf50" },
-  { name: "Calzado Casual", count: 680, percentage: 27.8, color: "#2196f3" },
-  { name: "Calzado Formal", count: 520, percentage: 21.2, color: "#673ab7" },
-  { name: "Calzado para Playa", count: 405, percentage: 16.5, color: "#ff9800" }
-];
+  const monthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+  return `${monthNames[month - 1]} ${year}`;
+}
 
-// Datos para la tabla de métricas por categoría
-const categoryMetrics = [
-  {
-    category: "Calzado Deportivo",
-    sales: 420,
-    returnsRate: 4.2,
-    turnoverRate: 4.8,
-    profit: 32450,
-    trend: 8.5
-  },
-  {
-    category: "Calzado Casual",
-    sales: 385,
-    returnsRate: 3.8,
-    turnoverRate: 4.2,
-    profit: 28600,
-    trend: 5.2
-  },
-  {
-    category: "Calzado Formal",
-    sales: 210,
-    returnsRate: 2.5,
-    turnoverRate: 3.5,
-    profit: 24800,
-    trend: -2.1
-  },
-  {
-    category: "Calzado para Playa",
-    sales: 320,
-    returnsRate: 5.1,
-    turnoverRate: 5.2,
-    profit: 18900,
-    trend: 12.4
-  }
-];
+function getCurrentMonthLabel() {
+  const now = new Date();
+  const monthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+  return monthNames[now.getMonth()];
+}
 
 const Analisis_Inv = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [timeRange, setTimeRange] = useState("mesActual");
+  const {
+    analisisData,
+    loading,
+    error,
+    refresh,
+    hasData
+  } = useAnalisisInv();
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+
+  // Filtrar datos basado en la búsqueda
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleResetFilters = () => {
-    setSelectedCategory("all");
-    setTimeRange("mesActual");
-  };
-
-  const getCurrentInventoryData = () => {
-    return inventoryDataByPeriod[timeRange];
-  };
-
-  const getFilteredCategoryDistribution = () => {
-    if (selectedCategory === "all") {
-      return categoryDistribution;
+    if (analisisData?.data?.productos) {
+      const filtered = analisisData.data.productos.filter(producto =>
+        producto.artNombre.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData([]);
     }
-    return categoryDistribution.filter(category => {
-      const categoryKey = category.name.toLowerCase().replace("calzado ", "");
-      return categoryKey.includes(selectedCategory.toLowerCase());
-    });
-  };
+  }, [analisisData, searchQuery]);
 
-  const getFilteredCategoryMetrics = () => {
-    if (selectedCategory === "all") {
-      return categoryMetrics;
-    }
-    return categoryMetrics.filter(metric => {
-      const categoryKey = metric.category.toLowerCase().replace("calzado ", "");
-      return categoryKey.includes(selectedCategory.toLowerCase());
-    });
-  };
-
-  const getTotalProducts = () => {
-    if (selectedCategory === "all") {
-      return getCurrentInventoryData().totalProducts;
-    }
-    const filteredCategories = getFilteredCategoryDistribution();
-    return filteredCategories.reduce((total, category) => total + category.count, 0);
-  };
-
-  const getFilteredInventoryStatus = () => {
-    const currentData = getCurrentInventoryData();
-    const totalProducts = getTotalProducts();
-    const ratio = totalProducts / currentData.totalProducts;
-
-    return {
-      inStock: Math.round((currentData.totalProducts - currentData.lowStockProducts - currentData.outOfStockProducts) * ratio),
-      lowStock: Math.round(currentData.lowStockProducts * ratio),
-      outOfStock: Math.round(currentData.outOfStockProducts * ratio)
-    };
-  };
-
-  if (isLoading) {
-    return (
-      <FlexBox
-        direction={FlexBoxDirection.Column}
-        justifyContent={FlexBoxJustifyContent.Center}
-        alignItems={FlexBoxAlignItems.Center}
-        style={{ height: "100%" }}
-      >
-        <IllustratedMessage
-          name={IllustrationMessageType.SapLogo}
-          titleText="Cargando Análisis de Inventario"
-          subtitleText="Por favor espere..."
-        />
-      </FlexBox>
-    );
-  }
-
-  const kpiCards = [
+  // Columnas para la tabla, ahora con categoría y valor inventario
+  const columns = [
     {
-      title: "Valor Total del Inventario",
-      value: `$${getCurrentInventoryData().inventoryValue.toLocaleString()}`,
-      subtitle: "vs. período anterior",
-      icon: "retail-store",
-      state: getCurrentInventoryData().trend.direction === 'up' ? "Success" : "Error",
-      trend: `${getCurrentInventoryData().trend.direction === 'up' ? '+' : '-'}${getCurrentInventoryData().trend.value}% vs período anterior`
+      Header: "Nombre del Producto",
+      accessor: "artNombre",
+      width: 220,
+      Cell: ({ value }) => <Text style={{ fontWeight: "500" }}>{value}</Text>
     },
     {
-      title: "Índice de Rotación",
-      value: getCurrentInventoryData().rotationIndex.toString(),
-      subtitle: "veces/mes",
-      icon: "shipping-status",
-      state: "Information",
-      trend: "+0.3 vs mes anterior"
+      Header: "Categoría",
+      accessor: "categoria",
+      width: 160,
+      Cell: ({ value }) => <Text>{value}</Text>
     },
     {
-      title: "Días Promedio en Inventario",
-      value: `${getCurrentInventoryData().avgDaysInStock}`,
-      subtitle: "días",
-      icon: "calendar",
-      state: getCurrentInventoryData().avgDaysInStock < 30 ? "Success" : "Warning",
-      trend: "-2.5 vs periodo anterior"
+      Header: "Existencia Actual",
+      accessor: "existenciaActual",
+      width: 120,
+      Cell: ({ value }) => <Text style={{ color: "var(--sapInformativeColor)", fontWeight: "bold" }}>{value} unidades</Text>
     },
     {
-      title: "Productos Bajo Mínimos",
-      value: getCurrentInventoryData().lowStockProducts.toString(),
-      subtitle: "productos",
-      icon: "alert",
-      state: "Warning",
-      trend: "-12 vs mes anterior"
+      Header: `Predicción Ventas en ${getNextMonthLabel()}`,
+      accessor: "prediccion",
+      width: 120,
+      Cell: ({ value }) => <Text style={{ color: "var(--sapAccentColor7)", fontWeight: "bold", }}>{value} unidades</Text>
+    },
+    {
+      Header: "Costo Unitario",
+      accessor: "costoUnitario",
+      width: 120,
+      Cell: ({ value }) => <Text>${value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+    },
+    {
+      Header: "Valor Inventario",
+      accessor: "valorInventario",
+      width: 140,
+      Cell: ({ value }) => <Text style={{ color: "var(--sapPositiveColor)", fontWeight: "bold" }}>${value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+    },
+    {
+      Header: "Déficit Estimado",
+      accessor: "deficitEstimado",
+      width: 120,
+      Cell: ({ value }) => <Text>{value}</Text>
+    },
+    {
+      Header: "Riesgo",
+      accessor: "riesgo",
+      width: 80,
+      Cell: ({ value }) => <Text style={{ color: value === 'Sí' ? 'var(--sapNegativeColor)' : 'var(--sapPositiveColor)' }}>{value}</Text>
+    },
+    {
+      Header: "Días Cobertura",
+      accessor: "diasCobertura",
+      width: 120,
+      Cell: ({ value }) => <Text>{value !== null && value !== undefined ? value.toFixed(2) : '-'}</Text>
+    },
+    {
+      Header: "Última Compra",
+      accessor: "ultimaCompra",
+      width: 120,
+      Cell: ({ value }) => <Text>{value || '-'}</Text>
+    },
+    {
+      Header: "Días Prom. entre Órdenes",
+      accessor: "diasPromEntreOrdenes",
+      width: 150,
+      Cell: ({ value }) => <Text>{value !== null && value !== undefined ? value.toFixed(2) : '-'}</Text>
     }
   ];
 
-  const secondRowKPIs = [
-    {
-      title: "Precisión de Inventario",
-      value: `${getCurrentInventoryData().stockAccuracy}%`,
-      subtitle: "exactitud",
-      icon: "checklist-item",
-      state: "Success",
-      trend: "+0.8% vs periodo anterior"
-    },
-    {
-      title: "Precisión de Pronóstico",
-      value: `${getCurrentInventoryData().forecastAccuracy}%`,
-      subtitle: "exactitud",
-      icon: "future",
-      state: "Success",
-      trend: "+2.3% vs periodo anterior"
-    },
-    {
-      title: "Tasa de Cumplimiento",
-      value: `${getCurrentInventoryData().orderFulfillment}%`,
-      subtitle: "cumplimiento",
-      icon: "complete",
-      state: "Success",
-      trend: "+1.5% vs periodo anterior"
-    },
-    {
-      title: "Costo de Mantenimiento",
-      value: `$${getCurrentInventoryData().carryCost.toLocaleString()}`,
-      subtitle: "mensual",
-      icon: "expense-report",
-      state: "Error",
-      trend: "+3.1% vs periodo anterior"
-    }
-  ];
+  // KPIs desde el resumen del backend
+  const resumen = analisisData?.data?.resumen || {};
+  const valorTotalInventario = resumen.totalValorInventario || 0;
+  const productosBajoStock = resumen.productosBajoStock || 0;
+
+  // Manejadores de eventos
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleRefresh = async () => {
+    setShowToast(true);
+    setToastMessage("Actualizando datos...");
+    await refresh();
+    setToastMessage("Datos actualizados correctamente");
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+  };
+
+  const handleExportCSV = () => {
+    downloadCSV(filteredData);
+    setToastMessage("Archivo CSV exportado");
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
   return (
     <div style={{ 
@@ -257,36 +189,126 @@ const Analisis_Inv = () => {
       paddingTop: "2rem"
     }}>
       <InventoryHeader />
-      
-      <InventoryFilters 
-        selectedCategory={selectedCategory}
-        timeRange={timeRange}
-        onCategoryChange={setSelectedCategory}
-        onTimeRangeChange={setTimeRange}
-        onResetFilters={handleResetFilters}
-      />
-
-      <div style={styles.mainContent}>
-        <InventoryKPIs kpiCards={kpiCards} />
-        <InventoryKPIs kpiCards={secondRowKPIs} />
-
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "1rem"
-        }}>
-          <InventoryDistribution 
-            categoryDistribution={getFilteredCategoryDistribution()} 
-          />
-          <InventoryStatus 
-            inventoryStatus={getFilteredInventoryStatus()} 
-          />
-        </div>
-
-        <InventoryMetrics 
-          categoryMetrics={getFilteredCategoryMetrics()} 
-        />
+      <div style={{
+        padding: "0.5rem 1rem",
+        backgroundColor: "var(--sapList_Background)",
+        borderRadius: "0.5rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        boxShadow: "var(--sapContent_Shadow0)",
+      }}>
+        <FlexBox 
+          justifyContent={FlexBoxJustifyContent.SpaceBetween}
+          alignItems={FlexBoxAlignItems.Center}
+          wrap={FlexBoxWrap.Wrap}
+          style={{ width: "100%" }}
+        >
+          <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ gap: "1rem" }}>
+            <Text>
+              Período: {analisisData?.data?.anio || 'No disponible'}
+            </Text>
+          </FlexBox>
+          
+          <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ gap: "0.5rem" }}>
+            <Button 
+              icon="refresh" 
+              onClick={handleRefresh}
+              tooltip="Actualizar análisis"
+              style={{ marginRight: '0.5rem' }}
+            >
+              Actualizar
+            </Button>
+            <Button 
+              icon="download"
+              onClick={handleExportCSV}
+              tooltip="Exportar a CSV"
+              style={{ marginRight: '0.5rem' }}
+            >
+              Exportar
+            </Button>
+          </FlexBox>
+        </FlexBox>
       </div>
+
+      <div style={{ padding: "1rem" }}>
+        {/* Error Message */}
+        {error && (
+          <MessageStrip 
+            design="Negative" 
+            style={{ marginBottom: "1rem" }}
+          >
+            Error: {error}
+          </MessageStrip>
+        )}
+
+        {/* Filtros de búsqueda */}
+        <div className={styles.filterBar}>
+          <FlexBox 
+            justifyContent={FlexBoxJustifyContent.SpaceBetween}
+            alignItems={FlexBoxAlignItems.Center}
+            wrap={FlexBoxWrap.Wrap}
+            style={{ gap: "1rem" }}
+          >
+            <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ gap: "1rem", padding: "1rem" }}>
+              <FlexBox alignItems={FlexBoxAlignItems.Center} style={{ gap: "0.5rem" }}>
+                <Icon name="search" />
+                <Text>Buscar producto:</Text>
+                <Input
+                  placeholder="Ingrese nombre del producto..."
+                  value={searchQuery}
+                  onInput={handleSearch}
+                  style={{ width: "300px" }}
+                />
+              </FlexBox>
+              <Button 
+                icon="refresh"
+                design="Transparent"
+                onClick={handleClearFilters}
+              >
+                Limpiar Filtros
+              </Button>
+            </FlexBox>
+          </FlexBox>
+        </div>
+        {/* Loading State */}
+        {loading ? (
+          <FlexBox
+            direction={FlexBoxDirection.Column}
+            justifyContent={FlexBoxJustifyContent.Center}
+            alignItems={FlexBoxAlignItems.Center}
+            style={{ height: "400px", gap: "1rem" }}
+          >
+            <BusyIndicator size="Large" />
+            <Text style={{ fontSize: "1.25rem", fontWeight: "600" }}>
+              Cargando Análisis de Inventario
+            </Text>
+          </FlexBox>
+        ) : (
+          <>
+            {hasData ? (
+              <InventoryTable
+                data={filteredData}
+                columns={columns}
+                title="Análisis de Inventario"
+                totalCount={analisisData?.data?.productos?.length || 0}
+                isLoading={loading}
+              />
+            ) : (
+              <MessageStrip design="Information">
+                No hay datos disponibles para mostrar
+              </MessageStrip>
+            )}
+          </>
+        )}
+      </div>
+
+      <Toast
+        show={showToast}
+        onAfterClose={() => setShowToast(false)}
+      >
+        {toastMessage}
+      </Toast>
     </div>
   );
 };

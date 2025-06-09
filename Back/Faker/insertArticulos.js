@@ -1,5 +1,5 @@
 const { faker } = require('@faker-js/faker');
-const { connectToHANA5 } = require('../Config/confDB');
+const { connectToHANA } = require('../Config/confDB');
 const fs = require('fs');
 require('dotenv').config();
 
@@ -10,7 +10,7 @@ function escapeSQLString(str) {
 
 async function insertArticulos() {
   try {
-    const conn = await connectToHANA5();
+    const conn = await connectToHANA();
     console.log('✅ Conexión lista, insertando artículos...');
 
     let insertsToFile = '';
@@ -21,7 +21,7 @@ async function insertArticulos() {
       ];
 
 
-    for (let i = 26; i <= 50; i++) {
+    for (let i = 8; i <= 10; i++) {
       const artCodigo = `COD${i.toString().padStart(4, '0')}`;
       const artNombre = escapeSQLString(`${faker.commerce.productMaterial()} ${tiposZapato[Math.floor(Math.random() * tiposZapato.length)]}`);
       const artDesc = escapeSQLString(faker.commerce.productDescription());
@@ -54,7 +54,7 @@ INSERT INTO "DBADMIN"."ARTICULO" (
         conn.exec(query, (err) => {
           if (err) {
             console.error(`❌ Error insertando ${artCodigo}:`, err.message);
-            reject(err);
+            reject(err instanceof Error ? err : new Error(String(err)));
           } else {
             console.log(`✅ Insertado ${artCodigo}`);
             resolve();

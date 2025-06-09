@@ -1,0 +1,6 @@
+applications:
+  - name: spidersap-frontend
+    path: build
+    memory: 128M
+    buildpacks:
+      - https://github.com/cloudfoundry/staticfile-buildpack.git

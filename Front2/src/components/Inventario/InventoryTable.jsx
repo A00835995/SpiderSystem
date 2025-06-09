@@ -21,20 +21,28 @@ export default function InventoryTable({ data = [], columns = [], isLoading, tot
       style={{ padding: "2rem" }}
     >
       <BusyIndicator size="Large" />
-      <Text style={{ marginTop: "1rem" }}>Cargando datos de inventario...</Text>
+      <Text style={{ marginTop: "1rem", fontSize: "1.25rem", fontWeight: "600" }}>
+        Cargando datos de inventario...
+      </Text>
     </FlexBox>
   ) : (
-    <Card>
+    <Card style={{ width: "100%" }}>
       <AnalyticalTable
         data={data}
         columns={columns}
-        visibleRows={10}
+        visibleRows={50}
         alternateRowColor
         header={
           <Bar 
             design={BarDesign.Header}
             endContent={
-              <Label>Mostrando {data.length} de {totalCount} productos</Label>
+              <Text style={{ 
+                fontSize: "0.875rem",
+                color: "var(--sapContent_LabelColor)",
+                fontWeight: "500"
+              }}>
+                Mostrando {data.length} de {totalCount} productos
+              </Text>
             }
           />
         }
@@ -42,7 +50,13 @@ export default function InventoryTable({ data = [], columns = [], isLoading, tot
           <Bar 
             design={BarDesign.Footer}
             startContent={
-              <Text>Total de productos: {data.length}</Text>
+              <Text style={{ 
+                fontSize: "0.875rem",
+                color: "var(--sapContent_LabelColor)",
+                fontWeight: "500"
+              }}>
+                Total de productos: {data.length}
+              </Text>
             }
           />
         }

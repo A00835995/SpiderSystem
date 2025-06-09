@@ -26,7 +26,7 @@ export default function InventoryFilters({
       showClearButton
       onClear={handleClearFilters}
       className={styles.filterBar}
-      style={{marginTop: "10px"}}
+      style={{marginTop: "1rem"}}
     >
       <FilterGroupItem label="Búsqueda">
         <Input

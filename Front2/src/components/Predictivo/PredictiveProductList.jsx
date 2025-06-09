@@ -16,7 +16,7 @@ export default function PredictiveProductList({ products, onProductSelect }) {
               key={index}
               info={`${producto.perdidas} unidades`}
               infoState={producto.perdidas > 10 ? ValueState.Error : producto.perdidas > 5 ? ValueState.Warning : ValueState.Success}
-              description={`Ventas: ${producto.ventas} | Predicción: ${producto.prediccion}`}
+              description={`Existencia: ${producto.ventas} | Predicción: ${producto.prediccion}`}
               icon={producto.perdidas > 10 ? "status-critical" : "cart"}
               onClick={() => onProductSelect(producto)}
             >

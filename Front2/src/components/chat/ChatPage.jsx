@@ -28,9 +28,15 @@ import MessageContent from './MessageContent';
 import { getInitial } from './utils';
 
 // Actualizar URLs para usar API_CONFIG
-const SOCKET_URL = API_CONFIG.endpoints.socketURL || 'http://localhost:4000';
+const SOCKET_URL = API_CONFIG.socketURL; // Ahora es dinámico
 const API_URL = API_CONFIG.baseUrl + API_CONFIG.endpoints.chat;
 const USERS_URL = API_CONFIG.baseUrl + API_CONFIG.endpoints.usuarios;
+
+// Debug Socket.io
+console.log('🔌 Socket.io Debug:');
+console.log('- SOCKET_URL:', SOCKET_URL);
+console.log('- API_URL:', API_URL);
+console.log('- USERS_URL:', USERS_URL);
 
 const ChatPage = () => {
   const navigate = useNavigate();

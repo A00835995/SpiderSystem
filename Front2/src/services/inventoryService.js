@@ -34,11 +34,14 @@ export async function fetchTotalInventoryCount() {
             axiosInstance.get('/gettotalproductos')
         ]);
         
+        const totalData = totalResponse.data.data;
+        const statusData = statusResponse.data.data;
+        
         return {
-            disponibles: statusResponse.data.data.Disponible || 0,
-            bajoStock: statusResponse.data.data["Bajo stock"] || 0,
-            agotados: statusResponse.data.data.Agotado || 0,
-            total: totalResponse.data.data.total || 0
+            disponibles: statusData.Disponible || 0,
+            bajoStock: statusData["Bajo Stock"] || 0,
+            agotados: statusData.Agotado || 0,
+            total: totalData.total || 0
         };
     } catch (error) {
         console.error('Error al obtener total de productos:', error);

@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-    baseUrl: "http://localhost:4000/api",
+    baseUrl: import.meta.env.VITE_API_URL || "http://localhost:4000/api",
     endpoints: {
         articles: "/getarticulos",
         totalCount: "/getTotalArticulos",
@@ -45,15 +45,9 @@ export const API_CONFIG = {
             registrar: "/ventas/registrar"
         },
         metricas: {
-            resumenFinanciero: {
-                mes: "/metricas/resumen-financiero/mes/:mes/:anio",
-                anio: "/metricas/resumen-financiero/anio/:anio",
-                categoria: "/metricas/ventas-categoria/mes/:mes/:anio",
-                categoriaAnio: "/metricas/ventas-categoria/anio/:anio"
-            },
-            indicadoresCliente: {
-                mes: "/metricas/indicadores-cliente/mes/:mes/:anio",
-                anio: "/metricas/indicadores-cliente/anio/:anio"
+            ventasCategoria: {
+                mes: "/metricas/ventas-categoria/mes/:mes/:anio",
+                anio: "/metricas/ventas-categoria/anio/:anio"
             },
             indicadoresCompletos: {
                 mes: "/metricas/indicadores-completos/mes/:mes/:anio",
@@ -69,6 +63,20 @@ export const API_CONFIG = {
         actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso",
         chat: "/chat",
         chatUsers: "/chat/users",
-        socketURL: "http://localhost:4000"
+        tendenciaVentasAnual: "/predictivo/tendencia-ventas/anual/:anio",
+        riesgoStockFuturo: "/predictivo/riesgo-stock/futuro/:periodo",
+        analisisInventario: "/analisis-inventario/analisis/:periodo"
+    },
+    // Socket URL dinámico basado en baseUrl
+    get socketURL() {
+        return this.baseUrl.replace('/api', '');
     }
 };
+
+// Debug: Ver qué URL se está usando
+console.log('🔧 API_CONFIG Debug:');
+console.log('- NODE_ENV:', import.meta.env.MODE);
+console.log('- VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('- baseUrl final:', API_CONFIG.baseUrl);
+console.log('- URL de login será:', `${API_CONFIG.baseUrl}/login`);
+console.log('- Entorno:', import.meta.env.MODE === 'production' ? 'PRODUCCIÓN' : 'DESARROLLO');

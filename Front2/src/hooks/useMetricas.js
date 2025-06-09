@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { 
-  fetchResumenFinancieroMes,
-  fetchResumenFinancieroAnio,
   fetchVentasPorCategoriaMes,
   fetchVentasPorCategoriaAnio,
   fetchIndicadoresCompletosMes,
@@ -29,49 +27,6 @@ export function useMetricas() {
     mes: new Date().getMonth() + 1,
     anio: new Date().getFullYear()
   });
-
-  /**
-   * Obtiene resumen financiero mensual
-   * @param {number} mes - Mes (1-12)
-   * @param {number} anio - Año
-   * @returns {Promise<Object>} Datos del resumen financiero
-   */
-  const obtenerResumenFinancieroMes = useCallback(async (mes, anio) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetchResumenFinancieroMes(mes, anio);
-      const data = response.data || response; // Extraer data si existe, sino usar respuesta completa
-      setResumenFinanciero(data);
-      return data;
-    } catch (err) {
-      setError('Error al obtener resumen financiero mensual: ' + err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  /**
-   * Obtiene resumen financiero anual
-   * @param {number} anio - Año
-   * @returns {Promise<Object>} Datos del resumen financiero
-   */
-  const obtenerResumenFinancieroAnio = useCallback(async (anio) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetchResumenFinancieroAnio(anio);
-      const data = response.data || response; // Extraer data si existe, sino usar respuesta completa
-      setResumenFinanciero(data);
-      return data;
-    } catch (err) {
-      setError('Error al obtener resumen financiero anual: ' + err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   /**
    * Obtiene ventas por categoría mensual
@@ -353,8 +308,6 @@ export function useMetricas() {
     periodoActual,
     
     // Funciones individuales
-    obtenerResumenFinancieroMes,
-    obtenerResumenFinancieroAnio,
     obtenerVentasPorCategoriaMes,
     obtenerVentasPorCategoriaAnio,
     obtenerIndicadoresCompletosMes,

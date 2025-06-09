@@ -16,22 +16,22 @@ import {
 } from '@ui5/webcomponents-react';
 import { useProveedores } from '../../hooks/useProveedores';
 
-const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => {
+const InventoryResumen = ({ activeCategory, setActiveCategory }) => {
   const { resumenCategorias, distribucionInventario, loading, error } = useProveedores();
 
-  // Función para obtener el color según el tipo y el tema
-  const getColorForType = (type, isDark) => {
+  // Función para obtener el color según el tipo
+  const getColorForType = (type) => {
     switch (type) {
       case 'Success':
-        return isDark ? '#36b37e' : '#107e3e';
+        return '#107e3e';
       case 'Information':
-        return isDark ? '#4c9aff' : '#0a6ed1';
+        return '#0a6ed1';
       case 'Warning':
-        return isDark ? '#ffab00' : '#e9730c';
+        return '#e9730c';
       case 'Error':
-        return isDark ? '#ef5350' : '#bb0000';
+        return '#bb0000';
       default:
-        return isDark ? '#a0a0a0' : '#6a6d70';
+        return '#6a6d70';
     }
   };
 
@@ -52,10 +52,10 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
   };
 
   // Función para obtener el color del indicador de stock bajo
-  const getStockAlertColor = (stockBajo, isDark) => {
-    if (stockBajo > 10) return isDark ? '#ef5350' : '#bb0000';
-    if (stockBajo > 5) return isDark ? '#ffab00' : '#e9730c';
-    return isDark ? '#4c9aff' : '#0a6ed1';
+  const getStockAlertColor = (stockBajo) => {
+    if (stockBajo > 10) return '#ef5350';
+    if (stockBajo > 5) return '#ffab00';
+    return '#4c9aff';
   };
 
   if (loading) {
@@ -63,7 +63,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
       <Card 
         style={{ 
           marginTop: '1.5rem',
-          backgroundColor: isDarkMode ? '#2d2d2d' : '#ffffff',
+          backgroundColor: 'var(--sapBackgroundColor)',
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.07)',
           borderRadius: '0.5rem',
           border: 'none',
@@ -79,7 +79,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
           style={{ height: '200px' }}
         >
           <BusyIndicator active size="Medium" />
-          <Text style={{ marginLeft: '1rem', color: isDarkMode ? '#e0e0e0' : 'inherit' }}>
+          <Text style={{ marginLeft: '1rem', color: 'var(--sapTextColor)' }}>
             Cargando resumen de inventario...
           </Text>
         </FlexBox>
@@ -92,7 +92,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
       <Card 
         style={{ 
           marginTop: '1.5rem',
-          backgroundColor: isDarkMode ? '#2d2d2d' : '#ffffff',
+          backgroundColor: 'var(--sapBackgroundColor)',
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.07)',
           borderRadius: '0.5rem',
           border: 'none',
@@ -107,10 +107,10 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
           alignItems={FlexBoxAlignItems.Center}
           style={{ height: '200px', flexDirection: 'column', gap: '1rem' }}
         >
-          <Text style={{ color: isDarkMode ? '#ff6b6b' : '#d63031', fontSize: '1.125rem' }}>
+          <Text style={{ color: 'var(--sapNegativeTextColor)', fontSize: '1.125rem' }}>
             Error al cargar el resumen de inventario
           </Text>
-          <Text style={{ color: isDarkMode ? '#a0a0a0' : '#6a6d70', fontSize: '0.875rem' }}>
+          <Text style={{ color: 'var(--sapTextColor)', fontSize: '0.875rem' }}>
             {error}
           </Text>
         </FlexBox>
@@ -122,12 +122,12 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
     <Card 
       style={{ 
         marginTop: '1.5rem',
-        backgroundColor: isDarkMode ? '#2d2d2d' : '#ffffff',
+        backgroundColor: 'var(--sapBackgroundColor)',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.07)',
         borderRadius: '0.5rem',
         border: 'none',
         overflow: 'hidden',
-        padding: '1.5rem',
+        padding: '1rem',
         width: '100%',
         marginBottom: '3rem'
       }}
@@ -142,7 +142,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
           selectedIndex={activeCategory}
           style={{ 
             marginBottom: '1.5rem', 
-            borderBottom: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`
+            borderBottom: '1px solid var(--sapContent_ForegroundBorderColor)'
           }}
           fixed
         >
@@ -160,10 +160,10 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
       </div>
 
       {activeCategory === 0 && (
-        <div style={{ marginTop: '1.5rem', overflowX: 'auto' }}>
+        <div style={{ marginTop: '1.5rem', overflowX: 'auto', paddingLeft: '1rem', paddingRight: '1rem', marginTop: '-0.7rem' }}>
           <Title level="H5" style={{ 
             marginBottom: '1rem', 
-            color: isDarkMode ? '#e0e0e0' : '#32363a', 
+            color: 'var(--sapTextColor)', 
             fontSize: '1.125rem',
             fontWeight: '600'
           }}>
@@ -171,15 +171,15 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
           </Title>
           
           {resumenCategorias?.data?.length > 0 ? (
-            <FlexBox wrap style={{ gap: '1.5rem', alignItems: 'stretch', minWidth: '900px', justifyContent: 'space-between' }}>
+            <FlexBox wrap style={{ gap: '1.5rem', alignItems: 'stretch', minWidth: '900px', justifyContent: 'space-between', padding: '1rem'}}>
               {resumenCategorias.data.map((categoria, index) => (
                 <div 
                   key={`categoria-${index}`}
                   style={{ 
                     padding: '1.5rem',
                     borderRadius: '0.5rem',
-                    backgroundColor: isDarkMode ? '#3d3d3d' : '#ffffff',
-                    border: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+                    backgroundColor: 'var(--sapBackgroundColor)',
+                    border: `1px solid var(--sapContent_ForegroundBorderColor)`,
                     boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
                     flexGrow: 1,
                     flexBasis: 'calc(50% - 1.5rem)',
@@ -210,7 +210,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
                       </Badge>
                     </FlexBox>
                     
-                    <Text style={{ fontSize: '0.875rem', color: isDarkMode ? '#a0a0a0' : '#6a6d70', marginBottom: '1rem' }}>
+                    <Text style={{ fontSize: '0.875rem', color: 'var(--sapTextColor)', marginBottom: '1rem' }}>
                       Existencia total: {categoria.totalExistencia} unidades
                     </Text>
                   </div>
@@ -220,19 +220,19 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
                       <div style={{ flex: 1 }}>
                         <Text style={{ 
                           fontSize: '0.75rem', 
-                          color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                          color: 'var(--sapTextColor)',
                           marginBottom: '0.25rem'
                         }}>
                           Proveedores
                         </Text>
                         <FlexBox alignItems="Center" style={{ gap: '0.375rem' }}>
                           <Icon name="supplier" style={{ 
-                            color: isDarkMode ? '#4c9aff' : '#0854a0',
+                            color: getColorForType('Success'),
                             fontSize: '1rem'
                           }} />
                           <Text style={{ 
                             fontWeight: '600', 
-                            color: isDarkMode ? '#4c9aff' : '#0854a0',
+                            color: getColorForType('Success'),
                             fontSize: '0.875rem'
                           }}>
                             {categoria.numeroProveedores} activos
@@ -242,19 +242,19 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
                       <div style={{ flex: 1 }}>
                         <Text style={{ 
                           fontSize: '0.75rem', 
-                          color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                          color: 'var(--sapTextColor)',
                           marginBottom: '0.25rem'
                         }}>
                           Stock Bajo
                         </Text>
                         <FlexBox alignItems="Center" style={{ gap: '0.375rem' }}>
                           <Icon name="alert" style={{ 
-                            color: getStockAlertColor(categoria.productosStockBajo, isDarkMode),
+                            color: getStockAlertColor(categoria.productosStockBajo),
                             fontSize: '1rem'
                           }} />
                           <Text style={{ 
                             fontWeight: '600',
-                            color: getStockAlertColor(categoria.productosStockBajo, isDarkMode),
+                            color: getStockAlertColor(categoria.productosStockBajo),
                             fontSize: '0.875rem'
                           }}>
                             {categoria.productosStockBajo} productos
@@ -266,26 +266,26 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
                     <div style={{ 
                       marginTop: '1rem', 
                       paddingTop: '1rem', 
-                      borderTop: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}` 
+                      borderTop: `1px solid var(--sapContent_ForegroundBorderColor)` 
                     }}>
                       <FlexBox style={{ gap: '1rem' }}>
                         <div style={{ flex: 1 }}>
                           <Text style={{ 
                             fontSize: '0.75rem', 
-                            color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                            color: 'var(--sapTextColor)',
                             marginBottom: '0.25rem'
                           }}>
                             Valor Costo
                           </Text>
                           <FlexBox alignItems="Center" style={{ gap: '0.375rem' }}>
                             <Icon name="money-bills" style={{ 
-                              color: isDarkMode ? '#36b37e' : '#107e3e',
+                              color: getColorForType('Success'),
                               fontSize: '1rem'
                             }} />
                             <Text style={{ 
                               fontWeight: '600', 
                               fontSize: '0.875rem',
-                              color: isDarkMode ? '#36b37e' : '#107e3e'
+                              color: getColorForType('Success')
                             }}>
                               {formatMoney(categoria.valorInventarioCosto)}
                             </Text>
@@ -294,20 +294,20 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
                         <div style={{ flex: 1 }}>
                           <Text style={{ 
                             fontSize: '0.75rem', 
-                            color: isDarkMode ? '#a0a0a0' : '#6a6d70',
+                            color: 'var(--sapTextColor)',
                             marginBottom: '0.25rem'
                           }}>
                             Valor Venta
                           </Text>
                           <FlexBox alignItems="Center" style={{ gap: '0.375rem' }}>
                             <Icon name="sales-document" style={{ 
-                              color: isDarkMode ? '#4c9aff' : '#0854a0',
+                              color: getColorForType('Information'),
                               fontSize: '1rem'
                             }} />
                             <Text style={{ 
                               fontWeight: '600', 
                               fontSize: '0.875rem',
-                              color: isDarkMode ? '#4c9aff' : '#0854a0'
+                              color: getColorForType('Information')
                             }}>
                               {formatMoney(categoria.valorInventarioVenta)}
                             </Text>
@@ -325,7 +325,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
               alignItems={FlexBoxAlignItems.Center}
               style={{ height: '150px', flexDirection: 'column', gap: '1rem' }}
             >
-              <Text style={{ color: isDarkMode ? '#a0a0a0' : '#6a6d70', fontSize: '1rem' }}>
+              <Text style={{ color: 'var(--sapTextColor)', fontSize: '1rem' }}>
                 No hay datos de categorías disponibles
               </Text>
             </FlexBox>
@@ -334,10 +334,10 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
       )}
       
       {activeCategory === 1 && (
-        <div style={{ marginTop: '1.5rem', overflowX: 'auto' }}>
+        <div style={{ marginTop: '1.5rem', overflowX: 'auto', paddingLeft: '1rem', paddingRight: '1rem', marginTop: '-0.7rem'}}>
           <Title level="H5" style={{ 
             marginBottom: '1rem', 
-            color: isDarkMode ? '#e0e0e0' : '#32363a', 
+            color: 'var(--sapTextColor)', 
             fontSize: '1.125rem',
             fontWeight: '600'
           }}>
@@ -345,15 +345,15 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
           </Title>
           
           {distribucionInventario?.data?.length > 0 ? (
-            <FlexBox wrap style={{ gap: '1.5rem', alignItems: 'stretch', minWidth: '900px', justifyContent: 'space-between' }}>
+            <FlexBox wrap style={{ gap: '1.5rem', alignItems: 'stretch', minWidth: '900px', justifyContent: 'space-between', padding: '1rem' }}>
               {distribucionInventario.data.map((distribucion, index) => (
                 <div 
                   key={`distribucion-${index}`}
                   style={{ 
                     padding: '1.5rem',
                     borderRadius: '0.5rem',
-                    backgroundColor: isDarkMode ? '#3d3d3d' : '#ffffff',
-                    border: `1px solid ${isDarkMode ? '#444444' : '#e0e0e0'}`,
+                    backgroundColor: 'var(--sapBackgroundColor)',
+                    border: `1px solid var(--sapContent_ForegroundBorderColor)`,
                     boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
                     flexGrow: 1,
                     flexBasis: 'calc(50% - 1.5rem)',
@@ -386,7 +386,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
                       </Badge>
                     </FlexBox>
                     
-                    <Text style={{ fontSize: '0.875rem', color: isDarkMode ? '#a0a0a0' : '#6a6d70', marginBottom: '1rem' }}>
+                    <Text style={{ fontSize: '0.875rem', color: 'var(--sapTextColor)', marginBottom: '1rem' }}>
                       Participación en el inventario general
                     </Text>
                   </div>
@@ -396,20 +396,20 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
                       marginBottom: '1rem',
                       padding: '1rem',
                       borderRadius: '0.25rem',
-                      backgroundColor: isDarkMode ? '#262626' : '#f8f9fa',
-                      border: `1px solid ${isDarkMode ? '#404040' : '#e9ecef'}`
+                      backgroundColor: 'var(--sapBackgroundColor)',
+                      border: `1px solid var(--sapContent_ForegroundBorderColor)`
                     }}>
                       <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween} alignItems="Center" style={{ marginBottom: '0.5rem' }}>
                         <Text style={{ 
                           fontSize: '0.75rem', 
-                          color: isDarkMode ? '#a0a0a0' : '#6a6d70'
+                          color: 'var(--sapTextColor)'
                         }}>
                           Porcentaje de Participación
                         </Text>
                         <Text style={{ 
                           fontWeight: '700',
                           fontSize: '1.25rem',
-                          color: isDarkMode ? '#4c9aff' : '#0854a0'
+                          color: getColorForType('Information')
                         }}>
                           {distribucion.porcentajeParticipacion.toFixed(1)}%
                         </Text>
@@ -418,17 +418,17 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
                       <div style={{
                         width: '100%',
                         height: '8px',
-                        backgroundColor: isDarkMode ? '#404040' : '#e9ecef',
+                        backgroundColor: 'var(--sapContent_ForegroundBorderColor)',
                         borderRadius: '4px',
                         overflow: 'hidden'
                       }}>
                         <div style={{
                           width: `${Math.min(distribucion.porcentajeParticipacion, 100)}%`,
                           height: '100%',
-                          backgroundColor: index % 4 === 0 ? (isDarkMode ? '#36b37e' : '#107e3e') : 
-                                          index % 4 === 1 ? (isDarkMode ? '#4c9aff' : '#0854a0') : 
-                                          index % 4 === 2 ? (isDarkMode ? '#ffab00' : '#e9730c') : 
-                                          (isDarkMode ? '#ef5350' : '#bb0000'),
+                          backgroundColor: index % 4 === 0 ? getColorForType('Success') : 
+                                          index % 4 === 1 ? getColorForType('Information') : 
+                                          index % 4 === 2 ? getColorForType('Warning') : 
+                                          getColorForType('Error'),
                           borderRadius: '4px',
                           transition: 'width 0.3s ease'
                         }} />
@@ -441,7 +441,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
                         <Text style={{ 
                           fontSize: '0.875rem', 
                           fontWeight: '600',
-                          color: isDarkMode ? '#e0e0e0' : '#32363a',
+                          color: 'var(--sapTextColor)',
                         }}>
                           {distribucion.cantidadProveedores} {distribucion.cantidadProveedores === 1 ? 'proveedor' : 'proveedores'}
                         </Text>
@@ -457,7 +457,7 @@ const InventoryResumen = ({ activeCategory, setActiveCategory, isDarkMode }) => 
               alignItems={FlexBoxAlignItems.Center}
               style={{ height: '150px', flexDirection: 'column', gap: '1rem' }}
             >
-              <Text style={{ color: isDarkMode ? '#a0a0a0' : '#6a6d70', fontSize: '1rem' }}>
+              <Text style={{ color: 'var(--sapTextColor)', fontSize: '1rem' }}>
                 No hay datos de distribución disponibles
               </Text>
             </FlexBox>

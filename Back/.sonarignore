@@ -1,0 +1,10 @@
+# Ignorar archivos de cobertura
+coverage/lcov-report/**/*.html
+
+# Ignorar otros archivos de cobertura
+coverage/**/*.json
+coverage/**/*.txt
+
+# Ignorar Faker
+Faker/**
+**/Faker/** 
