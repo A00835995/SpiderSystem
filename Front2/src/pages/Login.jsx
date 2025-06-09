@@ -4,9 +4,6 @@ import { useUI5Theme } from "../components/UI5ThemeProvider";
 import { useAuth } from "../hooks/useAuth";
 import { API_CONFIG } from "../config/api";
 import {
-  Card,
-  Form,
-  FormItem,
   Input,
   Button,
   FlexBox,
@@ -15,12 +12,8 @@ import {
   FlexBoxJustifyContent,
   Title,
   Text,
-  Icon,
   Link,
-  FormGroup,
   MessageStrip,
-  IllustratedMessage,
-  IllustrationMessageType,
 } from "@ui5/webcomponents-react";
 import "@ui5/webcomponents-icons/dist/log.js";
 import "@ui5/webcomponents-icons/dist/message-information.js";

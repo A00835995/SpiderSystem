@@ -2,11 +2,56 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { usePermisos } from '../contexts/PermisosContext';
 
+// Función para verificar si un token JWT es válido estructuralmente
+const isTokenValid = (token) => {
+  if (!token) return false;
+  
+  // Un token JWT debe tener 3 partes separadas por puntos
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+  
+  try {
+    // Intentar decodificar el payload (segunda parte)
+    const payload = JSON.parse(atob(parts[1]));
+    
+    // Verificar si el token ha expirado
+    if (payload.exp && payload.exp * 1000 < Date.now()) {
+      console.error('❌ Token expirado:', new Date(payload.exp * 1000));
+      return false;
+    }
+    
+    return true;
+  } catch (e) {
+    console.error('❌ Error al analizar el token:', e);
+    return false;
+  }
+};
+
 const ProtectedRoute = ({ children }) => {
   const { tienePermiso, loading, userRole } = usePermisos();
   const location = useLocation();
   const [isChecking, setIsChecking] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
+
+  // Verificar el token al montar el componente
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    
+    // Si el token no es válido, redireccionar al login
+    if (!isTokenValid(token)) {
+      // Limpiar datos de autenticación
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Guardar la ruta actual para redireccionar después del login
+      if (location.pathname !== '/') {
+        localStorage.setItem('redirectAfterLogin', location.pathname);
+      }
+      
+      // Forzar redirección al login
+      window.location.href = '/';
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const checkPermission = async () => {

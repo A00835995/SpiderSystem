@@ -10,6 +10,7 @@ import {
   Icon,
   ObjectStatus,
   ValueState,
+  Avatar,
   Label
 } from '@ui5/webcomponents-react';
 import { useNavigate } from 'react-router-dom';

@@ -30,7 +30,6 @@ import "@ui5/webcomponents-icons/dist/circle-task.js";
 const ALERTS_PER_PAGE = 10;
 
 export default function Alertas() {
-  const { isDarkMode } = useUI5Theme();
   const [allAlerts, setAllAlerts] = useState([]);
   const [filteredAlerts, setFilteredAlerts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
