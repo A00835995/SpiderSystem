@@ -33,7 +33,7 @@ export default function InventoryHeader() {
           color: "var(--sapTextColor)",
           padding: "0.25rem 0"
         }}>
-          Inventario
+          Análisis de Inventario
         </Title>
       </div>
       <div style={{

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAnalisisInv } from '../hooks/useAnalisisInv';
 import InventoryTable from "../components/Inventario/InventoryTable";
-import InventoryHeader from "../components/Inventario/InventoryHeader";
+import InventoryHeader from "../components/AnalisisInv/AnalisisInvHeader";
 import { downloadCSV } from "../utils/csvUtils";
 
 import {
