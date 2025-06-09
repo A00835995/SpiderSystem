@@ -53,6 +53,8 @@ const metricasRoutes = require('./Routes/metricasRoutes');
 const chatRoutes = require('./Routes/chatRoutes');
 const ordenesProveedorRoutes = require('./Routes/ordenesProveedor');
 const ventasRoutes = require('./Routes/ventasRoutes');
+const predictivoRoutes = require('./Routes/predictivoRoutes');
+const analisisInvRoutes = require('./Routes/analisisInvRoutes');
 const { connectToHANA } = require('./Config/confDB');
 
 // Middleware
@@ -75,6 +77,8 @@ app.use('/api/metricas', metricasRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/ordenes-proveedor', ordenesProveedorRoutes);
 app.use('/api/ventas', ventasRoutes);
+app.use('/api/predictivo', predictivoRoutes);
+app.use('/api/analisis-inventario', analisisInvRoutes);
 
 //El servidor link
 const PORT = process.env.PORT || 4000;

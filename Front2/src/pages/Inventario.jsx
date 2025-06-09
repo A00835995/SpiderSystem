@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useInventory } from "../hooks/useInventory";
 
+import InventoryHeader from "../components/Inventario/InventoryHeader";
 import InventoryStats from "../components/Inventario/InventoryStats";
 import InventoryFilters from "../components/Inventario/InventoryFilters";
 import InventoryTable from "../components/Inventario/InventoryTable";
@@ -316,13 +317,17 @@ export default function Inventario() {
   
   
   return (
-    
     <>
-      <DynamicPageTitle
-        header={<Title>Inventario</Title>}
-        subHeader={<Text>Gestión y control de inventario de productos</Text>}
-        className={styles.pageHeader}
-      />
+      <InventoryHeader />
+    {/* (Opcional) Subtítulo visual */}
+    <div style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+      <Text style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--sapTextColor)' }}>
+        Inventario
+      </Text>
+      <Text style={{ fontSize: '1rem', color: 'var(--sapContent_LabelColor)' }}>
+        Gestión y control de inventario de productos
+      </Text>
+    </div>
 
 {notifications.map(notif => (
   <MessageStrip
@@ -342,7 +347,7 @@ export default function Inventario() {
 ))}
 
       
-      <DynamicPageHeader className={styles.pageHeader}>
+      
         <FlexBox 
           justifyContent={FlexBoxJustifyContent.SpaceBetween}
           alignItems={FlexBoxAlignItems.Center}
@@ -373,11 +378,7 @@ export default function Inventario() {
             </Button>
           </FlexBox>
         </FlexBox>
-      </DynamicPageHeader>
 
-      
-
-      
       <div className={styles.pageContainer}>
         {/* Estadísticas de inventario */}
         <InventoryStats
@@ -385,8 +386,6 @@ export default function Inventario() {
           styles={styles}
         />
 
-
-        
         {/* Filtros */}
         <InventoryFilters
           searchQuery={searchQuery}

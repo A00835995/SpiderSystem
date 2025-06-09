@@ -129,16 +129,31 @@ async function generarOrdenesML(targetOrdenes = 800) {
   shuffled.slice(Math.floor(total * 0.2), Math.floor(total * 0.7)).forEach(art => demandaMap.set(art.ARTIID, 'media'));
   shuffled.slice(Math.floor(total * 0.7)).forEach(art => demandaMap.set(art.ARTIID, 'baja'));
 
-    const idOrden = await new Promise((resolve, reject) => {
-      conn.exec(insertOrdenSQL, (err) => {
-        if (err) return reject(err instanceof Error ? err : new Error(String(err)));
+  // Generar fechas de órdenes (último año completo - distribuidas equitativamente)
+  const fechasDisponibles = getOrderScheduleDates(12, 1.5);
+  let ordenesGeneradas = 0;
+  let ordenesPorMes = {};
+  let ordenesPorProveedor = {};
 
-        // Obtener el último IDORDEN generado
-        conn.exec(`SELECT MAX("IDORDEN") AS "IDORDEN" FROM "DBADMIN"."ORDEN"`, (err2, rows) => {
-          if (err2) return reject(err2 instanceof Error ? err2 : new Error(String(err2)));
-          resolve(rows[0].IDORDEN);
-        });
-      });
+  console.log(`📅 Fechas disponibles: ${fechasDisponibles.length}`);
+  console.log('🚀 Iniciando generación de órdenes...\n');
+
+  // Generar órdenes
+  for (const fecha of fechasDisponibles) {
+    if (ordenesGeneradas >= targetOrdenes) break;
+
+    const fechaObj = new Date(fecha);
+    const mesKey = `${fechaObj.getFullYear()}-${String(fechaObj.getMonth() + 1).padStart(2, '0')}`;
+    
+    if (!ordenesPorMes[mesKey]) ordenesPorMes[mesKey] = 0;
+
+    // Determinar cuántas órdenes generar este día (1-3 órdenes por día)
+    const ordenesHoy = faker.number.int({ min: 1, max: 3 });
+    
+    for (let o = 0; o < ordenesHoy && ordenesGeneradas < targetOrdenes; o++) {
+      // Seleccionar proveedor aleatorio
+      const idProv = faker.helpers.arrayElement(proveedores);
+      const articulosParaOrden = articulosPorProveedor[idProv];
 
       if (articulosParaOrden.length === 0) continue;
 
@@ -166,16 +181,6 @@ async function generarOrdenesML(targetOrdenes = 800) {
       if (ordenesGeneradas % 50 === 0) {
         console.log(`📈 Progreso: ${ordenesGeneradas}/${targetOrdenes} órdenes generadas`);
       }
-
-      await new Promise((resolve, reject) => {
-        conn.exec(insertArt, (err1) => {
-          if (err1) return reject(err1 instanceof Error ? err1 : new Error(String(err1)));
-          conn.exec(insertRecibo, (err2) => {
-            if (err2) return reject(err2 instanceof Error ? err2 : new Error(String(err2)));
-            resolve();
-          });
-        });
-      });
     }
   }
 

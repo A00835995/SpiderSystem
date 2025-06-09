@@ -101,51 +101,36 @@ async function generarVentasML(targetVentas = 3000) {
   const { altaDemanda, mediaDemanda, bajaDemanda } = classifyArticlesByDemand(articulos);
   console.log(`📊 Distribución: Alta (${altaDemanda.length}), Media (${mediaDemanda.length}), Baja (${bajaDemanda.length})`);
 
-  // Generar fechas progresivas (último año)
+  // Generar fechas progresivas (último año completo - distribuidas equitativamente)
   const fechasDisponibles = getProgressiveDates(12, 365);
   let ventasGeneradas = 0;
   let ventasPorMes = {};
 
-    const idVenta = await new Promise((resolve, reject) => {
-      conn.exec(insertVentaSQL, (err) => {
-        if (err) return reject(err instanceof Error ? err : new Error(String(err)));
+  console.log(`📅 Fechas disponibles: ${fechasDisponibles.length}`);
+  console.log('🚀 Iniciando generación de ventas...\n');
 
-        // Obtener el último IdVenta generado
-        conn.exec(`SELECT MAX("IdVenta") AS "IdVenta" FROM "DBADMIN"."VENTA"`, (err2, rows) => {
-          if (err2) return reject(err2 instanceof Error ? err2 : new Error(String(err2)));
-          resolve(rows[0].IdVenta);
-        });
-      });
-    });
+  // Generar ventas día por día
+  for (const fecha of fechasDisponibles) {
+    if (ventasGeneradas >= targetVentas) break;
 
-    // Elegir de 1 a 10 artículos para la venta
-    const numArticulos = faker.number.int({ min: 1, max: 5 });
-    const articulosSeleccionados = faker.helpers.shuffle(articulos).slice(0, numArticulos);
+    const fechaObj = new Date(fecha);
+    const dayOfWeek = fechaObj.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const mesKey = `${fechaObj.getFullYear()}-${String(fechaObj.getMonth() + 1).padStart(2, '0')}`;
+    
+    if (!ventasPorMes[mesKey]) ventasPorMes[mesKey] = 0;
 
-    for (const art of articulosSeleccionados) {
-      const cantidad = faker.number.int({ min: 1, max: 5 }); // Cantidades menores para ventas
-      
-      for (let v = 0; v < ventasHoy && ventasGeneradas < targetVentas; v++) {
-        await generarVentaIndividual(conn, art, fecha, fileContent, 'alta');
-        ventasGeneradas++;
-        ventasPorMes[mesKey]++;
+    // Procesar artículos de alta demanda
+    for (const art of altaDemanda) {
+      if (Math.random() < 0.9) { // 90% probabilidad de venta diaria
+        const ventasHoy = getVentasPorDia('alta', dayOfWeek, isWeekend);
+        
+        for (let v = 0; v < ventasHoy && ventasGeneradas < targetVentas; v++) {
+          await generarVentaIndividual(conn, art, fecha, fileContent, 'alta');
+          ventasGeneradas++;
+          ventasPorMes[mesKey]++;
+        }
       }
-      
-      const precioCompra = parseFloat(art.ARTPRECIOCOMPRA);
-      const precioIVA = +(precioVenta * 1.16).toFixed(2);
-
-      const insertVentaEnc = `
-        INSERT INTO "DBADMIN"."VentaEnc" 
-        ("IdVenta", "ARTIID", "VtaCant", "VtaPRECIOCOMP", "VtaPRECIOIVA", "ELIMINADO", "FECMOVTO")
-        VALUES (${idVenta}, ${art.ARTIID}, ${cantidad}, ${precioCompra.toFixed(2)}, ${precioIVA}, 0, '${fecMovto}');
-      `;
-
-      await new Promise((resolve, reject) => {
-        conn.exec(insertVentaEnc, (err) => {
-          if (err) return reject(err instanceof Error ? err : new Error(String(err)));
-          resolve();
-        });
-      });
     }
 
     // Procesar artículos de media demanda

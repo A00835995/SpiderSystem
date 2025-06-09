@@ -62,7 +62,10 @@ export const API_CONFIG = {
         consultarOrdenCompra: "/ordenes-proveedor/consultar",
         actualizarOrdenAProceso: "/ordenes-proveedor/actualizar-a-proceso",
         chat: "/chat",
-        chatUsers: "/chat/users"
+        chatUsers: "/chat/users",
+        tendenciaVentasAnual: "/predictivo/tendencia-ventas/anual/:anio",
+        riesgoStockFuturo: "/predictivo/riesgo-stock/futuro/:periodo",
+        analisisInventario: "/analisis-inventario/analisis/:periodo"
     },
     // Socket URL dinámico basado en baseUrl
     get socketURL() {

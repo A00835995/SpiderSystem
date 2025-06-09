@@ -1,0 +1,61 @@
+📅 VENTAS POR MES:
+undefined: undefined ventas, undefined unidades (promedio: NaN)
+undefined: undefined ventas, undefined unidades (promedio: NaN)
+
+🔥 TOP 20 PRODUCTOS POR DEMANDA:
+1. ID:4 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+2. ID:58 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+3. ID:56 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+4. ID:59 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+5. ID:63 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+6. ID:34 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+7. ID:51 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+8. ID:42 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+9. ID:22 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+10. ID:21 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+11. ID:8 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+12. ID:5 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+13. ID:28 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+14. ID:33 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+15. ID:47 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+16. ID:62 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+17. ID:65 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+18. ID:10 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+19. ID:57 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+20. ID:45 - 🟢 BAJA
+   └ Vendido: undefined unidades en undefined ventas (Promedio: NaN)
+
+🏢 ÓRDENES POR PROVEEDOR:
+Proveedor 2: undefined órdenes, undefined unidades, undefined productos diferentes
+Proveedor 4: undefined órdenes, undefined unidades, undefined productos diferentes
+Proveedor 3: undefined órdenes, undefined unidades, undefined productos diferentes
+Proveedor 1: undefined órdenes, undefined unidades, undefined productos diferentes
+
+📅 PATRONES POR DÍA DE LA SEMANA:
+Lunes: 15 ventas (promedio: 2.33 unidades)
+Miércoles: 119 ventas (promedio: 4.34 unidades)
+Jueves: 135 ventas (promedio: 6.39 unidades)
+Viernes: 2 ventas (promedio: 2.00 unidades)
+
+⚠️ PRODUCTOS CON RIESGO DE AGOTAMIENTO (último mes):
+ID:43
+   └ Vendido: 50 unidades, Última orden hace 69 días

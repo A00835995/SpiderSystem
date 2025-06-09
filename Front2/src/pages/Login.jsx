@@ -104,7 +104,7 @@ export default function Login() {
   };
 
   const rightPanelStyle = {
-    backgroundColor: theme ? "#529cf7" : "#f0f4f8",
+    backgroundColor: theme ? "#E4E8EB" : "#f0f4f8",
     color: theme ? "#e2e8f0" : "#475569",
     display: "flex",
     flexDirection: "column",
@@ -123,7 +123,6 @@ export default function Login() {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: theme ? "rgba(26, 32, 54, 0.7)" : "rgba(0, 0, 0, 0.05)",
     zIndex: 1
   };
 
@@ -339,21 +338,11 @@ export default function Login() {
             <Title level="H1" style={{ 
               fontSize: "2.5rem", 
               marginBottom: "1rem", 
-              color: theme ? "white" : "#1e2a4a",
+              color: theme ? "black" : "#1e2a4a",
               textShadow: theme ? "none" : "0 1px 2px rgba(0, 0, 0, 0.05)"
             }}>
-              ¡Bienvenido de nuevo!
+              SPIDER-SYSTEM
             </Title>
-            <Text style={{ 
-              fontSize: "1.25rem", 
-              maxWidth: "80%", 
-              margin: "0 auto", 
-              color: theme ? "#cbd5e0" : "#334155",
-              lineHeight: "1.6",
-              textShadow: theme ? "none" : "0 1px 2px rgba(0, 0, 0, 0.03)"
-            }}>
-              Inicia sesión para continuar tus conversaciones y ponerte al día con tus mensajes.
-            </Text>
           </div>
         </FlexBox>
       </div>
