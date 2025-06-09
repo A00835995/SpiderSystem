@@ -25,19 +25,19 @@ console.log('🌐 allowedOrigins:', allowedOrigins);
 
 const corsOptions = {
     origin: function (origin, callback) {
-        // Permitir requests sin origin (ej. aplicaciones móviles)
-        if (!origin) return callback(null, true);
-        
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('No permitido por política CORS'));
-        }
+      console.log('🌍 CORS origin detected:', origin);
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error('❌ Bloqueado por CORS:', origin);
+        callback(new Error('No permitido por política CORS'));
+      }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-};
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  };
+  
 
 const io = new Server(server, {
     cors: corsOptions
