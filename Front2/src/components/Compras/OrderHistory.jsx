@@ -42,16 +42,24 @@ const OrderHistory = ({ onClose }) => {
 
   // Función para filtrar las órdenes según el estado seleccionado
   const filterOrders = () => {
+    let filtered;
+    
     if (selectedFilter === "todos") {
-      setFilteredOrders(orderHistory);
-      return;
+      filtered = [...orderHistory];
+    } else {
+      filtered = orderHistory.filter(order => {
+        const normalizedStatus = order.estado.toLowerCase().replace(/ /g, '_');
+        return normalizedStatus === selectedFilter;
+      });
     }
-
-    const filtered = orderHistory.filter(order => {
-      const normalizedStatus = order.estado.toLowerCase().replace(/ /g, '_');
-      return normalizedStatus === selectedFilter;
+    
+    // Ordenar por número de orden (de mayor a menor)
+    filtered.sort((a, b) => {
+      const idA = parseInt(a.id, 10) || 0;
+      const idB = parseInt(b.id, 10) || 0;
+      return idB - idA; // Orden descendente (mayor a menor)
     });
-
+    
     setFilteredOrders(filtered);
   };
 
@@ -74,6 +82,13 @@ const OrderHistory = ({ onClose }) => {
             metodoPago: "Crédito Corporativo"
           }
         }));
+        
+        // Ordenar las órdenes por ID (de mayor a menor) antes de guardarlas
+        formattedOrders.sort((a, b) => {
+          const idA = parseInt(a.id, 10) || 0;
+          const idB = parseInt(b.id, 10) || 0;
+          return idB - idA; // Orden descendente (mayor a menor)
+        });
         
         setOrderHistory(formattedOrders);
       } else {
