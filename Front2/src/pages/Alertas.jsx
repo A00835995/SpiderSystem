@@ -110,38 +110,44 @@ export default function Alertas() {
   
   // Filtrar alertas
   useEffect(() => {
-    // Siempre empezar con una copia limpia de todas las alertas
-    let filtered = [...allAlerts];
-    
+    // Resetear la página actual siempre que cambie el filtro
     if (selectedFilter !== "all") {
-      filtered = allAlerts.filter(alert => {
+      const filtered = allAlerts.filter(alert => {
         if (selectedFilter === "success") {
           return alert.isResolved;
         } else {
           return alert.type === selectedFilter && !alert.isResolved;
         }
       });
+      setFilteredAlerts(filtered);
+    } else {
+      setFilteredAlerts([...allAlerts]);
     }
     
-    // Limpiar las alertas filtradas antes de establecer las nuevas
-    setFilteredAlerts([]);
-    // Luego establecer las alertas filtradas
-    setFilteredAlerts(filtered);
+    // Siempre volver a la primera página cuando cambian los filtros
     setCurrentPage(1);
   }, [allAlerts, selectedFilter]);
   
   // Obtener alertas para la página actual
   const currentAlerts = useMemo(() => {
+    // Asegurarnos de que estamos trabajando con una copia completamente nueva del array
+    const alertsCopy = JSON.parse(JSON.stringify(filteredAlerts));
     const startIndex = (currentPage - 1) * ALERTS_PER_PAGE;
-    return filteredAlerts.slice(startIndex, startIndex + ALERTS_PER_PAGE);
-  }, [filteredAlerts, currentPage]);
+    const endIndex = startIndex + ALERTS_PER_PAGE;
+    
+    return alertsCopy.slice(startIndex, endIndex);
+  }, [filteredAlerts, currentPage, ALERTS_PER_PAGE]);
   
   // Calcular total de páginas
   const totalPages = Math.ceil(filteredAlerts.length / ALERTS_PER_PAGE);
   
   // Manejadores de eventos
   const handlePageChange = (event) => {
-    setCurrentPage(event.detail.page);
+    // Guardamos la página a la que queremos navegar
+    const newPage = event.detail.page;
+    
+    // Actualizamos la página actual
+    setCurrentPage(newPage);
   };
 
   const handleFilterChange = (newFilter) => {
@@ -191,6 +197,7 @@ export default function Alertas() {
 
       <div style={styles.alertList}>
         <AlertList
+          key={`alert-list-${currentPage}-${selectedFilter}`}
           alerts={currentAlerts}
           isLoading={isLoading}
                   currentPage={currentPage}

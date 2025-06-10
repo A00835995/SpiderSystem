@@ -56,7 +56,7 @@ export default function AlertList({
   return (
     <>
       <Text style={{ marginBottom: "1rem" }}>
-        Mostrando {alerts.length} alertas
+        Mostrando {alerts.length} {alerts.length === 1 ? "alerta" : "alertas"} (Página {currentPage} de {totalPages})
       </Text>
       
       <List>

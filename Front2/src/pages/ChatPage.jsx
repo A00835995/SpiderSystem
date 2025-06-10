@@ -32,55 +32,6 @@ const getInitial = (name) => {
   return name.charAt(0).toUpperCase();
 };
 
-// Datos de proveedores para el chat
-const mockProveedores = [
-  { 
-    id: 1, 
-    nombre: "Distribuidora del Norte", 
-    email: "contacto@distribuidoradelnorte.com", 
-    status: "online", 
-    lastMessage: "El pedido #1234 ha sido enviado",
-    keywords: ["norte", "distribuidora", "pedidos", "envíos"],
-    avatar: "supplier" 
-  },
-  { 
-    id: 2, 
-    nombre: "Calzado Martínez", 
-    email: "ventas@calzadomartinez.com", 
-    status: "away", 
-    lastMessage: "Nuevos modelos disponibles en catálogo",
-    keywords: ["calzado", "zapatos", "modelos", "catálogo"],
-    avatar: "supplier" 
-  },
-  { 
-    id: 3, 
-    nombre: "Importadora González", 
-    email: "pedidos@importadoragonzalez.com", 
-    status: "online", 
-    lastMessage: "Confirmación de recepción de mercancía",
-    keywords: ["importadora", "importación", "mercancía", "pedidos"],
-    avatar: "shipping-status" 
-  },
-  { 
-    id: 4, 
-    nombre: "Suelas y Más", 
-    email: "ventas@suelasymas.com", 
-    status: "offline", 
-    lastMessage: "Actualización de precios para el próximo mes",
-    keywords: ["suelas", "materiales", "precios"],
-    avatar: "product" 
-  },
-  { 
-    id: 5, 
-    nombre: "Distribuidora de Pieles SA", 
-    email: "info@distpieles.com", 
-    status: "online", 
-    lastMessage: "Stock disponible de pieles premium",
-    keywords: ["pieles", "cuero", "stock", "premium"],
-    avatar: "factory" 
-  }
-];
-
 // Componente del indicador de estado
 const StatusIndicator = ({ status }) => {
   const statusColors = {
@@ -469,7 +420,7 @@ const ChatPage = () => {
         <div style={styles.searchContainer}>
           <Input
             icon="search"
-            placeholder="Buscar proveedor..."
+            placeholder="Buscar usuario..."
             value={searchTerm}
             onChange={handleSearch}
             onInput={handleSearch} // Añadir onInput para que responda en tiempo real
