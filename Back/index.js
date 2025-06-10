@@ -11,9 +11,13 @@ const allowedOrigins = [
     'http://localhost:3000',    // React dev server
     'http://localhost:5173',    // Vite dev server
     'http://localhost:4173',    // Vite preview
+    'http://localhost:4000',    // API server itself
     'http://127.0.0.1:3000',
     'http://127.0.0.1:5173',
-    'http://127.0.0.1:4173'
+    'http://127.0.0.1:4173',
+    'http://localhost:4000/api-docs',
+    'http://127.0.0.1:4000',
+    'http://127.0.0.1:4000/api-docs'
 ];
 
 // En producción, agregar el dominio real
@@ -26,7 +30,8 @@ console.log('🌐 allowedOrigins:', allowedOrigins);
 const corsOptions = {
     origin: function (origin, callback) {
       console.log('🌍 CORS origin detected:', origin);
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Permitir solicitudes sin origen (como las peticiones directas desde el navegador o Postman)
+      if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
         callback(null, true);
       } else {
         console.error('❌ Bloqueado por CORS:', origin);
@@ -36,7 +41,7 @@ const corsOptions = {
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-  };
+};
   
 
 const io = new Server(server, {
@@ -63,11 +68,21 @@ const { connectToHANA } = require('./Config/confDB');
 const setupSwagger = require('./swaggerConfig');
 
 // Middleware
-app.use(cors(corsOptions));
 app.use(express.json());
+
+// Middleware para permitir que Swagger funcione sin restricciones CORS
+app.use('/api-docs', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  next();
+});
 
 // Configurar Swagger
 setupSwagger(app);
+
+// Aplicar CORS después de Swagger
+app.use(cors(corsOptions));
 
 // Hacer io disponible en los controladores
 app.set('io', io);
