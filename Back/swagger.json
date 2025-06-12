@@ -1778,6 +1778,150 @@
           }
         }
       }
+    },
+    "/predictivo/tendencia-ventas/anual/{anio}": {
+      "get": {
+        "tags": ["Análisis Predictivo"],
+        "summary": "Obtener tendencia de ventas anual",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año para el análisis (formato YYYY, entre 2020-2030)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tendencia de ventas anual",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos para el año especificado"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/predictivo/riesgo-stock/futuro/{periodo}": {
+      "get": {
+        "tags": ["Análisis Predictivo"],
+        "summary": "Obtener análisis de riesgo de stock futuro",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "periodo",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Período para el análisis (formato YYYYMM, entre 202001-203012)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Análisis de riesgo de stock futuro",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos para el período especificado"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
+    },
+    "/analisis-inventario/analisis/{anio}": {
+      "get": {
+        "tags": ["Análisis de Inventario"],
+        "summary": "Obtener análisis de inventario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "anio",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Año para el análisis (formato YYYY, entre 2020-2030)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Análisis de inventario",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "No se encontraron datos para el año especificado"
+          },
+          "500": {
+            "description": "Error en el servidor"
+          }
+        }
+      }
     }
   }
 } 
