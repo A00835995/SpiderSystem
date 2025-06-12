@@ -1,5 +1,7 @@
 name: 🚀 Deploy SpiderSystem to SAP BTP Cloud Foundry
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -9,11 +11,14 @@ jobs:
     steps:
       - name: 📦 Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Required for SonarQube to analyze entire history
 
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
+
       - name: ☁️ Install Cloud Foundry CLI v8
         run: |
             wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | \
@@ -23,7 +28,34 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y cf8-cli || sudo apt-get install -y cf-cli
             cf version
-        
+
+      - name: 🧪 Backend testing and linting
+        working-directory: Back
+        run: |
+          npm install
+          npm run lint
+          npm test --coverage
+
+      - name: 🔍 SonarQube Scan (Backend)
+        working-directory: Back
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_BACKEND }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY_BACKEND }}
+        run: |
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip -q sonar-scanner.zip
+          export PATH="$PATH:$PWD/sonar-scanner-5.0.1.3006-linux/bin"
+          sonar-scanner \
+            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.exclusions=**/__tests__/**,**/*.test.js,**/node_modules/**,**/coverage/lcov-report/**/*.html,**/Faker/**,**/HANAML/** \
+            -Dsonar.tests=__tests__ \
+            -Dsonar.test.inclusions=**/__tests__/**/*.test.js \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.coverage.exclusions=**/coverage/lcov-report/**/*.html,**/Faker/**,**/HANAML/**
 
       - name: 🔐 Authenticate to SAP BTP CF
         env:
@@ -59,6 +91,47 @@ jobs:
           echo "BACKEND_URL=https://$BACKEND_ROUTE/api" >> $GITHUB_ENV
           echo "✅ Backend URL: https://$BACKEND_ROUTE/api"
 
+      - name: 🔎 Test backend health endpoint
+        run: |
+          echo "⏳ Waiting 15s for backend to boot..."
+          sleep 15
+          curl --fail "${{ env.BACKEND_URL }}/login" || {
+            echo "❌ Backend health check failed."
+            exit 1
+          }
+
+      - name: 🧪 Frontend testing and linting
+        working-directory: Front2
+        run: |
+          npm install
+          npm run lint
+          npm test --coverage
+
+      - name: 🔍 SonarQube Scan (Frontend)
+        working-directory: Front2
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_FRONTEND }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY_FRONTEND }}
+        run: |
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip -q sonar-scanner.zip
+          export PATH="$PATH:$PWD/sonar-scanner-5.0.1.3006-linux/bin"
+          sonar-scanner \
+            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+            -Dsonar.sources=src \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.exclusions=**/__tests__/**,**/*.test.jsx,**/*.test.js,**/node_modules/**,**/coverage/**,**/build/**,**/Faker/**,**/HANAML/** \
+            -Dsonar.tests=src \
+            -Dsonar.test.inclusions=src/**/__tests__/**/*.test.jsx,src/**/__tests__/**/*.test.js \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.testExecutionReportPaths=coverage/test-report.xml \
+            -Dsonar.javascript.file.suffixes=js,jsx \
+            -Dsonar.qualitygate.wait=true \
+            -Dsonar.verbose=true \
+            -Dsonar.coverage.exclusions=**/coverage/lcov-report/**/*.html,**/Faker/**,**/HANAML/**,**/__tests__/**,**/*.test.jsx,**/*.test.js
+
       - name: 🏗️ Build Frontend (spidersap-frontend)
         working-directory: Front2
         run: |
@@ -66,13 +139,13 @@ jobs:
           npm install
           npm run build
           echo "root: ." > build/Staticfile
+          echo "pushstate: enabled" >> build/Staticfile
 
       - name: 📁 Check build output
         working-directory: Front2
         run: |
             echo "Verificando contenido de la carpeta build:"
             ls -la build
-        
 
       - name: 🌍 Deploy Frontend (spidersap-frontend)
         working-directory: Front2
