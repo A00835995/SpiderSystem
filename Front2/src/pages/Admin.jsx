@@ -6,7 +6,7 @@ import {
   Bar,
   MessageBox
 } from '@ui5/webcomponents-react';
-import useAdminLogic from '../components/Admin/useAdminLogic';
+import { useAdminLogic } from '../components/Admin/useAdminLogic';
 import AdminHeader from '../components/Admin/AdminHeader';
 import UserCard from '../components/Admin/UserCard';
 import UserForm from '../components/Admin/UserForm';
