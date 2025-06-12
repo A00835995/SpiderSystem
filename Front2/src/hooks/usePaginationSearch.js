@@ -10,13 +10,22 @@ export const usePaginationSearch = (items, initialItemsPerPage = 5) => {
     setCurrentPage(1);
   }, [searchQuery]);
 
-  // Filtrar items según la búsqueda
+  // Filtrar items según la búsqueda y ordenarlos por número de orden (mayor a menor)
   const filteredItems = useMemo(() => {
-    return items.filter(item => 
+    // Primero filtramos los items
+    const filtered = items.filter(item => 
       item.id.toLowerCase().includes(searchQuery.toLowerCase()) || 
       (item.proveedor && item.proveedor.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (item.producto && item.producto.toLowerCase().includes(searchQuery.toLowerCase()))
     );
+    
+    // Luego ordenamos por número de orden (descendente)
+    return filtered.sort((a, b) => {
+      // Convertir los IDs a números para una comparación numérica correcta
+      const idA = parseInt(a.id, 10) || 0;
+      const idB = parseInt(b.id, 10) || 0;
+      return idB - idA; // Orden descendente (mayor a menor)
+    });
   }, [items, searchQuery]);
 
   // Calcular los índices para la paginación

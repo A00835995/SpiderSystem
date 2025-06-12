@@ -9,6 +9,7 @@ import VentasHeader from '../components/Ventas/VentasHeader';
 import SearchAndFilters from '../components/Ventas/SearchAndFilters';
 import ProductGrid from '../components/Ventas/ProductGrid';
 import ShoppingCart from '../components/Ventas/ShoppingCart';
+import OrderConfirmationDialog from '../components/Compras/OrderConfirmationDialog';
 
 const Ventas = () => {
   const [loading, setLoading] = useState(true);
@@ -19,6 +20,13 @@ const Ventas = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [notification, setNotification] = useState(null);
   const [error, setError] = useState(null);
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+  const [confirmationInfo, setConfirmationInfo] = useState({
+    type: 'Success',
+    title: '',
+    message: '',
+    ordenId: null
+  });
 
   // Obtener productos disponibles desde la API
   useEffect(() => {
@@ -118,17 +126,18 @@ const Ventas = () => {
     ]);
   };
 
-  // Filtrar productos
+  // Filtrar productos (solo por búsqueda, sin filtro de categoría)
   const filteredProducts = productos.filter(producto => {
-    const matchesSearch = producto.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         (producto.categoria && producto.categoria.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                         (producto.descripcion && producto.descripcion.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesCategory = selectedCategory === 'todas' || 
-                           (producto.categoria && producto.categoria === selectedCategory);
-    
-    return matchesSearch && matchesCategory;
+    return producto.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           (producto.categoria && producto.categoria.toLowerCase().includes(searchQuery.toLowerCase())) ||
+           (producto.descripcion && producto.descripcion.toLowerCase().includes(searchQuery.toLowerCase()));
   });
+
+  // Función simple para manejar el cambio de categoría (no hace nada pero mantiene la interfaz)
+  const handleCategoryChange = () => {
+    // No hacemos nada, siempre mantenemos "todas" como categoría
+    setSelectedCategory('todas');
+  };
 
   // Mostrar notificación
   const showNotification = (message, type = 'Success') => {
@@ -201,6 +210,11 @@ const Ventas = () => {
     showNotification('Carrito vaciado', 'Information');
   };
 
+  // Cerrar el diálogo de confirmación
+  const handleCloseConfirmationDialog = () => {
+    setShowConfirmationDialog(false);
+  };
+
   // Proceder al checkout
   const handleCheckout = async () => {
     const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
@@ -237,7 +251,15 @@ const Ventas = () => {
       
       if (response.data && response.data.success) {
         // Si la venta se registró correctamente
-        alert(`¡Gracias por tu compra!\n\nResumen:\n- ${itemCount} artículos\n- Total: $${total.toLocaleString()}\n\nVenta registrada con ID: ${response.data.data.IdVenta}`);
+        
+        // Mostrar diálogo de confirmación
+        setConfirmationInfo({
+          type: 'Success',
+          title: '¡Compra Exitosa!',
+          message: `¡Gracias por tu compra! Has adquirido ${itemCount} artículos por un total de $${total.toLocaleString()}.`,
+          ordenId: response.data.data.IdVenta
+        });
+        setShowConfirmationDialog(true);
         
         // Limpiar carrito y cerrar modal
         setCarrito([]);
@@ -249,10 +271,17 @@ const Ventas = () => {
       }
     } catch (error) {
       console.error("Error al procesar la venta:", error);
-      showNotification(`Error: ${error.message}`, 'Negative');
       
-      // Mostrar alerta con mensaje de error
-      alert(`No se pudo completar la compra. Error: ${error.message}`);
+      // Mostrar diálogo de error
+      setConfirmationInfo({
+        type: 'Error',
+        title: 'Error en la Compra',
+        message: `No se pudo completar la compra. ${error.message}`,
+        ordenId: null
+      });
+      setShowConfirmationDialog(true);
+      
+      showNotification(`Error: ${error.message}`, 'Negative');
     }
   };
 
@@ -299,6 +328,16 @@ const Ventas = () => {
         </div>
       )}
 
+      {/* Diálogo de confirmación */}
+      <OrderConfirmationDialog
+        open={showConfirmationDialog}
+        onClose={handleCloseConfirmationDialog}
+        type={confirmationInfo.type}
+        title={confirmationInfo.title}
+        message={confirmationInfo.message}
+        ordenId={confirmationInfo.ordenId}
+      />
+
       {/* Header */}
       <VentasHeader />
       
@@ -332,7 +371,7 @@ const Ventas = () => {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
+            onCategoryChange={handleCategoryChange}
           />
           
           {/* Grid de productos */}

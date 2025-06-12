@@ -29,13 +29,7 @@ const SearchAndFilters = ({ searchQuery, onSearchChange, selectedCategory, onCat
           onChange={(e) => onCategoryChange(e.detail.selectedOption.dataset.value)}
           style={{ width: '100%' }}
         >
-          <Option data-value="todas" selected={selectedCategory === 'todas'}>Todas las categorías</Option>
-          <Option data-value="deportivos" selected={selectedCategory === 'deportivos'}>Deportivos</Option>
-          <Option data-value="formales" selected={selectedCategory === 'formales'}>Formales</Option>
-          <Option data-value="casuales" selected={selectedCategory === 'casuales'}>Casuales</Option>
-          <Option data-value="infantiles" selected={selectedCategory === 'infantiles'}>Infantiles</Option>
-          <Option data-value="botas" selected={selectedCategory === 'botas'}>Botas</Option>
-          <Option data-value="sandalias" selected={selectedCategory === 'sandalias'}>Sandalias</Option>
+          <Option data-value="todas" selected={true}>Todas las categorías</Option>
         </Select>
       </div>
     </FlexBox>
