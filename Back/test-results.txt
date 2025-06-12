@@ -1,0 +1,957 @@
+FAIL __tests__/Controllers/compras.test.js
+  Compras Controller
+    getComprasData
+      ✓ should return 200 and all data when no providerId is provided (2 ms)
+      ✓ should return 200 and filtered articles when providerId is provided (1 ms)
+      ✓ should handle empty results from database
+      ✕ should handle database errors (6 ms)
+    getArticulosPorProveedor
+      ✓ should return 200 and articles when provider exists
+      ✓ should return 400 when providerId is invalid
+      ✓ should return 400 when providerId is missing
+      ✓ should handle empty results from database
+      ✕ should handle database errors
+    crearOrdenCompra
+      ✓ should return 201 when order is created successfully
+      ✓ should return 500 when order data is invalid (3 ms)
+      ✓ should return 500 when items array is empty
+      ✓ should return 500 when item quantity is invalid
+      ✓ should handle database errors (1 ms)
+    getOrdenesEnProgreso
+      ✓ should return 200 and list of orders when orders exist
+      ✓ should return 404 when no orders exist
+      ✕ should handle database errors
+    actualizarOrdenACompletada
+      ✕ should return 200 when order is completed successfully (2 ms)
+      ✓ should return 400 when IdOrden is missing
+      ✕ should return 400 when IdOrden is invalid
+      ✕ should handle database errors (1 ms)
+
+  ● Compras Controller › getComprasData › should handle database errors
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+        "error": "Database error",
+        "message": "Error al obtener datos de compras",
+    +   "stack": "Error: Database error
+    +     at Object.<anonymous> (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/__tests__/Controllers/compras.test.js:118:27)
+    +     at Promise.then.completed (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:298:28)
+    +     at new Promise (<anonymous>)
+    +     at callAsyncCircusFn (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:231:10)
+    +     at _callCircusTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:316:40)
+    +     at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    +     at _runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:252:3)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:126:9)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    +     at run (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:71:3)
+    +     at runAndTransformResultsToJestFormat (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    +     at jestAdapter (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    +     at runTestInternal (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:367:16)
+    +     at runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:444:34)",
+      },
+
+    Number of calls: 1
+
+      122 |
+      123 |             expect(mockStatus).toHaveBeenCalledWith(500);
+    > 124 |             expect(mockJson).toHaveBeenCalledWith({
+          |                              ^
+      125 |                 message: 'Error al obtener datos de compras',
+      126 |                 error: error.message
+      127 |             });
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/compras.test.js:124:30)
+
+  ● Compras Controller › getArticulosPorProveedor › should handle database errors
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+        "error": "Database error",
+        "message": "Error al obtener artículos por proveedor",
+    +   "stack": "Error: Database error
+    +     at Object.<anonymous> (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/__tests__/Controllers/compras.test.js:185:27)
+    +     at Promise.then.completed (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:298:28)
+    +     at new Promise (<anonymous>)
+    +     at callAsyncCircusFn (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:231:10)
+    +     at _callCircusTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:316:40)
+    +     at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    +     at _runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:252:3)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:126:9)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    +     at run (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:71:3)
+    +     at runAndTransformResultsToJestFormat (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    +     at jestAdapter (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    +     at runTestInternal (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:367:16)
+    +     at runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:444:34)",
+      },
+
+    Number of calls: 1
+
+      189 |
+      190 |             expect(mockStatus).toHaveBeenCalledWith(500);
+    > 191 |             expect(mockJson).toHaveBeenCalledWith({
+          |                              ^
+      192 |                 message: 'Error al obtener artículos por proveedor',
+      193 |                 error: error.message
+      194 |             });
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/compras.test.js:191:30)
+
+  ● Compras Controller › getOrdenesEnProgreso › should handle database errors
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+        "error": "Database error",
+        "message": "Error al obtener órdenes en progreso",
+    +   "stack": "Error: Database error
+    +     at Object.<anonymous> (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/__tests__/Controllers/compras.test.js:319:27)
+    +     at Promise.then.completed (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:298:28)
+    +     at new Promise (<anonymous>)
+    +     at callAsyncCircusFn (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:231:10)
+    +     at _callCircusTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:316:40)
+    +     at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    +     at _runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:252:3)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:126:9)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    +     at run (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:71:3)
+    +     at runAndTransformResultsToJestFormat (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    +     at jestAdapter (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    +     at runTestInternal (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:367:16)
+    +     at runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:444:34)",
+      },
+
+    Number of calls: 1
+
+      323 |
+      324 |             expect(mockStatus).toHaveBeenCalledWith(500);
+    > 325 |             expect(mockJson).toHaveBeenCalledWith({
+          |                              ^
+      326 |                 message: 'Error al obtener órdenes en progreso',
+      327 |                 error: error.message
+      328 |             });
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/compras.test.js:325:30)
+
+  ● Compras Controller › actualizarOrdenACompletada › should return 200 when order is completed successfully
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    -   "message": "Estado de la orden actualizado correctamente a Completada",
+    +   "data": Object {
+    +     "mensaje": "Actualización exitosa",
+          "ordenId": 1,
+    +   },
+    +   "message": "Estado de la orden actualizado correctamente a Completada",
+    +   "success": true,
+      },
+
+    Number of calls: 1
+
+      339 |             expect(executeQuery).toHaveBeenCalledWith('CALL DBADMIN.ActualizarEstadoOrdenCompletada(?)', [1]);
+      340 |             expect(mockStatus).toHaveBeenCalledWith(200);
+    > 341 |             expect(mockJson).toHaveBeenCalledWith({
+          |                              ^
+      342 |                 message: 'Estado de la orden actualizado correctamente a Completada',
+      343 |                 ordenId: 1
+      344 |             });
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/compras.test.js:341:30)
+
+  ● Compras Controller › actualizarOrdenACompletada › should return 400 when IdOrden is invalid
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: 400
+    Received: 200
+
+    Number of calls: 1
+
+      359 |             await actualizarOrdenACompletada(mockReq, mockRes);
+      360 |
+    > 361 |             expect(mockStatus).toHaveBeenCalledWith(400);
+          |                                ^
+      362 |             expect(mockJson).toHaveBeenCalledWith({
+      363 |                 message: 'Se requiere el ID de la orden'
+      364 |             });
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/compras.test.js:361:32)
+
+  ● Compras Controller › actualizarOrdenACompletada › should handle database errors
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    +   "code": "UNKNOWN_ERROR",
+        "error": "Database error",
+        "message": "Error al actualizar el estado de la orden",
+    -   "stack": "Error: Database error
+    -     at Object.<anonymous> (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/__tests__/Controllers/compras.test.js:369:27)
+    -     at Promise.then.completed (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:298:28)
+    -     at new Promise (<anonymous>)
+    -     at callAsyncCircusFn (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:231:10)
+    -     at _callCircusTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:316:40)
+    -     at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    -     at _runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:252:3)
+    -     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:126:9)
+    -     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    -     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    -     at run (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:71:3)
+    -     at runAndTransformResultsToJestFormat (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    -     at jestAdapter (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    -     at runTestInternal (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:367:16)
+    -     at runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:444:34)",
+    +   "success": false,
+      },
+
+    Number of calls: 1
+
+      373 |
+      374 |             expect(mockStatus).toHaveBeenCalledWith(500);
+    > 375 |             expect(mockJson).toHaveBeenCalledWith({
+          |                              ^
+      376 |                 message: 'Error al actualizar el estado de la orden',
+      377 |                 error: error.message,
+      378 |                 stack: error.stack
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/compras.test.js:375:30)
+
+FAIL __tests__/Routes/permisosRoutes.test.js
+  Permisos Routes
+    GET /api/permisos/roles
+      ✓ should call obtenerRoles controller (8 ms)
+    GET /api/permisos/paginas
+      ✓ should call obtenerPaginas controller (1 ms)
+    GET /api/permisos/rol-pagina
+      ✓ should call obtenerRolPagina controller (1 ms)
+    GET /api/permisos/paginas-permitidas/:idRol
+      ✓ should call obtenerPaginasPermitidas controller with correct idRol (1 ms)
+      ✓ should handle invalid idRol parameter (1 ms)
+    GET /api/permisos/verificar-permiso/:idRol/:ruta
+      ✓ should call verificarPermiso controller with correct parameters (1 ms)
+      ✕ should handle invalid parameters (2 ms)
+    Error handling
+      ✓ should handle 404 for non-existent routes
+      ✕ should handle middleware errors (3 ms)
+
+  ● Permisos Routes › GET /api/permisos/verificar-permiso/:idRol/:ruta › should handle invalid parameters
+
+    expect(jest.fn()).toHaveBeenCalled()
+
+    Expected number of calls: >= 1
+    Received number of calls:    0
+
+      89 |             const response = await request(app).get(`/api/permisos/verificar-permiso/${invalidIdRol}/${invalidRuta}`);
+      90 |             expect(response.status).toBe(404);
+    > 91 |             expect(permisosController.verificarPermiso).toHaveBeenCalled();
+         |                                                         ^
+      92 |         }, 1000);
+      93 |     });
+      94 |
+
+      at Object.toHaveBeenCalled (__tests__/Routes/permisosRoutes.test.js:91:57)
+
+  ● Permisos Routes › Error handling › should handle middleware errors
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 500
+    Received: 200
+
+      108 |
+      109 |             const response = await request(app).get('/api/permisos/roles');
+    > 110 |             expect(response.status).toBe(500);
+          |                                     ^
+      111 |         }, 1000);
+      112 |     });
+      113 | }); 
+
+      at Object.toBe (__tests__/Routes/permisosRoutes.test.js:110:37)
+
+FAIL __tests__/Controllers/gestionUsuarios.test.js
+  Gestion Usuarios Controller
+    getUsuarios
+      ✓ should return 200 and list of users
+      ✓ should handle database errors
+    getUsuario
+      ✓ should return 200 and user data when user exists (1 ms)
+      ✓ should return 400 when id is missing
+      ✓ should handle database errors
+    createUsuario
+      ✕ should return 200 when user is created successfully (1 ms)
+      ✓ should return 400 when name is missing
+      ✕ should return 400 when email is invalid
+      ✓ should return 400 when password is invalid
+      ✓ should return 400 when role is invalid
+      ✓ should handle database errors
+    updateRolUsuario
+      ✓ should return 200 when role is updated successfully
+      ✓ should return 400 when role is invalid (1 ms)
+      ✓ should handle database errors
+    updateNombreUsuario
+      ✓ should return 200 when name is updated successfully (1 ms)
+      ✓ should return 400 when name is missing
+      ✓ should handle database errors
+    updateEmailUsuario
+      ✓ should return 200 when email is updated successfully
+      ✓ should return 400 when id is missing
+      ✕ should return 400 when email is invalid
+      ✓ should handle database errors
+    deleteUsuario
+      ✓ should return 200 when user is deleted successfully (1 ms)
+      ✓ should handle database errors
+
+  ● Gestion Usuarios Controller › createUsuario › should return 200 when user is created successfully
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      "CALL \"CREAR_USUARIO\"(?, ?, ?, ?)",
+      Array [
+    -   1,
+    +   2,
+        "Test User",
+        "test@test.com",
+        "hashedPassword",
+      ],
+
+    Number of calls: 1
+
+      136 |             expect(bcrypt.genSalt).toHaveBeenCalledWith(10);
+      137 |             expect(bcrypt.hash).toHaveBeenCalledWith('password123', 'salt');
+    > 138 |             expect(executeQuery).toHaveBeenCalledWith(
+          |                                  ^
+      139 |                 'CALL "CREAR_USUARIO"(?, ?, ?, ?)',
+      140 |                 [1, 'Test User', 'test@test.com', 'hashedPassword']
+      141 |             );
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/gestionUsuarios.test.js:138:34)
+
+  ● Gestion Usuarios Controller › createUsuario › should return 400 when email is invalid
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    -   "message": "Formato de correo electrónico inválido",
+    +   "message": "El correo electrónico debe contener el símbolo @",
+      },
+
+    Number of calls: 1
+
+      164 |
+      165 |             expect(mockStatus).toHaveBeenCalledWith(400);
+    > 166 |             expect(mockJson).toHaveBeenCalledWith({
+          |                              ^
+      167 |                 message: 'Formato de correo electrónico inválido'
+      168 |             });
+      169 |         });
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/gestionUsuarios.test.js:166:30)
+
+  ● Gestion Usuarios Controller › updateEmailUsuario › should return 400 when email is invalid
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    -   "message": "Formato de correo electrónico inválido",
+    +   "message": "El correo electrónico debe contener el símbolo @",
+      },
+
+    Number of calls: 1
+
+      323 |
+      324 |             expect(mockStatus).toHaveBeenCalledWith(400);
+    > 325 |             expect(mockJson).toHaveBeenCalledWith({
+          |                              ^
+      326 |                 message: 'Formato de correo electrónico inválido'
+      327 |             });
+      328 |         });
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/gestionUsuarios.test.js:325:30)
+
+FAIL __tests__/Utils/inventoryWatcher.test.js
+  Inventory Watcher
+    getInventoryState
+      ✕ debería obtener el estado del inventario correctamente (1 ms)
+      ✕ debería manejar errores al obtener el estado del inventario
+    checkInventoryChanges
+      ✕ debería detectar cambios en el inventario y enviar actualización
+      ✕ no debería enviar actualización si no hay cambios
+    startInventoryWatcher
+      ✕ debería iniciar el monitor de inventario correctamente
+      ✕ debería realizar la primera verificación inmediatamente
+
+  ● Inventory Watcher › getInventoryState › debería obtener el estado del inventario correctamente
+
+    TypeError: require(...).getInventoryState is not a function
+
+      44 |
+      45 |             // Obtener el estado del inventario
+    > 46 |             const result = await require('../../Utils/inventoryWatcher').getInventoryState();
+         |                                                                          ^
+      47 |
+      48 |             // Verificar resultados
+      49 |             expect(result).toEqual({
+
+      at Object.getInventoryState (__tests__/Utils/inventoryWatcher.test.js:46:74)
+
+  ● Inventory Watcher › getInventoryState › debería manejar errores al obtener el estado del inventario
+
+    TypeError: require(...).getInventoryState is not a function
+
+      59 |
+      60 |             // Obtener el estado del inventario
+    > 61 |             const result = await require('../../Utils/inventoryWatcher').getInventoryState();
+         |                                                                          ^
+      62 |
+      63 |             // Verificar resultados
+      64 |             expect(result).toBeNull();
+
+      at Object.getInventoryState (__tests__/Utils/inventoryWatcher.test.js:61:74)
+
+  ● Inventory Watcher › checkInventoryChanges › debería detectar cambios en el inventario y enviar actualización
+
+    TypeError: inventoryWatcher.checkInventoryChanges is not a function
+
+      108 |
+      109 |             // Verificar cambios
+    > 110 |             await inventoryWatcher.checkInventoryChanges();
+          |                                    ^
+      111 |
+      112 |             // Verificar que se envió la actualización
+      113 |             expect(broadcastUpdate).toHaveBeenCalledWith({
+
+      at Object.checkInventoryChanges (__tests__/Utils/inventoryWatcher.test.js:110:36)
+
+  ● Inventory Watcher › checkInventoryChanges › no debería enviar actualización si no hay cambios
+
+    TypeError: inventoryWatcher.checkInventoryChanges is not a function
+
+      148 |
+      149 |             // Verificar cambios
+    > 150 |             await inventoryWatcher.checkInventoryChanges();
+          |                                    ^
+      151 |
+      152 |             // Verificar que no se envió actualización
+      153 |             expect(broadcastUpdate).not.toHaveBeenCalled();
+
+      at Object.checkInventoryChanges (__tests__/Utils/inventoryWatcher.test.js:150:36)
+
+  ● Inventory Watcher › startInventoryWatcher › debería iniciar el monitor de inventario correctamente
+
+    expect(received).toHaveBeenCalled()
+
+    Matcher error: received value must be a mock or spy function
+
+    Received has type:  function
+    Received has value: [Function setInterval]
+
+      162 |             // Verificar que se configuró el intervalo
+      163 |             expect(watcherId).toBeDefined();
+    > 164 |             expect(setInterval).toHaveBeenCalled();
+          |                                 ^
+      165 |
+      166 |             // Limpiar el intervalo
+      167 |             clearInterval(watcherId);
+
+      at Object.toHaveBeenCalled (__tests__/Utils/inventoryWatcher.test.js:164:33)
+
+  ● Inventory Watcher › startInventoryWatcher › debería realizar la primera verificación inmediatamente
+
+    Property `checkInventoryChanges` does not exist in the provided object
+
+      171 |             // Mock de la función checkInventoryChanges
+      172 |             const mockCheckInventoryChanges = jest.fn();
+    > 173 |             jest.spyOn(require('../../Utils/inventoryWatcher'), 'checkInventoryChanges')
+          |                  ^
+      174 |                 .mockImplementation(mockCheckInventoryChanges);
+      175 |
+      176 |             // Iniciar el watcher
+
+      at ModuleMocker.spyOn (node_modules/jest-mock/build/index.js:731:13)
+      at Object.spyOn (__tests__/Utils/inventoryWatcher.test.js:173:18)
+
+FAIL __tests__/Controllers/ordenesProveedor.test.js
+  OrdenesProveedor Controller
+    getOrdenesProveedor
+      ✕ should return 200 and list of orders when orders exist for admin (1 ms)
+      ✓ should return 200 and list of orders when orders exist for provider
+      ✓ should return 404 when no orders exist
+      ✕ should handle database errors (1 ms)
+    consultarOrdenCompra
+      ✓ should return 200 and order details when order exists
+      ✓ should return 400 when IdOrden is missing
+      ✓ should return 404 when order does not exist
+      ✓ should handle database errors
+    actualizarOrdenAProceso
+      ✓ should return 200 when order is updated successfully by admin
+      ✓ should return 200 when order is updated successfully by provider
+      ✓ should return 400 when IdOrden is missing
+      ✓ should handle database errors
+    actualizarOrdenACompletada
+      ✕ should return 200 when order is completed successfully
+      ✓ should return 400 when IdOrden is missing
+      ✕ should handle database errors
+
+  ● OrdenesProveedor Controller › getOrdenesProveedor › should return 200 and list of orders when orders exist for admin
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "CALL GETordenedesProveedor()"
+    Received: "CALL GETordenedesProveedor()", []
+
+    Number of calls: 1
+
+      64 |             expect(executeQuery).toHaveBeenCalledWith('CALL GETordenedesProveedor()');
+      65 |             expect(mockStatus).toHaveBeenCalledWith(200);
+    > 66 |             expect(mockJson).toHaveBeenCalledWith({
+         |                            ^
+      67 |                 message: 'Órdenes de proveedor obtenidas correctamente',
+      68 |                 data: expect.any(Array)
+      69 |             });
+
+      at Object.<anonymous> (__tests__/Controllers/ordenesProveedor.test.js:66:28)
+
+  ● OrdenesProveedor Controller › getOrdenesProveedor › should handle database errors
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+        "error": "Database error",
+        "message": "Error al obtener órdenes de proveedor",
+    +   "stack": "Error: Database error
+    +     at Object.<anonymous> (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/__tests__/Controllers/ordenesProveedor.test.js:103:21)
+    +     at Promise.then.completed (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:298:28)
+    +     at new Promise (<anonymous>)
+    +     at callAsyncCircusFn (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:231:10)
+    +     at _callCircusTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:316:40)
+    +     at _runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:252:3)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:126:9)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    +     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    +     at run (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:71:3)
+    +     at runAndTransformResultsToJestFormat (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    +     at jestAdapter (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    +     at runTestInternal (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:367:16)
+    +     at runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:444:34)",
+      },
+
+    Number of calls: 1
+
+      105 |         });
+      106 |
+    > 107 |         it('should handle database errors', async () => {
+          |                        ^
+      108 |             const error = new Error('Database error');
+      109 |             executeQuery.mockRejectedValueOnce(error);
+      110 |
+
+      at Object.<anonymous> (__tests__/Controllers/ordenesProveedor.test.js:107:24)
+
+  ● OrdenesProveedor Controller › actualizarOrdenACompletada › should return 200 when order is completed successfully
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    -   "message": "Estado de la orden actualizado correctamente a Completada",
+    +   "data": Object {
+    +     "mensaje": "Actualización exitosa",
+          "ordenId": 1,
+    +   },
+    +   "message": "Estado de la orden actualizado correctamente a Completada",
+    +   "success": true,
+      },
+
+    Number of calls: 1
+
+      240 |         });
+      241 |     });
+    > 242 |
+          | ^
+      243 |     describe('actualizarOrdenACompletada', () => {
+      244 |         it('should return 200 when order is completed successfully', async () => {
+      245 |             mockReq.body = { IdOrden: 1 };
+
+      at Object.<anonymous> (__tests__/Controllers/ordenesProveedor.test.js:242:24)
+
+  ● OrdenesProveedor Controller › actualizarOrdenACompletada › should handle database errors
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    +   "code": "UNKNOWN_ERROR",
+        "error": "Database error",
+        "message": "Error al actualizar el estado de la orden",
+    -   "stack": "Error: Database error
+    -     at Object.<anonymous> (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/__tests__/Controllers/ordenesProveedor.test.js:258:21)
+    -     at Promise.then.completed (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:298:28)
+    -     at new Promise (<anonymous>)
+    -     at callAsyncCircusFn (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/utils.js:231:10)
+    -     at _callCircusTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:316:40)
+    -     at _runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:252:3)
+    -     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:126:9)
+    -     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    -     at _runTestsForDescribeBlock (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:121:9)
+    -     at run (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/run.js:71:3)
+    -     at runAndTransformResultsToJestFormat (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    -     at jestAdapter (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    -     at runTestInternal (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:367:16)
+    -     at runTest (/Users/hugolozano/Desktop/spidersapfinal/SpiderSystem/Back/node_modules/jest-runner/build/runTest.js:444:34)",
+    +   "success": false,
+      },
+
+    Number of calls: 1
+
+      260 |
+      261 |             expect(mockStatus).toHaveBeenCalledWith(400);
+    > 262 |             expect(mockJson).toHaveBeenCalledWith({
+          |                        ^
+      263 |                 message: 'Se requiere el ID de la orden'
+      264 |             });
+      265 |         });
+
+      at Object.<anonymous> (__tests__/Controllers/ordenesProveedor.test.js:262:24)
+
+FAIL __tests__/Controllers/gestionProveedores.test.js
+  GestionProveedores Controller
+    getProveedoresResumen
+      ✓ should return 200 and list of providers when providers exist (1 ms)
+      ✓ should return 404 when no providers exist
+      ✓ should return 500 when database error occurs (1 ms)
+    getDetalleProveedor
+      ✓ should return 200 and provider details when provider exists
+      ✓ should return 400 when id is missing
+      ✓ should return 404 when provider does not exist
+    createProveedor
+      ✓ should return 201 when provider is created successfully
+      ✓ should return 400 when required fields are missing (1 ms)
+      ✓ should return 400 when email format is invalid
+      ✕ should return 409 when email is duplicate (2 ms)
+    actualizarNombreProveedor
+      ✓ should return 200 when name is updated successfully (1 ms)
+      ✓ should return 400 when id is missing
+      ✓ should return 400 when nombre is missing
+    eliminarProveedor
+      ✓ should return 200 when provider is deleted successfully
+      ✓ should return 400 when id is missing
+      ✓ should return 404 when provider does not exist
+    getTiposProveedores
+      ✓ should return 200 and list of provider types when types exist
+      ✓ should return 404 when no types exist
+    getTiposPagosProveedores
+      ✓ should return 200 and list of payment types when types exist
+      ✓ should return 404 when no types exist
+    getResumenCategorias
+      ✓ should return 200 and list of categories when categories exist (1 ms)
+      ✓ should return 404 when no categories exist
+    getDistribucionProveedorInventario
+      ✓ should return 200 and distribution data when data exists
+      ✓ should return 404 when no distribution data exists
+
+  ● GestionProveedores Controller › createProveedor › should return 409 when email is duplicate
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: 409
+    Received: 500
+
+    Number of calls: 1
+
+      242 |             await createProveedor(mockReq, mockRes);
+      243 |
+    > 244 |             expect(mockStatus).toHaveBeenCalledWith(409);
+          |                                ^
+      245 |             expect(mockJson).toHaveBeenCalledWith(
+      246 |                 GestionProveedoresResponseDto.conflictResponse(
+      247 |                     "Ya existe un proveedor con este email",
+
+      at Object.toHaveBeenCalledWith (__tests__/Controllers/gestionProveedores.test.js:244:32)
+
+FAIL __tests__/Utils/websocket.test.js
+  WebSocket Utils
+    initializeWebSocket
+      ✕ should initialize WebSocket server
+      ✓ should handle client connection
+      ✕ should handle client disconnection
+      ✕ should handle client errors
+    broadcastUpdate
+      ✓ should not send updates if server is not initialized
+      ✓ should broadcast message to all connected clients
+      ✕ should handle errors when sending messages
+      ✓ should not send to closed clients
+
+  ● WebSocket Utils › initializeWebSocket › should initialize WebSocket server
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "connection", Any<Function>
+
+    Number of calls: 0
+
+      48 |         it('should initialize WebSocket server', () => {
+      49 |             initializeWebSocket(mockServer);
+    > 50 |             expect(mockServer.on).toHaveBeenCalledWith('connection', expect.any(Function));
+         |                                   ^
+      51 |         });
+      52 |
+      53 |         it('should handle client connection', () => {
+
+      at Object.toHaveBeenCalledWith (__tests__/Utils/websocket.test.js:50:35)
+
+  ● WebSocket Utils › initializeWebSocket › should handle client disconnection
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 0
+    Received: 1
+
+      61 |             const closeHandler = mockWs.on.mock.calls.find(call => call[0] === 'close')[1];
+      62 |             closeHandler();
+    > 63 |             expect(mockServer.clients.size).toBe(0);
+         |                                             ^
+      64 |         });
+      65 |
+      66 |         it('should handle client errors', () => {
+
+      at Object.toBe (__tests__/Utils/websocket.test.js:63:45)
+
+  ● WebSocket Utils › initializeWebSocket › should handle client errors
+
+    expect(jest.fn()).toHaveBeenCalled()
+
+    Expected number of calls: >= 1
+    Received number of calls:    0
+
+      68 |             const errorHandler = mockWs.on.mock.calls.find(call => call[0] === 'error')[1];
+      69 |             errorHandler(new Error('Test error'));
+    > 70 |             expect(mockWs.close).toHaveBeenCalled();
+         |                                  ^
+      71 |         });
+      72 |     });
+      73 |
+
+      at Object.toHaveBeenCalled (__tests__/Utils/websocket.test.js:70:34)
+
+  ● WebSocket Utils › broadcastUpdate › should handle errors when sending messages
+
+    expect(jest.fn()).toHaveBeenCalled()
+
+    Expected number of calls: >= 1
+    Received number of calls:    0
+
+       95 |             const message = { type: 'test', data: 'test' };
+       96 |             broadcastUpdate(message);
+    >  97 |             expect(mockWsWithError.close).toHaveBeenCalled();
+          |                                           ^
+       98 |         });
+       99 |
+      100 |         it('should not send to closed clients', () => {
+
+      at Object.toHaveBeenCalled (__tests__/Utils/websocket.test.js:97:43)
+
+PASS __tests__/Routes/ventasRoutes.test.js
+  Ventas Routes
+    GET /api/ventas/articulos-disponibles
+      ✓ should call verifyToken middleware (4 ms)
+      ✓ should call getArticulosParaVenta controller (1 ms)
+    POST /api/ventas/registrar
+      ✓ should call verifyToken middleware (5 ms)
+      ✓ should call registrarVenta controller (1 ms)
+      ✓ should handle invalid request body (3 ms)
+    Error handling
+      ✓ should handle 404 for non-existent routes (1 ms)
+      ✓ should handle middleware errors (2 ms)
+
+PASS __tests__/Controllers/metricas.test.js
+  Métricas Controller
+    getVentasPorCategoriaMes
+      ✓ should return 400 if mes or anio is missing (1 ms)
+      ✓ should return 400 if mes is invalid
+      ✓ should return 404 if no data found
+      ✓ should return 200 with data for successful request
+    getVentasPorCategoriaAnio
+      ✓ should return 400 if anio is missing
+      ✓ should return 404 if no data found
+      ✓ should return 200 with data for successful request
+    getIndicadoresCompletosMes
+      ✓ should return 400 if mes or anio is missing
+      ✓ should return 400 if mes is invalid
+      ✓ should return 404 if no data found
+      ✓ should return 200 with data for successful request
+    getIndicadoresCompletosAnio
+      ✓ should return 400 if anio is missing
+      ✓ should return 404 if no data found
+      ✓ should return 200 with data for successful request
+    getStockPorCategoria
+      ✓ should return 404 if no data found
+      ✓ should return 200 with data for successful request
+    Error handling
+      ✓ should handle database errors
+
+PASS __tests__/Controllers/inicio.test.js
+  Inicio Controller
+    getOrdenesPendientes
+      ✓ should return 200 and total of pending orders
+      ✓ should return 404 when no pending orders exist
+      ✓ should handle database errors
+    getVentasMes
+      ✓ should return 200 and monthly sales data (1 ms)
+      ✓ should return 404 when no monthly sales exist
+      ✓ should handle database errors
+    getProductosInventario
+      ✓ should return 200 and total products in inventory
+      ✓ should return 404 when no products exist
+      ✓ should handle database errors
+    getVentasMesAnterior
+      ✓ should return 200 and previous month sales variation
+      ✓ should return 404 when no previous month sales exist
+      ✓ should handle database errors (2 ms)
+    getOrdenesRecientes
+      ✓ should return 200 and recent orders
+      ✓ should return 404 when no recent orders exist
+      ✓ should handle database errors
+    getVentasXCategoria
+      ✓ should return 200 and sales by category
+      ✓ should return 404 when no category sales exist
+      ✓ should handle database errors
+    getProductosMasVendidosMesActual
+      ✓ should return 200 and top selling products (1 ms)
+      ✓ should return 404 when no top selling products exist
+      ✓ should handle database errors
+
+PASS __tests__/Controllers/ventas.test.js
+  Ventas Controller
+    getArticulosParaVenta
+      ✓ should return 200 and articles when found
+      ✓ should return 404 when no articles are found
+      ✓ should handle database errors (1 ms)
+    registrarVenta
+      ✓ should return 201 when sale is registered successfully
+      ✓ should return 400 when request body is invalid
+      ✓ should handle database errors (2 ms)
+      ✓ should handle empty result from stored procedure
+
+PASS __tests__/Controllers/login.test.js
+  Login Controller
+    login
+      ✓ should return 400 if email or password is missing
+      ✓ should return 404 if user is not found
+      ✓ should return 401 if password is incorrect (1 ms)
+      ✓ should return 200 and token for successful login with regular user
+      ✓ should return 200 and token for successful login with provider user (with IDPROV)
+      ✓ should return 200 and token for successful login with provider user (without IDPROV)
+      ✓ should handle database errors
+      ✓ should handle unexpected errors
+
+PASS __tests__/dto/Ventas/VentaResponseDto.test.js
+  VentaResponseDto
+    toArticuloParaVenta
+      ✓ should transform a database article to sale format (1 ms)
+      ✓ should handle zero IVA
+      ✓ should handle missing or null values
+    toArticulosParaVentaList
+      ✓ should transform an array of database articles to sale format
+      ✓ should return empty array when input is not an array
+      ✓ should handle empty array
+      ✓ should handle array with invalid items
+
+PASS __tests__/Controllers/alertas.test.js
+  Alertas Controller
+    getAlertas
+      ✓ should return 404 when no alerts are found
+      ✓ should return 200 with alerts when found
+      ✓ should handle database errors
+
+PASS __tests__/Utils/validations.test.js
+  Validation Utils
+    validateEmail
+      ✓ should return true for valid email addresses (1 ms)
+      ✓ should return false for invalid email addresses
+    validatePassword
+      ✓ should return true for valid passwords
+      ✓ should return false for invalid passwords
+
+----------------------------|---------|----------|---------|---------|---------------------------------------------------------------------------------------------------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                                                             
+----------------------------|---------|----------|---------|---------|---------------------------------------------------------------------------------------------------------------
+All files                   |   73.74 |    69.19 |   84.27 |   74.08 |                                                                                                               
+ Config                     |   21.42 |     7.14 |       0 |   21.42 |                                                                                                               
+  confDB.js                 |   21.42 |     7.14 |       0 |   21.42 | 13-67                                                                                                         
+ Controllers                |   74.58 |    74.53 |   85.48 |   74.75 |                                                                                                               
+  alertas.js                |     100 |      100 |     100 |     100 |                                                                                                               
+  compras.js                |   92.42 |    61.76 |     100 |    92.3 | 26,39-51,114                                                                                                  
+  gestionProveedores.js     |   48.86 |    64.93 |      60 |   48.86 | 55-60,111-115,156-161,166-199,204-237,242-276,281-315,320-354,359-392,425-430,450-455,475-480,500-505,525-530 
+  gestionUsuarios.js        |   94.11 |    86.84 |     100 |   94.11 | 56,68,76,153,165                                                                                              
+  inicio.js                 |     100 |      100 |     100 |     100 |                                                                                                               
+  login.js                  |     100 |    93.75 |     100 |     100 | 6                                                                                                             
+  metricas.js               |   56.66 |     60.6 |    62.5 |   57.62 | 73-78,116-121,151-156,161-264,284-289                                                                         
+  ordenesProveedor.js       |   94.02 |    78.57 |     100 |   94.02 | 9,48-60                                                                                                       
+  ventas.js                 |    90.9 |    94.11 |     100 |    90.9 | 124-128                                                                                                       
+ Routes                     |     100 |      100 |     100 |     100 |                                                                                                               
+  permisosRoutes.js         |     100 |      100 |     100 |     100 |                                                                                                               
+  ventasRoutes.js           |     100 |      100 |     100 |     100 |                                                                                                               
+ Utils                      |   80.51 |    71.87 |   78.57 |   82.66 |                                                                                                               
+  dbUtils.js                |    37.5 |        0 |       0 |    37.5 | 5-10                                                                                                          
+  inventoryWatcher.js       |   68.96 |    28.57 |     100 |   71.42 | 19-20,38-54                                                                                                   
+  validations.js            |     100 |      100 |     100 |     100 |                                                                                                               
+  websocket.js              |   95.83 |       75 |     100 |     100 | 26                                                                                                            
+ dto/Compras                |   80.76 |    76.19 |     100 |   77.27 |                                                                                                               
+  ComprasDto.js             |   76.92 |       50 |     100 |      70 | 4,17,28                                                                                                       
+  OrdenCompraDto.js         |   84.61 |    86.66 |     100 |   83.33 | 32,36                                                                                                         
+ dto/GestionProveedores     |   90.47 |    67.39 |      85 |   90.47 |                                                                                                               
+  GestionResponseDto.js     |   90.47 |    67.39 |      85 |   90.47 | 181-193                                                                                                       
+ dto/GestionUsuarios        |   60.71 |    59.25 |   81.81 |   61.53 |                                                                                                               
+  GestionResponseDto.js     |   60.71 |    59.25 |   81.81 |   61.53 | 13,20,31-34,39,50,61,72,83                                                                                    
+ dto/Inicio                 |      85 |       50 |     100 |   82.35 |                                                                                                               
+  InicioResponseDto.js      |      85 |       50 |     100 |   82.35 | 46,61,79                                                                                                      
+ dto/Metricas               |   73.17 |    72.72 |   76.47 |   73.17 |                                                                                                               
+  MetricasResponseDto.js    |   73.17 |    72.72 |   76.47 |   73.17 | 9-10,14-15,29-30,34-35,111-121,201                                                                            
+ dto/OrdenesProveedor       |   56.81 |    45.45 |     100 |   60.52 |                                                                                                               
+  OrdenCompraConsultaDto.js |   53.84 |    38.88 |     100 |   57.14 | 19-25,67-99,119                                                                                               
+  OrdenesProveedorDto.js    |      80 |       75 |     100 |     100 | 11                                                                                                            
+ dto/Ventas                 |     100 |      100 |     100 |     100 |                                                                                                               
+  VentaResponseDto.js       |     100 |      100 |     100 |     100 |                                                                                                               
+----------------------------|---------|----------|---------|---------|---------------------------------------------------------------------------------------------------------------
+Test Suites: 7 failed, 8 passed, 15 total
+Tests:       26 failed, 154 passed, 180 total
+Snapshots:   0 total
+Time:        0.592 s, estimated 1 s
+Ran all test suites.

@@ -39,7 +39,7 @@ export const useAnalisisInv = (initialYear = AnalisisInvService.getCurrentYear()
                 throw new Error('Se requiere un año para cargar el análisis de inventario');
             }
             
-            console.log(`🔄 Cargando análisis de inventario para el año ${anio}...`);
+            console.log(`Cargando análisis de inventario para el año ${anio}...`);
             
             // Validar año
             if (!AnalisisInvService.isValidYear(anio)) {
@@ -66,18 +66,18 @@ export const useAnalisisInv = (initialYear = AnalisisInvService.getCurrentYear()
                 const promocion = AnalisisInvService.getProductosParaPromocion(productos);
                 setProductosParaPromocion(promocion);
                 
-                console.log('📊 Análisis procesado:', {
+                console.log('Análisis procesado:', {
                     totalProductos: productos.length,
                     productosUrgentes: urgentes.length,
                     productosPromocion: promocion.length,
-                    clasificacion: Object.keys(clasificados).map(key => `${key}: ${clasificados[key].length}`)
+                    clasificacion: Object.entries(clasificados).map(([key, value]) => `${key}: ${value.length}`)
                 });
             }
             
-            console.log('✅ Análisis de inventario cargado exitosamente');
+            console.log('Análisis de inventario cargado exitosamente');
             
         } catch (err) {
-            console.error('❌ Error cargando análisis de inventario:', err);
+            console.error('Error cargando análisis de inventario:', err);
             setError(err.message);
             setAnalisisData(null);
             setProductosClasificados({});

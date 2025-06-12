@@ -156,17 +156,17 @@ exports.actualizarOrdenACompletada = async (req, res) => {
             return res.status(400).json({ message: error.message });
         }
 
-        const result = await executeQuery('CALL DBADMIN.ActualizarEstadoOrdenCompletada(?)', [IdOrden]);
+            const result = await executeQuery('CALL DBADMIN.ActualizarEstadoOrdenCompletada(?)', [IdOrden]);
         const mensaje = extractSuccessMessage(result);
 
-        return res.status(200).json({
-            success: true,
-            message: 'Estado de la orden actualizado correctamente a Completada',
-            data: {
-                ordenId: IdOrden,
-                mensaje: mensaje
-            }
-        });
+            return res.status(200).json({
+                success: true,
+                message: 'Estado de la orden actualizado correctamente a Completada',
+                data: {
+                    ordenId: IdOrden,
+                    mensaje: mensaje
+                }
+            });
     } catch (error) {
         console.error('Error al actualizar el estado de la orden:', error);
         const { statusCode, errorMessage } = handleSpecificErrors(error);

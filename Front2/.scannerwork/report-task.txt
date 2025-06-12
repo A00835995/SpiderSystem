@@ -1,6 +1,0 @@
-projectKey=SpiderSAP_front
-serverUrl=http://20.115.80.90:9002
-serverVersion=25.5.0.107428
-dashboardUrl=http://20.115.80.90:9002/dashboard?id=SpiderSAP_front
-ceTaskId=6836b111-728f-4c0f-a8f9-515217dd7566
-ceTaskUrl=http://20.115.80.90:9002/api/ce/task?id=6836b111-728f-4c0f-a8f9-515217dd7566

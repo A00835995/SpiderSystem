@@ -9,11 +9,11 @@ const extractProviderIdFromToken = (authHeader) => {
         return null;
     }
 
-    try {
-        const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "seguridad");
+            try {
+                const token = authHeader.split(' ')[1];
+                const decoded = jwt.verify(token, process.env.JWT_SECRET || "seguridad");
         
-        if (decoded.role === 4 && decoded.proveedorId) {
+                if (decoded.role === 4 && decoded.proveedorId) {
             return decoded.proveedorId;
         }
     } catch (error) {
@@ -25,7 +25,7 @@ const extractProviderIdFromToken = (authHeader) => {
 const validateOrderId = (id) => {
     if (!id) {
         throw new Error('Se requiere el ID de la orden');
-    }
+                }
 };
 
 const handleError = (res, error, message) => {
@@ -85,7 +85,7 @@ exports.getOrdenesProveedor = async (req, res) => {
     } catch (error) {
         return handleError(res, error, 'Error al obtener órdenes de proveedor');
     }
-};
+}; 
 
 exports.consultarOrdenCompra = async (req, res) => {
     try {
@@ -101,21 +101,21 @@ exports.consultarOrdenCompra = async (req, res) => {
         const requestData = { IdOrden, ...(proveedorId && { IdProveedor: proveedorId }) };
         const databaseData = OrdenCompraConsultaDto.toDatabase(requestData);
         const data = await executeQuery('CALL ConsultarOrdenCompra(?)', [JSON.stringify(databaseData)]);
-
+        
         if (!data || data.length === 0) {
             return res.status(404).json({
                 message: 'No se encontró la orden de compra especificada'
             });
         }
 
-        return res.status(200).json({
-            message: 'Detalle de orden de compra obtenido correctamente',
+            return res.status(200).json({
+                message: 'Detalle de orden de compra obtenido correctamente',
             data: OrdenCompraConsultaDto.toResponse(data)
         });
     } catch (error) {
         return handleError(res, error, 'Error al consultar la orden de compra');
     }
-};
+}; 
 
 exports.actualizarOrdenAProceso = async (req, res) => {
     try {
@@ -140,7 +140,7 @@ exports.actualizarOrdenAProceso = async (req, res) => {
     } catch (error) {
         return handleError(res, error, 'Error al actualizar el estado de la orden');
     }
-};
+}; 
 
 exports.actualizarOrdenACompletada = async (req, res) => {
     try {
