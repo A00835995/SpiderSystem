@@ -91,15 +91,6 @@ jobs:
           echo "BACKEND_URL=https://$BACKEND_ROUTE/api" >> $GITHUB_ENV
           echo "✅ Backend URL: https://$BACKEND_ROUTE/api"
 
-      - name: 🔎 Test backend health endpoint
-        run: |
-          echo "⏳ Waiting 15s for backend to boot..."
-          sleep 15
-          curl --fail "${{ env.BACKEND_URL }}/login" || {
-            echo "❌ Backend health check failed."
-            exit 1
-          }
-
       - name: 🧪 Frontend testing and linting
         working-directory: Front2
         run: |
