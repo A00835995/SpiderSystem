@@ -75,6 +75,11 @@ export const useAdminLogic = () => {
       }
   };
 
+  const handleCancelDelete = () => {
+    setShowConfirmDialog(false);
+    setUserIdToDelete(null);
+  };
+
   const validateForm = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.nombre.trim()) {
@@ -148,8 +153,10 @@ export const useAdminLogic = () => {
     loading,
     error,
     showDialog,
+    setShowDialog,
     selectedUsuario,
     showToast,
+    setShowToast,
     toastMessage,
     showConfirmDialog,
     userIdToDelete,
@@ -159,6 +166,7 @@ export const useAdminLogic = () => {
     handleEditUsuario,
     handleDeleteUsuario,
     handleConfirmDelete,
+    handleCancelDelete,
     handleSave,
     getRolColor,
     getInitials

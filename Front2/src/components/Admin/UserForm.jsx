@@ -116,7 +116,7 @@ const UserForm = ({
     <>
       <Dialog
         open={showDialog}
-        onAfterClose={onClose}
+        onClose={handleClose}
         headerText={selectedUsuario ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
         style={{ width: '400px' }}
       >

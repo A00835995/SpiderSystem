@@ -34,6 +34,10 @@ const Admin = () => {
     handleCancelDelete
   } = useAdminLogic();
 
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+  };
+
   return (
     <div style={{ 
       width: "100%",
@@ -98,7 +102,7 @@ const Admin = () => {
       {/* Formulario en Dialog */}
       <UserForm
         showDialog={showDialog}
-        onClose={() => setShowDialog(false)}
+        onClose={handleCloseDialog}
         formData={formData}
         setFormData={setFormData}
         selectedUsuario={selectedUsuario}
